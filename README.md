@@ -18,6 +18,5 @@ ___
 
 ## Usage
 ### How to deploy
-#### 1)
 
 ### Demo
