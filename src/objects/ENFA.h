@@ -1,0 +1,10 @@
+#ifndef LIGHTWEIGHT_IDE_ENFA_H
+#define LIGHTWEIGHT_IDE_ENFA_H
+
+
+class ENFA {
+
+};
+
+
+#endif //LIGHTWEIGHT_IDE_ENFA_H

@@ -1,0 +1,10 @@
+#ifndef LIGHTWEIGHT_IDE_DFA_H
+#define LIGHTWEIGHT_IDE_DFA_H
+
+
+class DFA {
+
+};
+
+
+#endif //LIGHTWEIGHT_IDE_DFA_H

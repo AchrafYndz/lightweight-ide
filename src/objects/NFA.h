@@ -1,0 +1,10 @@
+#ifndef LIGHTWEIGHT_IDE_NFA_H
+#define LIGHTWEIGHT_IDE_NFA_H
+
+
+class NFA {
+
+};
+
+
+#endif //LIGHTWEIGHT_IDE_NFA_H
