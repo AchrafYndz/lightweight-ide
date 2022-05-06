@@ -16,6 +16,11 @@ class FA {
     std::vector<State *> states;
     std::vector<Transition *> transitions;
 
+    static bool anyStarting(std::set<State *> &s);
+    static bool anyStarting(std::vector<State *> &s);
+    static bool anyAccepting(std::set<State *> &s);
+    static bool anyAccepting(std::vector<State *> &s);
+
   public:
     FA() = default;
     FA(const std::string &file);

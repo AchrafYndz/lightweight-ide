@@ -2,6 +2,7 @@
 #define IDE_NFA_H
 
 #include "FA.h"
+#include "DFA.h"
 
 class NFA : public FA {
   public:
@@ -9,6 +10,8 @@ class NFA : public FA {
     NFA(const std::string &file) : FA(file) {}
     NFA(const std::vector<char> alphabet, const std::vector<State *> states,
         const std::vector<Transition *> transitions);
+
+    DFA toDFA() const;
 };
 
 #endif  // IDE_NFA_H
