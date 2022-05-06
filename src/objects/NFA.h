@@ -1,10 +1,14 @@
-#ifndef LIGHTWEIGHT_IDE_NFA_H
-#define LIGHTWEIGHT_IDE_NFA_H
+#ifndef IDE_NFA_H
+#define IDE_NFA_H
 
+#include "FA.h"
 
-class NFA {
-
+class NFA : public FA {
+  public:
+    NFA() = default;
+    NFA(const std::string &file) : FA(file) {}
+    NFA(const std::vector<char> alphabet, const std::vector<State *> states,
+        const std::vector<Transition *> transitions);
 };
 
-
-#endif //LIGHTWEIGHT_IDE_NFA_H
+#endif  // IDE_NFA_H

@@ -1,10 +1,17 @@
-#ifndef LIGHTWEIGHT_IDE_ENFA_H
-#define LIGHTWEIGHT_IDE_ENFA_H
+#ifndef IDE_ENFA_H
+#define IDE_ENFA_H
 
+#include "FA.h"
 
-class ENFA {
+class ENFA : public FA {
+  private:
+    char eps;
 
+  public:
+    ENFA() = default;
+    ENFA(const std::string &file) : FA(file) {}
+    ENFA(const std::vector<char> alphabet, const std::vector<State *> states,
+         const std::vector<Transition *> transitions, const char eps);
 };
 
-
-#endif //LIGHTWEIGHT_IDE_ENFA_H
+#endif  // IDE_ENFA_H
