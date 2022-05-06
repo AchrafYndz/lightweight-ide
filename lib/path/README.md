@@ -1,0 +1,1 @@
+The path simplification code is copied from the GeeksForGeeks [website](https://www.geeksforgeeks.org/simplify-directory-path-unix-like/) \(https://www.geeksforgeeks.org/simplify-directory-path-unix-like/\)
