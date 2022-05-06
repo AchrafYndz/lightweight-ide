@@ -116,7 +116,7 @@ TFA DFA::generateTFA() {
                     Transition *transition2 = findTransition(q, letter);
 
                     // Check if distinguishable
-                    if (transition1 == nullptr && transition2 == nullptr ||
+                    if ((transition1 == nullptr && transition2 == nullptr) ||
                         ((transition1 != nullptr && transition2 != nullptr) &&
                          pairCrossed(t, transition1->to->name, transition2->to->name))) {
                         // Pair distinguishable
