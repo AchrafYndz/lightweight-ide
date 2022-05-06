@@ -8,8 +8,8 @@ class NFA : public FA {
   public:
     NFA() = default;
     NFA(const std::string &file) : FA(file) {}
-    NFA(const std::vector<char> alphabet, const std::vector<State *> states,
-        const std::vector<Transition *> transitions);
+    NFA(const std::vector<char>& alphabet, const std::vector<State *>& states,
+        const std::vector<Transition *>& transitions);
 
     DFA toDFA() const;
 };
