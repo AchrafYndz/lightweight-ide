@@ -253,7 +253,7 @@ bool DFA::operator==(DFA &rhs) {
     // no difference in order
     sort(rhs.alphabet.begin(), rhs.alphabet.end());
     sort(alphabet.begin(), alphabet.end());
-    // Checl for equivalence
+    // Check for equivalence
     if (rhs.alphabet != alphabet) return false;
 
     // Combine and sort states
