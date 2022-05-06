@@ -15,7 +15,7 @@ struct State {
 
     State *copy() const { return new State{.name = name, .starting = starting, .accepting = accepting}; }
 
-    bool operator==(const State &rhs) {
+    bool operator==(const State &rhs) const {
         return (name == rhs.name && starting == rhs.starting && accepting == rhs.accepting);
     }
 };
@@ -33,7 +33,7 @@ struct Transition {
 
     Transition *copy(State *from, State *to) const { return new Transition{.from = from, .to = to, .input = input}; }
 
-    bool operator==(const Transition &rhs) { return (from == rhs.from && to == rhs.to && input == rhs.input); }
+    bool operator==(const Transition &rhs) const { return (from == rhs.from && to == rhs.to && input == rhs.input); }
 };
 
 inline void to_json(nlohmann::json &j, const Transition *p) {
