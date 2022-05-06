@@ -107,7 +107,7 @@ TFA DFA::generateTFA() {
                 // If already marked as distinguishable, continue
                 if (col.second) continue;
 
-                // Check if the state is distuingishable
+                // Check if the state is distinguishable
                 // Try all possible transitions, if the results are distinguishable
                 // then so are the starting states
                 for (const char letter : alphabet) {
