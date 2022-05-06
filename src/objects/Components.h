@@ -31,7 +31,7 @@ struct Transition {
 
     ~Transition() = default;
 
-    Transition *copy(State *from, State *to) const { return new Transition{.from = from, .to = to, .input = input}; }
+    Transition *copy(State *_from, State *_to) const { return new Transition{.from = _from, .to = _to, .input = input}; }
 
     bool operator==(const Transition &rhs) const { return (from == rhs.from && to == rhs.to && input == rhs.input); }
 };
