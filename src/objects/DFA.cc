@@ -180,17 +180,17 @@ DFA DFA::minimize() {
     // Create new states and transitions
     // Create DFA, we'll use this to access findState
     DFA dfa = DFA();
-    // Re-create all states and assign them to the DFA
+    // Recreate all states and assign them to the DFA
     for (auto state : states) minStates.push_back(state->copy());
     dfa.setStates(minStates);
-    // Re-create all transitions with the new states
+    // Recreate all transitions with the new states
     for (auto transition : transitions)
         minTransitions.push_back(
           transition->copy(dfa.findState(transition->from->name), dfa.findState(transition->to->name)));
 
     // Get all equivalence classes
     std::set<std::set<State *>> classes = findEquivalenceClasses(t);
-    // Re-create equivalence classes as we don't want shared
+    // Recreate equivalence classes as we don't want shared
     // pointers
     std::set<std::set<State *>> newClasses = {};
     for (const auto &c : classes) {
