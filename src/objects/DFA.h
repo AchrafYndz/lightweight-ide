@@ -19,8 +19,8 @@ class DFA : public FA {
 
     DFA() = default;
     DFA(const std::string &file) : FA(file){};
-    DFA(const std::vector<char> alphabet, const std::vector<State *> states,
-        const std::vector<Transition *> transitions);
+    DFA(const std::vector<char>& alphabet, const std::vector<State *>& states,
+        const std::vector<Transition *>& transitions);
 
     bool operator==(DFA &rhs);
 };
