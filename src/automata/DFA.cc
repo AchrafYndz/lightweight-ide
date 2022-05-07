@@ -112,8 +112,8 @@ TFA DFA::generateTFA() {
                 // then so are the starting states
                 for (const char letter : alphabet) {
                     // Get transitions
-                    Transition *transition1 = findTransition(p, letter);
-                    Transition *transition2 = findTransition(q, letter);
+                    Transition *transition1 = findTransition(p, letter).front();
+                    Transition *transition2 = findTransition(q, letter).front();
 
                     // Check if distinguishable
                     if ((transition1 == nullptr && transition2 == nullptr) ||

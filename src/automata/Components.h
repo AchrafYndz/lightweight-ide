@@ -25,9 +25,9 @@ inline void to_json(nlohmann::json &j, const State *p) {
 }
 
 struct Transition {
-    const State *from;
-    const State *to;
-    const char input;
+    State *from;
+    State *to;
+    char input;
 
     ~Transition() = default;
 

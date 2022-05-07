@@ -7,7 +7,7 @@ FA::FA(const std::string &file) {
     i >> j;
 
     // Parse alphabet
-    for (const std::string &c : j["alphabet"]) alphabet.push_back(c[0]);
+    for (const auto &c : j["alphabet"]) alphabet.push_back(std::string(c).front());
 
     // Parse states
     for (const auto &state : j["states"]) {
@@ -92,10 +92,11 @@ State *FA::findState(const std::string &n) const {
     return nullptr;
 }
 
-Transition *FA::findTransition(const State *from, const char input) const {
+std::vector<Transition *> FA::findTransition(const State *from, const char input) const {
+    std::vector<Transition *> result;
     for (Transition *transition : transitions)
-        if (transition->from == from && transition->input == input) return transition;
-    return nullptr;
+        if (transition->from == from && transition->input == input) result.push_back(transition);
+    return result;
 }
 
 void FA::setStates(std::vector<State *> &s) { states = s; }

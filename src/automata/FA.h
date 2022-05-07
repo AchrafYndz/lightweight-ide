@@ -31,7 +31,7 @@ class FA {
     static std::string stateSetToName(const std::set<State *> &s);
 
     State *findState(const std::string &n) const;
-    Transition *findTransition(const State *from, const char input) const;
+    std::vector<Transition *> findTransition(const State *from, const char input) const;
     State *findStartingState() const;
 
     void print(std::ostream &out) const;
@@ -42,6 +42,10 @@ class FA {
     void setTransitions(std::vector<Transition *> &states);
     void renameState(const std::string &s, const std::string &n);
     void removeUnused();
+
+    const std::vector<char> &getAlphabet() const { return alphabet; }
+    const std::vector<State *> &getStates() const { return states; }
+    const std::vector<Transition *> &getTransitions() const { return transitions; }
 };
 
 #endif  // IDE_FA_H

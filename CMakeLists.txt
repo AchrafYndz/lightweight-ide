@@ -20,7 +20,7 @@ AUX_SOURCE_DIRECTORY(lib/doctest DOCTEST_LIB_FILES)
 
 # ================== Source files ===================
 # object source files
-AUX_SOURCE_DIRECTORY(src/objects OBJECT_SOURCE_FILES)
+AUX_SOURCE_DIRECTORY(src/automata OBJECT_SOURCE_FILES)
 
 # test source files
 file(GLOB_RECURSE TEST_SOURCE_FILES tests/**/*.cc)
