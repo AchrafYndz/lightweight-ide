@@ -15,10 +15,17 @@ AUX_SOURCE_DIRECTORY(lib/path PATH_LIB_FILES)
 # id library files
 AUX_SOURCE_DIRECTORY(lib/id ID_LIB_FILES)
 
+# doctest library files
+AUX_SOURCE_DIRECTORY(lib/doctest DOCTEST_LIB_FILES)
+
 # ================== Source files ===================
+# object source files
 AUX_SOURCE_DIRECTORY(src/objects OBJECT_SOURCE_FILES)
 
-set(RELEASE_FILES
+# test source files
+file(GLOB_RECURSE TEST_SOURCE_FILES tests/**/*.cc)
+
+set(RELEASE_SOURCE_FILES
     src/ide.cc
     ${JSON_LIB_FILES}
     ${PATH_LIB_FILES}
@@ -26,4 +33,14 @@ set(RELEASE_FILES
     ${OBJECT_SOURCE_FILES}
 )
 
-add_executable(ide ${RELEASE_FILES})
+set(TEST_SOURCE_FILES
+    src/ideTest.cc
+    ${DOCTEST_LIB_FILES}
+    ${JSON_LIB_FILES}
+    ${PATH_LIB_FILES}
+    ${OBJECT_SOURCE_FILES}
+    ${TEST_SOURCE_FILES}
+)
+
+add_executable(ide ${RELEASE_SOURCE_FILES})
+add_executable(ide_test ${TEST_SOURCE_FILES})
