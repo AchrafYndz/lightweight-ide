@@ -132,3 +132,23 @@ State *FA::findStartingState() const {
         if (s->starting) return s;
     return nullptr;
 }
+
+bool FA::anyStarting(std::set<State *>& s) {
+     for (auto c : s) if (c->starting) return c->starting;
+    return false;
+}
+
+bool FA::anyStarting(std::vector<State *>& s) {
+    for (auto c : s) if (c->starting) return c->starting;
+    return false; 
+}
+
+bool FA::anyAccepting(std::vector<State *>& s) {
+    for (auto c : s) if (c->accepting) return c->accepting;
+    return false; 
+}
+
+bool FA::anyAccepting(std::set<State *>& s) {
+    for (auto c : s) if (c->accepting) return c->accepting;
+    return false; 
+}
