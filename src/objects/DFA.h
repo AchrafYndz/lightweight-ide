@@ -17,11 +17,10 @@ class DFA : public FA {
     void printTable();
     void printTable(TFA &t);
 
-  public:
     DFA() = default;
     DFA(const std::string &file) : FA(file){};
-    DFA(const std::vector<char> alphabet, const std::vector<State *> states,
-        const std::vector<Transition *> transitions);
+    DFA(const std::vector<char>& alphabet, const std::vector<State *>& states,
+        const std::vector<Transition *>& transitions);
 
     bool operator==(DFA &rhs);
 };

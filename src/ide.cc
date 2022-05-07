@@ -2,4 +2,6 @@
 
 #include "../lib/path/path.h"
 
-int main() { std::cout << path::rootDirectory << '\n'; }
+int main() {
+    std::cout << path::rootDirectory << '\n';
+}
