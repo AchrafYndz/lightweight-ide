@@ -2,12 +2,12 @@
 
 DFA::DFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
          const std::vector<Transition *> &transitions) :
-        FA(alphabet, states, transitions) {}
+    FA(alphabet, states, transitions) {}
 
 bool DFA::pairCrossed(TFA &t, const std::string &s1, const std::string &s2) {
-    for (auto &row: t) {
+    for (auto &row : t) {
         std::string pName = row.first;
-        for (auto &col: row.second) {
+        for (auto &col : row.second) {
             std::string qName = col.first;
             // These should contain the same value, so we can return the first
             // one we encounter.
@@ -20,7 +20,7 @@ bool DFA::pairCrossed(TFA &t, const std::string &s1, const std::string &s2) {
 
 std::set<std::set<State *>> DFA::findEquivalenceClasses(TFA &t) const {
     std::set<std::set<State *>> e = {};
-    for (auto &state: states) {
+    for (auto &state : states) {
         std::set<State *> result = findEquivalentStates(t, state);
         if (result.size() > 1) e.insert(result);
     }
@@ -31,9 +31,9 @@ std::set<std::set<State *>> DFA::findEquivalenceClasses(TFA &t) const {
 std::set<State *> DFA::findEquivalentStates(TFA &t, State *s) const {
     std::set<State *> e = {s};
 
-    for (auto &row: t) {
+    for (auto &row : t) {
         State *p = findState(row.first);
-        for (auto &col: row.second) {
+        for (auto &col : row.second) {
             if (col.second) continue;
             State *q = findState(col.first);
 
@@ -67,13 +67,13 @@ TFA DFA::generateTFA() {
     }
 
     // First run
-    for (auto &row: t) {
+    for (auto &row : t) {
         // Fetch state p
         std::string pName = row.first;
         const State *p = findState(pName);
 
         // Loop over all columns
-        for (auto &col: row.second) {
+        for (auto &col : row.second) {
             // Fetch state q
             std::string qName = col.first;
             State *q = findState(qName);
@@ -93,13 +93,13 @@ TFA DFA::generateTFA() {
         crossed = false;
 
         // Loop over all rows
-        for (auto &row: t) {
+        for (auto &row : t) {
             // Fetch state p
             std::string pName = row.first;
             const State *p = findState(pName);
 
             // Loop over all columns
-            for (auto &col: row.second) {
+            for (auto &col : row.second) {
                 // Fetch state q
                 std::string qName = col.first;
                 const State *q = findState(qName);
@@ -110,7 +110,7 @@ TFA DFA::generateTFA() {
                 // Check if the state is distinguishable
                 // Try all possible transitions, if the results are distinguishable
                 // then so are the starting states
-                for (const char letter: alphabet) {
+                for (const char letter : alphabet) {
                     // Get transitions
                     Transition *transition1 = findTransition(p, letter);
                     Transition *transition2 = findTransition(q, letter);
@@ -161,7 +161,7 @@ void DFA::printTable(TFA &t) {
         // Print bottom names
         if (row == (t.end() - 1)) {
             std::cout << "	";
-            for (auto &col: row->second) { std::cout << col.first << "	"; }
+            for (auto &col : row->second) { std::cout << col.first << "	"; }
             std::cout << std::endl;
         }
     }
@@ -180,26 +180,26 @@ DFA DFA::minimize() {
     // Create DFA, we'll use this to access findState
     DFA dfa = DFA();
     // Recreate all states and assign them to the DFA
-    for (auto state: states) minStates.push_back(state->copy());
+    for (auto state : states) minStates.push_back(state->copy());
     dfa.setStates(minStates);
     // Recreate all transitions with the new states
-    for (auto transition: transitions)
+    for (auto transition : transitions)
         minTransitions.push_back(
-                transition->copy(dfa.findState(transition->from->name), dfa.findState(transition->to->name)));
+          transition->copy(dfa.findState(transition->from->name), dfa.findState(transition->to->name)));
 
     // Get all equivalence classes
     std::set<std::set<State *>> classes = findEquivalenceClasses(t);
     // Recreate equivalence classes as we don't want shared
     // pointers
     std::set<std::set<State *>> newClasses = {};
-    for (const auto &c: classes) {
+    for (const auto &c : classes) {
         std::set<State *> r = {};
-        for (auto s: c) r.insert(dfa.findState(s->name));
+        for (auto s : c) r.insert(dfa.findState(s->name));
         newClasses.insert(r);
     }
 
     // Condense states and transitions
-    for (auto c: newClasses) {
+    for (auto c : newClasses) {
         // Create the new state
         std::string name = stateSetToName(c);
         bool starting = anyStarting(c);
@@ -209,8 +209,8 @@ DFA DFA::minimize() {
         minStates.push_back(combined);
 
         // Re-route all transitions
-        for (auto s: c) {
-            for (auto transition: minTransitions) {
+        for (auto s : c) {
+            for (auto transition : minTransitions) {
                 if (transition->from == s) transition->from = combined;
                 if (transition->to == s) transition->to = combined;
             }
@@ -237,7 +237,7 @@ DFA DFA::minimize() {
     dfa.removeUnused();
 
     // Rename all states to have brackets
-    for (auto state: minStates)
+    for (auto state : minStates)
         if (state->name[0] != '{') dfa.renameState(state->name, "{" + state->name + "}");
 
     // Breakpoint temp

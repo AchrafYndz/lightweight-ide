@@ -10,8 +10,8 @@ class ENFA : public FA {
   public:
     ENFA() = default;
     ENFA(const std::string &file) : FA(file) {}
-    ENFA(const std::vector<char>& alphabet, const std::vector<State *>& states,
-         const std::vector<Transition *>& transitions, const char eps);
+    ENFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
+         const std::vector<Transition *> &transitions, const char eps);
 };
 
 #endif  // IDE_ENFA_H
