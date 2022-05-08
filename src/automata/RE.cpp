@@ -3,6 +3,7 @@
 RE::RE(std::string re, const char eps) : eps(eps) {
     // remove whitespace from regex
     re.erase(remove(re.begin(), re.end(), ' '), re.end());
+    re.erase(remove(re.begin(), re.end(), '?'), re.end());
     this->re = re;
 
     for (const char ch : re) {
