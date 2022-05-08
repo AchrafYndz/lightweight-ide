@@ -23,6 +23,8 @@ class ENFA : public FA {
 
     void printStats(std::ostream &out) const;
     void printStats() const;
+
+    void setEpsilon(const char eps) { this->eps = eps; };
 };
 
 #endif  // IDE_ENFA_H

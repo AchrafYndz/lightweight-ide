@@ -99,11 +99,11 @@ std::vector<Transition *> FA::findTransition(const State *from, const char input
     return result;
 }
 
-void FA::setStates(std::vector<State *> &s) { states = s; }
+void FA::setStates(const std::vector<State *> &s) { states = s; }
 
-void FA::setTransitions(std::vector<Transition *> &t) { transitions = t; }
+void FA::setTransitions(const std::vector<Transition *> &t) { transitions = t; }
 
-void FA::setAlphabet(std::vector<char> &a) { alphabet = a; }
+void FA::setAlphabet(const std::vector<char> &a) { alphabet = a; }
 
 void FA::renameState(const std::string &s, const std::string &n) {
     for (auto &state : states) {

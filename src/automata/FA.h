@@ -16,11 +16,6 @@ class FA {
     std::vector<State *> states;
     std::vector<Transition *> transitions;
 
-    static bool anyStarting(std::set<State *> &s);
-    static bool anyStarting(std::vector<State *> &s);
-    static bool anyAccepting(std::set<State *> &s);
-    static bool anyAccepting(std::vector<State *> &s);
-
   public:
     FA() = default;
     FA(const std::string &file);
@@ -37,15 +32,20 @@ class FA {
     void print(std::ostream &out) const;
     void print() const;
 
-    void setStates(std::vector<State *> &states);
-    void setAlphabet(std::vector<char> &states);
-    void setTransitions(std::vector<Transition *> &states);
+    void setStates(const std::vector<State *> &states);
+    void setAlphabet(const std::vector<char> &states);
+    void setTransitions(const std::vector<Transition *> &states);
     void renameState(const std::string &s, const std::string &n);
     void removeUnused();
 
     const std::vector<char> &getAlphabet() const { return alphabet; }
     const std::vector<State *> &getStates() const { return states; }
     const std::vector<Transition *> &getTransitions() const { return transitions; }
+
+    static bool anyStarting(std::set<State *> &s);
+    static bool anyStarting(std::vector<State *> &s);
+    static bool anyAccepting(std::set<State *> &s);
+    static bool anyAccepting(std::vector<State *> &s);
 };
 
 #endif  // IDE_FA_H
