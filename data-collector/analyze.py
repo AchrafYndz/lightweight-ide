@@ -11,8 +11,8 @@ Keywords overview:
 ✅ else
 ✅ if
 ✅ elif
-⛔️ import
-⛔️ pass
+✅ import
+✅ pass
 ⛔️ break
 ⛔️ except
 ⛔️ in
@@ -114,6 +114,15 @@ class Analyzer(ast.NodeVisitor):
         self.count_keyword("import")
         self.generic_visit(node)
 
+    def visit_Pass(self, node):
+        # Handle pass
+        self.count_keyword("pass")
+        self.generic_visit(node)
+
+    def visit_Break(self, node):
+        # Handle import
+        self.count_keyword("break")
+        self.generic_visit(node)
 
     def generic_visit(self, node):
         print(type(node).__name__)
@@ -136,6 +145,7 @@ def main():
             analyzer = Analyzer()
             analyzer.visit(tree)
             stats = analyzer.stats
+            print(stats)
         except Exception as e:
             print(e)
             # Die in silence
