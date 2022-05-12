@@ -6,11 +6,11 @@ import json
 Keywords overview:
 ✅ False
 ✅ True
+⛔️ None
 ⛔️ await
 ⛔️ else
 ⛔️ import
 ⛔️ pass
-⛔️ None
 ⛔️ break
 ⛔️ except
 ⛔️ in
@@ -51,22 +51,22 @@ class Analyzer(ast.NodeVisitor):
         # Collect all variable names
         for alias in node.targets:
             if isinstance(alias, ast.Name):
-                self.stats["variable_names"].append(alias.id)
+                self.count_variable_name(str(alias.id))
 
         # Continue recursively
         self.generic_visit(node)
 
     def count_keyword(self, keyword):
-        if keyword not in self.stats.keywords:
-            self.stats.keywords[keyword] = 0
+        if keyword not in self.stats["keywords"]:
+            self.stats["keywords"][keyword] = 0
 
-        self.stats.keywords[keyword] += 1
+        self.stats["keywords"][keyword] += 1
 
     def count_variable_name(self, variable_name):
-        if variable_name not in self.stats.variable_names:
-            self.stats.variable_names[variable_name] = 0
+        if variable_name not in self.stats["variable_names"]:
+            self.stats["variable_names"][variable_name] = 0
 
-        self.stats.variable_names[variable_name] += 1
+        self.stats["variable_names"][variable_name] += 1
 
     def visit_Constant(self, node):
         # Handle booleans
@@ -82,8 +82,7 @@ class Analyzer(ast.NodeVisitor):
 
 def main():
     # General variables
-    data = []
-    keywords_processed = {}
+    stats = {}
 
     # Analyze files
     for filename in Path('data').rglob('*.py'):
@@ -92,44 +91,25 @@ def main():
         contents = f.read()
         f.close()
 
-        # Count keywords
-        # TODO: rewrite this to use AST
-        keywords = ['False', 'await', 'else', 'import', 'pass', 'None', 'break', 'except', 'in', 'raise', 'True', 'class', 'finally', 'is', 'return', 'and', 'continue', 'for', 'lambda', 'try', 'as', 'def', 'from', 'nonlocal', 'while', 'assert', 'del', 'global', 'not', 'with', 'async', 'elif', 'if', 'or', 'yield']
-        for keyword in keywords:
-            if keyword not in keywords_processed:
-                keywords_processed[keyword] = 0
-            keywords_processed[keyword] += contents.count(keyword)
-
-
         try:
             tree = ast.parse(contents)
             analyzer = Analyzer()
             analyzer.visit(tree)
-            data.extend(analyzer.stats["variable_names"])
-        except:
+            stats = analyzer.stats
+            print(analyzer.stats)
+        except Exception as e:
+            print(e)
             # Die in silence
             pass
             
-
-    # Parse data
-    data_processed = {}
-    for instance in data:
-        if instance not in data_processed:
-            data_processed[instance] = 0
-
-        data_processed[instance] += 1
-
     # Sort data for review purposes
-    data_sorted = dict(sorted(data_processed.items(), key=lambda item: item[1], reverse=True))
-    k_data_sorted = dict(sorted(keywords_processed.items(), key=lambda item: item[1], reverse=True))
-    t = {
-        "keywords": k_data_sorted,
-        "variable_names": data_sorted
-    }
+    stats_sorted = {}
+    for key in stats.keys():
+        stats_sorted[key] = dict(sorted(stats[key].items(), key=lambda item: item[1], reverse=True))
 
     # Dump data
     out_file = open("output.json", "w")
-    json.dump(t, out_file, indent = 4)
+    json.dump(stats_sorted, out_file, indent = 4)
     out_file.close()
 
 
