@@ -86,16 +86,27 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def analyze_if_chain(self, node):
-        pass
-
-    def visit_If(self, node):
-        # Handle await
+        # Let's check if there's an else/elif present
         if len(node.orelse) > 0:
+            # Extract the else/elif
             orelse = node.orelse[0]
-            if type(orelse) == ast.Expr:
+            if type(orelse) == ast.If:
+                # We found an elif, let's count it and 
+                # continue exploring
+                self.skip.append(orelse)
+                self.count_keyword("elif")
+                self.analyze_if_chain(orelse)
+
+            elif type(orelse) == ast.Expr:
+                # We've reached an else, we can stop here
                 self.count_keyword("else")
 
-        self.count_keyword("if")
+    def visit_If(self, node):
+        # Handle if and child else/elif(s)
+        if node not in self.skip:
+            self.count_keyword("if")
+            self.analyze_if_chain(node)
+
         self.generic_visit(node)
 
 
