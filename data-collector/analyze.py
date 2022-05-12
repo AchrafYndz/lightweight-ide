@@ -28,7 +28,7 @@ Keywords overview:
 ✅ try
 ✅ as
 ✅ def
-⛔️ from
+✅ from
 ⛔️ nonlocal
 ✅ while
 ⛔️ assert
@@ -112,6 +112,13 @@ class Analyzer(ast.NodeVisitor):
     def visit_Import(self, node):
         # Handle import
         self.count_keyword("import")
+        self.generic_visit(node)
+
+    def visit_ImportFrom(self, node):
+        # Handle import
+        self.count_keyword("import")
+        # Handle frm
+        self.count_keyword("from")
         self.generic_visit(node)
 
     def visit_alias(self, node):
