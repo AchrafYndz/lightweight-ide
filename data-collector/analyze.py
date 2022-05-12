@@ -29,7 +29,7 @@ Keywords overview:
 ✅ as
 ✅ def
 ✅ from
-⛔️ nonlocal
+✅ nonlocal
 ✅ while
 ⛔️ assert
 ✅ del
@@ -233,18 +233,28 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Yield(self, node):
-        # Handle with
+        # Handle yield
         self.count_keyword("yield")
         self.generic_visit(node)
 
     def visit_Del(self, node):
-        # Handle with
+        # Handle del
         self.count_keyword("del")
         self.generic_visit(node)
 
     def visit_Global(self, node):
-        # Handle with
+        # Handle global
         self.count_keyword("global")
+        self.generic_visit(node)
+
+    def visit_Nonlocal(self, node):
+        # Handle nonlocal
+        self.count_keyword("nonlocal")
+        self.generic_visit(node)
+
+    def visit_Assert(self, node):
+        # Handle assert
+        self.count_keyword("assert")
         self.generic_visit(node)
 
     def generic_visit(self, node):
