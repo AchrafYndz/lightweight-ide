@@ -31,10 +31,10 @@ Keywords overview:
 ✅ from
 ✅ nonlocal
 ✅ while
-⛔️ assert
+✅ assert
 ✅ del
 ✅ global
-⛔️ not
+✅ not
 ✅ with
 ✅ async
 ✅ or
@@ -255,6 +255,11 @@ class Analyzer(ast.NodeVisitor):
     def visit_Assert(self, node):
         # Handle assert
         self.count_keyword("assert")
+        self.generic_visit(node)
+
+    def visit_Not(self, node):
+        # Handle assert
+        self.count_keyword("not")
         self.generic_visit(node)
 
     def generic_visit(self, node):
