@@ -15,7 +15,7 @@ Keywords overview:
 ✅ pass
 ✅ break
 ✅ except
-⛔️ in
+✅ in
 ⛔️ raise
 ✅ class
 ✅ finally
@@ -125,7 +125,6 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Try(self, node):
-        print(node.__dict__)
         # Handle try
         self.count_keyword("try")
 
@@ -146,6 +145,11 @@ class Analyzer(ast.NodeVisitor):
     def visit_ClassDef(self, node):
         # Handle class
         self.count_keyword("class")
+        self.generic_visit(node)
+
+    def visit_In(self, node):
+        # Handle class
+        self.count_keyword("in")
         self.generic_visit(node)
 
     def generic_visit(self, node):
