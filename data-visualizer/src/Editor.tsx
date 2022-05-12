@@ -10,9 +10,6 @@ const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpec
         content = ""
     }
 
-    console.log(text)
-    console.log(startIndex)
-    
     for (let i = 0; i <= text.length; i++) {
         for (const type of Object.keys(highlightSpecsBounds)) {
             if (highlightSpecsBounds[type as keyof HighlightSpecsBounds].find(bounds => bounds[0] === (i + startIndex))) {
