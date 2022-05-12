@@ -282,7 +282,7 @@ def dict_to_hashmap(identifier, data):
     initialize_list_str = ", ".join(initialize_list) 
     initialize_str = f"{{{initialize_list_str}}}"
 
-    return f"unordered_map<string, int> {identifier} = {initialize_str}"
+    return f"unordered_map<string, int> {identifier} = {initialize_str};"
 
 def main():
     # General variables
@@ -305,14 +305,23 @@ def main():
             pass
 
     # Dump data to JSON file
-    stats_new = {}
-    for key in stats.keys():
-        stats_new[key] = dict(sorted(stats[key].items(), key=lambda item: item[1], reverse=True))
-    out_file = open("output.json", "w")
-    json.dump(stats_new, out_file, indent = 4)
-    out_file.close()
+    with open("output.json", "w") as f:
+        stats_new = {}
+        for key in stats.keys():
+            stats_new[key] = dict(sorted(stats[key].items(), key=lambda item: item[1], reverse=True))
+        json.dump(stats_new, f, indent = 4)
 
     # Dump data to CPP file
+    with open("output.cpp", "w") as f:
+        cpp_contents = f"""
+#include <string>
+#include <unordered_map>
 
+{dict_to_hashmap("keywords", stats_new["keywords"])}
+{dict_to_hashmap("variable_names", stats_new["variable_names"])}
+""" 
+
+        f.write(cpp_contents)
+    
 
 main()
