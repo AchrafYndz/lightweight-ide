@@ -35,10 +35,10 @@ Keywords overview:
 ⛔️ del
 ⛔️ global
 ⛔️ not
-⛔️ with
+✅ with
 ✅ async
 ✅ or
-⛔️ yield
+✅ yield
 """
 
 # Keyword extractor
@@ -220,6 +220,15 @@ class Analyzer(ast.NodeVisitor):
         self.count_keyword("def")
         self.generic_visit(node)
 
+    def visit_With(self, node):
+        # Handle with
+        self.count_keyword("with")
+        self.generic_visit(node)
+
+    def visit_Yield(self, node):
+        # Handle with
+        self.count_keyword("yield")
+        self.generic_visit(node)
 
     def generic_visit(self, node):
         print(type(node).__name__)
