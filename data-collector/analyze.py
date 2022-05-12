@@ -17,8 +17,8 @@ Keywords overview:
 ✅ except
 ⛔️ in
 ⛔️ raise
-⛔️ class
-⛔️ finally
+✅ class
+✅ finally
 ⛔️ is
 ⛔️ return
 ⛔️ and
@@ -125,13 +125,27 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Try(self, node):
+        print(node.__dict__)
         # Handle try
         self.count_keyword("try")
+
+        # Handle finally
+        if len(node.finalbody) > 0:
+            self.count_keyword("finally")
+
+        # Handle else
+        if len(node.orelse) > 0:
+            self.count_keyword("else")
         self.generic_visit(node)
 
     def visit_ExceptHandler(self, node):
         # Handle except
         self.count_keyword("except")
+        self.generic_visit(node)
+
+    def visit_ClassDef(self, node):
+        # Handle class
+        self.count_keyword("class")
         self.generic_visit(node)
 
     def generic_visit(self, node):
