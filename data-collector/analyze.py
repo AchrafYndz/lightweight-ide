@@ -8,7 +8,9 @@ Keywords overview:
 ✅ True
 ✅ None
 ✅ await
-⛔️ else
+✅ else
+✅ if
+✅ elif
 ⛔️ import
 ⛔️ pass
 ⛔️ break
@@ -35,8 +37,6 @@ Keywords overview:
 ⛔️ not
 ⛔️ with
 ⛔️ async
-⛔️ elif
-⛔️ if
 ⛔️ or
 ⛔️ yield
 """
@@ -109,6 +109,11 @@ class Analyzer(ast.NodeVisitor):
 
         self.generic_visit(node)
 
+    def visit_Import(self, node):
+        # Handle import
+        self.count_keyword("import")
+        self.generic_visit(node)
+
 
     def generic_visit(self, node):
         print(type(node).__name__)
@@ -131,7 +136,6 @@ def main():
             analyzer = Analyzer()
             analyzer.visit(tree)
             stats = analyzer.stats
-            print(analyzer.stats)
         except Exception as e:
             print(e)
             # Die in silence
