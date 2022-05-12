@@ -157,6 +157,16 @@ class Analyzer(ast.NodeVisitor):
         self.count_keyword("is")
         self.generic_visit(node)
 
+    def visit_Raise(self, node):
+        # Handle class
+        self.count_keyword("raise")
+        self.generic_visit(node)
+
+    def visit_Return(self, node):
+        # Handle class
+        self.count_keyword("return")
+        self.generic_visit(node)
+
     def generic_visit(self, node):
         print(type(node).__name__)
         print(type(node).__name__)
