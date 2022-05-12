@@ -12,7 +12,11 @@ ___
 
 
 ## Technologies used
-
+- C++
+- TypeScript
+- React
+- Python
+- Abstract syntax trees
 
 ## Project structure
 ```
