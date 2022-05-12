@@ -1,4 +1,4 @@
-import { Editor } from "./Editor"
+import Editor from "./Editor"
 
 const Header = ({ fileName }: { fileName: string }) => {
     return <>
@@ -11,6 +11,15 @@ const Header = ({ fileName }: { fileName: string }) => {
             </div>
         </div>
     </>
+}
+
+type Bounds = number[]
+
+export interface HighlightSpecs {
+    code: string,
+    strings: Bounds[],
+    comments: Bounds[],
+    keywords: Bounds[]
 }
 
 const App = () => {

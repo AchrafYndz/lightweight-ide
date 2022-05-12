@@ -1,5 +1,7 @@
-export const Editor = () => {
+const Editor = () => {
     return <>
 
     </>
 }
+
+export default Editor
