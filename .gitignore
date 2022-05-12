@@ -13,3 +13,4 @@ node_modules
 
 # Data collector
 data-collector/output.json
+data-collector/output.cpp
