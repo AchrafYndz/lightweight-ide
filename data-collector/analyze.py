@@ -46,6 +46,7 @@ class Analyzer(ast.NodeVisitor):
     def __init__(self):
         # Initialize statistics
         self.stats = {"variable_names": {}, "keywords": {}}
+        self.skip = []
 
     def visit_Assign(self, node):
         # Collect all variable names
@@ -82,8 +83,21 @@ class Analyzer(ast.NodeVisitor):
     def visit_Await(self, node):
         # Handle await 
         self.count_keyword("await")
-
         self.generic_visit(node)
+
+    def analyze_if_chain(self, node):
+        pass
+
+    def visit_If(self, node):
+        # Handle await
+        if len(node.orelse) > 0:
+            orelse = node.orelse[0]
+            if type(orelse) == ast.Expr:
+                self.count_keyword("else")
+
+        self.count_keyword("if")
+        self.generic_visit(node)
+
 
     def generic_visit(self, node):
         print(type(node).__name__)
