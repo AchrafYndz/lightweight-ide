@@ -21,6 +21,7 @@ class DFA : public FA {
     DFA(const std::string &file) : FA(file){};
     DFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
         const std::vector<Transition *> &transitions);
+    DFA(const DFA &dfa1, const DFA &dfa2, bool cross);
 
     bool operator==(DFA &rhs);
 };

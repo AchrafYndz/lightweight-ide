@@ -4,6 +4,69 @@ DFA::DFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
          const std::vector<Transition *> &transitions) :
     FA(alphabet, states, transitions) {}
 
+DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
+    // check that the alphabets are equa
+    assert(dfa1.getAlphabet() == dfa2.getAlphabet());
+
+    alphabet = dfa1.getAlphabet();
+
+    // add the startState
+    State *startSate =
+      new State{.name = std::string("(") + dfa1.findStartingState()->name + ',' + dfa2.findStartingState()->name + ')',
+                .starting = true,
+                .accepting = false};
+    states.push_back(startSate);
+
+    // keep track of the composition of states
+    std::map<std::string, std::pair<std::string, std::string>> stateComp;
+    stateComp[startSate->name] = {dfa1.findStartingState()->name, dfa2.findStartingState()->name};
+
+    // store the current states for lazy evaluation
+    std::vector<State *> currentStates = {startSate};
+
+    bool changed = true;
+    while (changed) {
+        changed = false;
+
+        std::vector<State *> newStates;
+        for (State *state : currentStates) {
+            for (const char ch : alphabet) {
+                State *dfa1State = dfa1.findTransition(dfa1.findState(stateComp[state->name].first), ch).front()->to;
+                State *dfa2State = dfa2.findTransition(dfa2.findState(stateComp[state->name].second), ch).front()->to;
+
+                const std::string newStateName = std::string("(") + dfa1State->name + ',' + dfa2State->name + ')';
+
+                // check if a transition from state 'state' to state 'newState' is already present on character 'ch'
+                if (findState(newStateName)) continue;
+
+                changed = true;
+
+                // update the state composition map
+                stateComp[newStateName] = {dfa1State->name, dfa2State->name};
+
+                // check if the newState needs to be accepting
+                bool newStateAccepting = false;
+                if (cross && (dfa1State->accepting && dfa2State->accepting)) {
+                    newStateAccepting = true;
+                } else if (!cross && (dfa1State->accepting || dfa2State->accepting)) {
+                    newStateAccepting = true;
+                }
+
+                // create new state and transition
+                State *newState = new State{.name = newStateName, .starting = false, .accepting = newStateAccepting};
+                Transition *trans = new Transition{.from = state, .to = newState, .input = ch};
+
+                states.push_back(newState);
+                transitions.push_back(trans);
+
+                newStates.push_back(newState);
+            }
+        }
+
+        currentStates = newStates;
+    }
+}
+
 bool DFA::pairCrossed(TFA &t, const std::string &s1, const std::string &s2) {
     for (auto &row : t) {
         std::string pName = row.first;
