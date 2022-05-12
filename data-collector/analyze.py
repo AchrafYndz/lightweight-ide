@@ -278,11 +278,11 @@ def merge(dict1, dict2):
     return result
 
 def dict_to_hashmap(identifier, data):
-    initialize_list = map(lambda entry: f"{{{entry[0]}, {entry[1]}}}", data.items())
+    initialize_list = map(lambda entry: f"{{\"{entry[0]}\", {entry[1]}}}", data.items())
     initialize_list_str = ", ".join(initialize_list) 
     initialize_str = f"{{{initialize_list_str}}}"
 
-    return f"unordered_map<string, int> {identifier} = {initialize_str};"
+    return f"std::unordered_map<std::string, int> {identifier} = {initialize_str};"
 
 def main():
     # General variables
