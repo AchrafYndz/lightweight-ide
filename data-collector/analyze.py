@@ -23,10 +23,10 @@ Keywords overview:
 ✅ return
 ✅ and
 ✅ continue
-⛔️ for
-⛔️ lambda
+✅ for
+✅ lambda
 ✅ try
-⛔️ as
+✅ as
 ⛔️ def
 ⛔️ from
 ⛔️ nonlocal
@@ -114,6 +114,13 @@ class Analyzer(ast.NodeVisitor):
         self.count_keyword("import")
         self.generic_visit(node)
 
+    def visit_alias(self, node):
+        # Handle as (part 1)
+        if node.asname:
+            self.count_keyword("as")
+        
+        self.generic_visit(node)
+
     def visit_Pass(self, node):
         # Handle pass
         self.count_keyword("pass")
@@ -138,6 +145,10 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_ExceptHandler(self, node):
+        # Handle as (part 2)
+        print(node.name)
+        if (node.name):
+            self.count_keyword("as")
         # Handle except
         self.count_keyword("except")
         self.generic_visit(node)
@@ -190,6 +201,11 @@ class Analyzer(ast.NodeVisitor):
     def visit_For(self, node):
         # Handle for
         self.count_keyword("for")
+        self.generic_visit(node)
+
+    def visit_Lambda(self, node):
+        # Handle for
+        self.count_keyword("lambda")
         self.generic_visit(node)
 
     def generic_visit(self, node):
