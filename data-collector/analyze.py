@@ -20,7 +20,7 @@ Keywords overview:
 ✅ class
 ✅ finally
 ✅ is
-⛔️ return
+✅ return
 ⛔️ and
 ⛔️ continue
 ⛔️ for
@@ -148,23 +148,33 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_In(self, node):
-        # Handle class
+        # Handle in
         self.count_keyword("in")
         self.generic_visit(node)
 
     def visit_Is(self, node):
-        # Handle class
+        # Handle is
         self.count_keyword("is")
         self.generic_visit(node)
 
     def visit_Raise(self, node):
-        # Handle class
+        # Handle raise
         self.count_keyword("raise")
         self.generic_visit(node)
 
     def visit_Return(self, node):
-        # Handle class
+        # Handle return
         self.count_keyword("return")
+        self.generic_visit(node)
+
+    def visit_And(self, node):
+        # Handle return
+        self.count_keyword("and")
+        self.generic_visit(node)
+
+    def visit_Or(self, node):
+        # Handle return
+        self.count_keyword("or")
         self.generic_visit(node)
 
     def generic_visit(self, node):
