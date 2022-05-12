@@ -49,12 +49,7 @@ class Analyzer(ast.NodeVisitor):
         self.skip = []
 
     def get_stats(self):
-        # Sort data for review purposes
-        stats_new = {}
-        for key in self.stats.keys():
-            stats_new[key] = dict(sorted(self.stats[key].items(), key=lambda item: item[1], reverse=True))
-
-        return stats_new
+        return self.stats
 
     def visit_Assign(self, node):
         # Collect all variable names
@@ -303,8 +298,11 @@ def main():
             pass
 
     # Dump data
+    stats_new = {}
+    for key in stats.keys():
+        stats_new[key] = dict(sorted(stats[key].items(), key=lambda item: item[1], reverse=True))
     out_file = open("output.json", "w")
-    json.dump(stats, out_file, indent = 4)
+    json.dump(stats_new, out_file, indent = 4)
     out_file.close()
 
 
