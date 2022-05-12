@@ -1,8 +1,6 @@
-import React from 'react';
+import { Editor } from "./Editor"
 
-const Header = () => {
-    const fileName = "main.py"
-    
+const Header = ({ fileName }: { fileName: string }) => {
     return <>
         <div className="bg-neutral-900 p-2 pb-0 flex flex-row justify-between items-center">
             <div className="bg-neutral-600 p-1 pl-2 pr-2 cursor-pointer">{fileName}</div>
@@ -18,7 +16,8 @@ const Header = () => {
 const App = () => {
   return (
     <div className="w-full h-full text-white">
-        <Header />
+        <Header fileName="main.py" />
+        <Editor />
     </div>
   );
 }
