@@ -48,6 +48,14 @@ class Analyzer(ast.NodeVisitor):
         self.stats = {"variable_names": {}, "keywords": {}}
         self.skip = []
 
+    def get_stats(self):
+        # Sort data for review purposes
+        stats_new = {}
+        for key in self.stats.keys():
+            stats_new[key] = dict(sorted(self.stats[key].items(), key=lambda item: item[1], reverse=True))
+
+        return stats_new
+
     def visit_Assign(self, node):
         # Collect all variable names
         for alias in node.targets:
@@ -109,6 +117,27 @@ class Analyzer(ast.NodeVisitor):
 
         self.generic_visit(node)
 
+    def visit_Try(self, node):
+        # Handle try
+        self.count_keyword("try")
+
+        # Handle finally
+        if len(node.finalbody) > 0:
+            self.count_keyword("finally")
+
+        # Handle else
+        if len(node.orelse) > 0:
+            self.count_keyword("else")
+        self.generic_visit(node)
+
+    def visit_ExceptHandler(self, node):
+        # Handle as (part 2)
+        if (node.name):
+            self.count_keyword("as")
+        # Handle except
+        self.count_keyword("except")
+        self.generic_visit(node)
+
     def visit_Import(self, node):
         # Handle import
         self.count_keyword("import")
@@ -136,28 +165,6 @@ class Analyzer(ast.NodeVisitor):
     def visit_Break(self, node):
         # Handle break
         self.count_keyword("break")
-        self.generic_visit(node)
-
-    def visit_Try(self, node):
-        # Handle try
-        self.count_keyword("try")
-
-        # Handle finally
-        if len(node.finalbody) > 0:
-            self.count_keyword("finally")
-
-        # Handle else
-        if len(node.orelse) > 0:
-            self.count_keyword("else")
-        self.generic_visit(node)
-
-    def visit_ExceptHandler(self, node):
-        # Handle as (part 2)
-        print(node.name)
-        if (node.name):
-            self.count_keyword("as")
-        # Handle except
-        self.count_keyword("except")
         self.generic_visit(node)
 
     def visit_ClassDef(self, node):
@@ -262,14 +269,22 @@ class Analyzer(ast.NodeVisitor):
         self.count_keyword("not")
         self.generic_visit(node)
 
-    def generic_visit(self, node):
-        print(type(node).__name__)
-        print(type(node).__name__)
-        ast.NodeVisitor.generic_visit(self, node)
+# Merge two statistics dictionaries
+def merge(dict1, dict2):
+    result = dict1
+
+    for type in ["variable_names", "keywords"]:
+        for key in dict2[type].keys():
+            if key in result[type]:
+                result[type][key] += dict2[type][key]
+            else:
+                result[type][key] = dict2[type][key]
+
+    return result
 
 def main():
     # General variables
-    stats = {}
+    stats = {"variable_names": {}, "keywords": {}}
 
     # Analyze files
     for filename in Path('data').rglob('*.py'):
@@ -282,21 +297,14 @@ def main():
             tree = ast.parse(contents)
             analyzer = Analyzer()
             analyzer.visit(tree)
-            stats = analyzer.stats
-            print(stats)
+            merge(stats, analyzer.get_stats())
         except Exception as e:
-            print(e)
             # Die in silence
             pass
-            
-    # Sort data for review purposes
-    stats_sorted = {}
-    for key in stats.keys():
-        stats_sorted[key] = dict(sorted(stats[key].items(), key=lambda item: item[1], reverse=True))
 
     # Dump data
     out_file = open("output.json", "w")
-    json.dump(stats_sorted, out_file, indent = 4)
+    json.dump(stats, out_file, indent = 4)
     out_file.close()
 
 
