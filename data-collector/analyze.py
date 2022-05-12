@@ -13,8 +13,8 @@ Keywords overview:
 ✅ elif
 ✅ import
 ✅ pass
-⛔️ break
-⛔️ except
+✅ break
+✅ except
 ⛔️ in
 ⛔️ raise
 ⛔️ class
@@ -25,7 +25,7 @@ Keywords overview:
 ⛔️ continue
 ⛔️ for
 ⛔️ lambda
-⛔️ try
+✅ try
 ⛔️ as
 ⛔️ def
 ⛔️ from
@@ -120,8 +120,18 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Break(self, node):
-        # Handle import
+        # Handle break
         self.count_keyword("break")
+        self.generic_visit(node)
+
+    def visit_Try(self, node):
+        # Handle try
+        self.count_keyword("try")
+        self.generic_visit(node)
+
+    def visit_ExceptHandler(self, node):
+        # Handle except
+        self.count_keyword("except")
         self.generic_visit(node)
 
     def generic_visit(self, node):
