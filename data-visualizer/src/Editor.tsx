@@ -1,4 +1,6 @@
-const Editor = () => {
+import { HighlightSpecs } from "./App"
+
+const Editor = ({ highlightSpecs }: { highlightSpecs: HighlightSpecs }) => {
     return <>
 
     </>

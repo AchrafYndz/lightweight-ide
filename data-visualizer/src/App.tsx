@@ -23,11 +23,25 @@ export interface HighlightSpecs {
 }
 
 const App = () => {
-  return (
-    <div className="w-full h-full text-white">
-        <Header fileName="main.py" />
-        <Editor />
-    </div>
+    const highlightSpecs: HighlightSpecs = {
+        "code": "from string import ascii_lowercase\n\ndef main():\n    # This is a comment!\n    message = \"Hello, alphabet!\"\n    print(message, ascii_lowercase)\n\nmain()",
+        "strings": [
+            [88, 104]
+        ],
+        "comments": [
+            [52, 71]
+        ],
+        "keywords": [
+            [0, 3],
+            [12, 17]
+        ]
+    }
+
+    return (
+        <div className="w-full h-full text-white">
+            <Header fileName="main.py" />
+            <Editor highlightSpecs={highlightSpecs} />
+        </div>
   );
 }
 
