@@ -14,12 +14,19 @@ const Header = ({ fileName }: { fileName: string }) => {
 }
 
 type Bounds = number[]
+type HexColor = String
 
 export interface HighlightSpecs {
     code: string,
     strings: Bounds[],
     comments: Bounds[],
     keywords: Bounds[]
+}
+
+export interface Theme {
+    strings: HexColor,
+    comments: HexColor,
+    keywords: HexColor,
 }
 
 const App = () => {
@@ -36,11 +43,20 @@ const App = () => {
             [12, 17]
         ]
     }
+    // dodododoIII
+
+    const themes: Theme[] = [
+        {
+            strings: "#97c279",
+            comments: "#7b808a",
+            keywords: "#c678dd"
+        }
+    ] 
 
     return (
-        <div className="w-full h-full text-white">
+        <div className="flex flex-col w-screen h-screen text-white">
             <Header fileName="main.py" />
-            <Editor highlightSpecs={highlightSpecs} />
+            <Editor highlightSpecs={highlightSpecs} themes={themes} />
         </div>
   );
 }
