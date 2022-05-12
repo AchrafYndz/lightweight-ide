@@ -15,6 +15,15 @@ ___
 
 
 ## Project structure
+```
+|
+|-- core (C++) - Core package that handles syntax highlighting and autocomplete logic 
+|
+|-- data-collector (Python) - Tooling to analyze keyword and variable naming trends
+|   |-- data - Python project(s) to analyze
+| 
+|-- data-visualizer (TypeScript) - Webpage built using ReactJS to visualize syntax highlighting results
+```
 
 ## Usage
 ### How to deploy
