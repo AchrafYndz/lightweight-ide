@@ -62,7 +62,7 @@ const App = () => {
     return (
         <div className="flex flex-col w-screen h-screen text-white">
             <Header fileName="main.py" />
-            <Editor highlightSpecs={highlightSpecs} themes={themes} />
+            <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
         </div>
   );
 }
