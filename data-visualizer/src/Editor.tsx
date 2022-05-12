@@ -1,52 +1,36 @@
 import { HighlightSpecs, HighlightSpecsBounds, Theme } from "./App"
 
 const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpecsBounds: HighlightSpecsBounds, theme: Theme, startIndex: number, text: string }) => {
-    let localBounds: HighlightSpecsBounds = highlightSpecsBounds;
-    
-    for (const [key, occurrences] of Object.entries(highlightSpecsBounds)) {
-        const currentType = key as keyof HighlightSpecsBounds;
-        localBounds[currentType] = [];
-
-        for (const occurence of occurrences) {
-            const oStart = occurence[0]
-            const oEnd = occurence[1]
-
-            if (oStart >= startIndex && startIndex + text.length >= oEnd) {
-                const lStart = oStart - startIndex
-                const lEnd = oEnd - startIndex + 1
-
-                localBounds[currentType].push([lStart, lEnd])
-            }
-        }
-    }
-
     let n: JSX.Element[] = [];
     let content = "";
 
     const pushContent = () => {
         if (content.length === 0) return
-        n.push(<span>{content}</span>)
+        n.push(<span key={n.length}>{content}</span>)
         content = ""
     }
+
+    console.log(text)
+    console.log(startIndex)
     
-    for (let i = 0; i < text.length; i++) {
-        for (const type of Object.keys(localBounds)) {
-            if (localBounds[type as keyof HighlightSpecsBounds].find(bounds => bounds[0] === i)) {
+    for (let i = 0; i <= text.length; i++) {
+        for (const type of Object.keys(highlightSpecsBounds)) {
+            if (highlightSpecsBounds[type as keyof HighlightSpecsBounds].find(bounds => bounds[0] === (i + startIndex))) {
                 pushContent()
             }
 
-            if (localBounds[type as keyof HighlightSpecsBounds].find(bounds => bounds[1] === i)) {
-                n.push(<span style={{color: theme[type as keyof Theme] as any}}>{content}</span>)
+            if (highlightSpecsBounds[type as keyof HighlightSpecsBounds].find(bounds => bounds[1] === (i + startIndex))) {
+                n.push(<span key={n.length} style={{color: theme[type as keyof Theme]}}>{content}</span>)
                 content = ""
             }
         }
-        // if (localBounds.find())
-        content += text[i]
+
+        if (text[i]) content += text[i]
     }
 
     pushContent()
 
-    return <p>
+    return <p className="whitespace-pre">
         {n}
     </p>
 }

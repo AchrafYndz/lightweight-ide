@@ -14,7 +14,7 @@ const Header = ({ fileName }: { fileName: string }) => {
 }
 
 export type Bounds = number[]
-type HexColor = String
+type HexColor = string
 
 export interface HighlightSpecsBounds {
     strings: Bounds[],
@@ -38,14 +38,15 @@ const App = () => {
         "code": "from string import ascii_lowercase\n\ndef main():\n    # This is a comment!\n    message = \"Hello, alphabet!\"\n    print(message, ascii_lowercase)\n\nmain()",
         "bounds": {
             "strings": [
-                [88, 104]
+                [88, 105]
             ],
             "comments": [
-                [52, 71]
+                [52, 72]
             ],
             "keywords": [
-                [0, 3],
-                [12, 17]
+                [0, 4],
+                [12, 18],
+                [36, 39]
             ]
         }
     }
