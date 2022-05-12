@@ -1,23 +1,24 @@
 import React from 'react';
 
-function App() {
+const Header = () => {
+    const fileName = "main.py"
+    
+    return <>
+        <div className="bg-neutral-900 p-2 pb-0 flex flex-row justify-between">
+            <div className="bg-neutral-600 p-1 pl-2 pr-2">{fileName}</div>
+            <div>
+
+            </div>
+        </div>
+    </>
+}
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="w-full h-full">
+        <Header />
     </div>
   );
 }
 
-export default App;
+export default App

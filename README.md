@@ -14,7 +14,8 @@ ___
 ## Technologies used
 - C++
 - TypeScript
-- React
+- ReactJS
+- Tailwind CSS
 - Python
 - Abstract syntax trees
 
