@@ -3,33 +3,33 @@ import { HighlightSpecs, HighlightSpecsBounds, Theme } from "./App"
 const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpecsBounds: HighlightSpecsBounds, theme: Theme, startIndex: number, text: string }) => {
     let n: JSX.Element[] = [];
     let content = "";
+    let currentColor: string | null = null;
 
     const pushContent = () => {
         if (content.length === 0) return
-        n.push(<span key={n.length}>{content}</span>)
+        n.push(<span key={n.length} style={{ ...(currentColor && { color: currentColor }) }}>{content}</span>)
         content = ""
     }
 
-    for (let i = 0; i <= text.length; i++) {
+    for (let i = 0; i < text.length; i++) {
         for (const type of Object.keys(highlightSpecsBounds)) {
             if (highlightSpecsBounds[type as keyof HighlightSpecsBounds].find(bounds => bounds[0] === (i + startIndex))) {
                 pushContent()
+                currentColor = theme[type as keyof Theme];
             }
 
             if (highlightSpecsBounds[type as keyof HighlightSpecsBounds].find(bounds => bounds[1] === (i + startIndex))) {
-                n.push(<span key={n.length} style={{color: theme[type as keyof Theme]}}>{content}</span>)
-                content = ""
+                pushContent()
+                currentColor = null;
             }
         }
 
-        if (text[i]) content += text[i]
+        content += text[i]
     }
 
     pushContent()
 
-    return <p className="whitespace-pre">
-        {n}
-    </p>
+    return <p className="whitespace-pre">{n}</p>
 }
 
 const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecs, theme: Theme }) => {

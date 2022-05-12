@@ -38,7 +38,7 @@ const App = () => {
         "code": "from string import ascii_lowercase\n\ndef main():\n    # This is a comment!\n    message = \"Hello, alphabet!\"\n    print(message, ascii_lowercase)\n\nmain()",
         "bounds": {
             "strings": [
-                [88, 105]
+                [87, 105]
             ],
             "comments": [
                 [52, 72]
