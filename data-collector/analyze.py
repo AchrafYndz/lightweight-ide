@@ -32,8 +32,8 @@ Keywords overview:
 ⛔️ nonlocal
 ✅ while
 ⛔️ assert
-⛔️ del
-⛔️ global
+✅ del
+✅ global
 ⛔️ not
 ✅ with
 ✅ async
@@ -235,6 +235,16 @@ class Analyzer(ast.NodeVisitor):
     def visit_Yield(self, node):
         # Handle with
         self.count_keyword("yield")
+        self.generic_visit(node)
+
+    def visit_Del(self, node):
+        # Handle with
+        self.count_keyword("del")
+        self.generic_visit(node)
+
+    def visit_Global(self, node):
+        # Handle with
+        self.count_keyword("global")
         self.generic_visit(node)
 
     def generic_visit(self, node):
