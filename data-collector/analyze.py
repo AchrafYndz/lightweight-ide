@@ -6,7 +6,7 @@ import json
 class Analyzer(ast.NodeVisitor):
     def __init__(self):
         # Initialize statistics
-        self.stats = {"variable_names": []}
+        self.stats = {"variable_names": {}, "keywords": {}}
 
     def visit_Assign(self, node):
         # Collect all variable names
@@ -16,6 +16,30 @@ class Analyzer(ast.NodeVisitor):
 
         # Continue recursively
         self.generic_visit(node)
+
+    def count_keyword(self, keyword):
+        if keyword not in self.stats.keywords:
+            self.stats.keywords[keyword] = 0
+
+        self.stats.keywords[keyword] += 1
+
+    def count_variable_name(self, variable_name):
+        if variable_name not in self.stats.variable_names:
+            self.stats.variable_names[variable_name] = 0
+
+        self.stats.variable_names[variable_name] += 1
+
+    def visit_Constant(self, node):
+        # Handle booleans
+        if type(node.value) == bool:
+            if not 
+            
+        self.generic_visit(node)
+
+    def generic_visit(self, node):
+        # print(type(node).__name__)
+        # print(type(node).__name__)
+        ast.NodeVisitor.generic_visit(self, node)
 
 def main():
     # General variables
