@@ -1,6 +1,10 @@
+# General
 .idea
 .cache
 build
 cmake-build-debug
 node_modules
 .DS_STORE
+
+# Data collector
+data-collector/output.json
