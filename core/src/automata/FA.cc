@@ -34,9 +34,9 @@ FA::FA(const std::vector<char> alphabet, const std::vector<State *> states,
     alphabet(alphabet), states(states), transitions(transitions) {}
 
 FA::~FA() {
-    for (const auto &state : states) { delete state; }
+    for (auto state : states) { delete state; }
 
-    for (const auto &transition : transitions) { delete transition; }
+    for (auto transition : transitions) { delete transition; }
 }
 
 void FA::print() const {
@@ -57,9 +57,14 @@ void FA::print(std::ostream &out) const {
     // Initialize json object
     nlohmann::json j;
 
+    std::vector<std::string> stringAlphabet;
+    for (const char ch : alphabet) {
+        stringAlphabet.push_back(std::string() + ch);
+    }
+
     // Add all properties
     j["type"] = "DFA";
-    j["alphabet"] = alphabet;
+    j["alphabet"] = stringAlphabet;
     j["states"] = states;
     j["transitions"] = transitions;
 

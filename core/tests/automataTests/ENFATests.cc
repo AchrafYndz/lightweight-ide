@@ -1,9 +1,10 @@
-#include <fstream>
-#include <sstream>
 #include "../../lib/doctest/doctest.h"
 
 #include "../../lib/path/path.h"
 #include "../../src/automata/ENFA.h"
+
+#include <fstream>
+#include <sstream>
 
 TEST_SUITE("ENFATests") {
     TEST_CASE("[ENFATests] parseFile0") {
@@ -101,9 +102,7 @@ TEST_SUITE("ENFATests") {
         transitions.push_back(new Transition{.from = enfa.findState("3"), .to = enfa.findState("4"), .input = 'b'});
         enfa.setTransitions(transitions);
 
-        SUBCASE("[ENFATests]-accepts expectTrue") {
-            CHECK(enfa.accepts("b"));
-        }
+        SUBCASE("[ENFATests]-accepts expectTrue") { CHECK(enfa.accepts("b")); }
 
         SUBCASE("[ENFATests]-accepts expectFalse") {
             CHECK_FALSE(enfa.accepts(""));

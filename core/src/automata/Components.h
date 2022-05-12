@@ -39,7 +39,7 @@ struct Transition {
 };
 
 inline void to_json(nlohmann::json &j, const Transition *p) {
-    j = nlohmann::json{{"from", p->from->name}, {"to", p->to->name}, {"input", p->input}};
+    j = nlohmann::json{{"from", p->from->name}, {"to", p->to->name}, {"input", std::string() + p->input}};
 }
 
 #endif  // IDE_COMPONENTS_H
