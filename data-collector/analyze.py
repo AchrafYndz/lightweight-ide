@@ -21,8 +21,8 @@ Keywords overview:
 ✅ finally
 ✅ is
 ✅ return
-⛔️ and
-⛔️ continue
+✅ and
+✅ continue
 ⛔️ for
 ⛔️ lambda
 ✅ try
@@ -30,14 +30,14 @@ Keywords overview:
 ⛔️ def
 ⛔️ from
 ⛔️ nonlocal
-⛔️ while
+✅ while
 ⛔️ assert
 ⛔️ del
 ⛔️ global
 ⛔️ not
 ⛔️ with
 ⛔️ async
-⛔️ or
+✅ or
 ⛔️ yield
 """
 
@@ -168,13 +168,28 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_And(self, node):
-        # Handle return
+        # Handle and
         self.count_keyword("and")
         self.generic_visit(node)
 
     def visit_Or(self, node):
-        # Handle return
+        # Handle or
         self.count_keyword("or")
+        self.generic_visit(node)
+
+    def visit_Continue(self, node):
+        # Handle continue
+        self.count_keyword("continue")
+        self.generic_visit(node)
+
+    def visit_While(self, node):
+        # Handle while
+        self.count_keyword("while")
+        self.generic_visit(node)
+
+    def visit_For(self, node):
+        # Handle for
+        self.count_keyword("for")
         self.generic_visit(node)
 
     def generic_visit(self, node):
