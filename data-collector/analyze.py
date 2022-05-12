@@ -27,7 +27,7 @@ Keywords overview:
 ✅ lambda
 ✅ try
 ✅ as
-⛔️ def
+✅ def
 ⛔️ from
 ⛔️ nonlocal
 ✅ while
@@ -36,7 +36,7 @@ Keywords overview:
 ⛔️ global
 ⛔️ not
 ⛔️ with
-⛔️ async
+✅ async
 ✅ or
 ⛔️ yield
 """
@@ -204,9 +204,22 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Lambda(self, node):
-        # Handle for
+        # Handle lambda
         self.count_keyword("lambda")
         self.generic_visit(node)
+
+    def visit_FunctionDef(self, node):
+        # Handle def
+        self.count_keyword("def")
+        self.generic_visit(node)
+
+    def visit_AsyncFunctionDef(self, node):
+        # Handle async
+        self.count_keyword("async")
+        # Handle def
+        self.count_keyword("def")
+        self.generic_visit(node)
+
 
     def generic_visit(self, node):
         print(type(node).__name__)
