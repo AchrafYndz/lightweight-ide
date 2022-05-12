@@ -16,10 +16,10 @@ Keywords overview:
 ✅ break
 ✅ except
 ✅ in
-⛔️ raise
+✅ raise
 ✅ class
 ✅ finally
-⛔️ is
+✅ is
 ⛔️ return
 ⛔️ and
 ⛔️ continue
@@ -150,6 +150,11 @@ class Analyzer(ast.NodeVisitor):
     def visit_In(self, node):
         # Handle class
         self.count_keyword("in")
+        self.generic_visit(node)
+
+    def visit_Is(self, node):
+        # Handle class
+        self.count_keyword("is")
         self.generic_visit(node)
 
     def generic_visit(self, node):
