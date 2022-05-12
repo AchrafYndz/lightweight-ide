@@ -69,8 +69,13 @@ class Analyzer(ast.NodeVisitor):
         self.stats["variable_names"][variable_name] += 1
 
     def visit_Constant(self, node):
-        # Handle booleans
+        # Handle True and False
+        print(type(node.value))
         if type(node.value) == bool:
+            self.count_keyword(str(node.value))
+            
+        # Handle None
+        elif type(node.value) == type(None):
             self.count_keyword(str(node.value))
             
         self.generic_visit(node)
