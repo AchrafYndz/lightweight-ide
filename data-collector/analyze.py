@@ -2,6 +2,45 @@ import ast
 from pathlib import Path
 import json
 
+"""
+Keywords overview:
+✅ False
+✅ True
+⛔️ await
+⛔️ else
+⛔️ import
+⛔️ pass
+⛔️ None
+⛔️ break
+⛔️ except
+⛔️ in
+⛔️ raise
+⛔️ class
+⛔️ finally
+⛔️ is
+⛔️ return
+⛔️ and
+⛔️ continue
+⛔️ for
+⛔️ lambda
+⛔️ try
+⛔️ as
+⛔️ def
+⛔️ from
+⛔️ nonlocal
+⛔️ while
+⛔️ assert
+⛔️ del
+⛔️ global
+⛔️ not
+⛔️ with
+⛔️ async
+⛔️ elif
+⛔️ if
+⛔️ or
+⛔️ yield
+"""
+
 # Keyword extractor
 class Analyzer(ast.NodeVisitor):
     def __init__(self):
@@ -32,7 +71,7 @@ class Analyzer(ast.NodeVisitor):
     def visit_Constant(self, node):
         # Handle booleans
         if type(node.value) == bool:
-            if not 
+            self.count_keyword(str(node.value))
             
         self.generic_visit(node)
 
