@@ -138,3 +138,7 @@ DFA ENFA::toDFA() const {
 
     std::vector<std::set<State *>> queue = {{start}};
 }
+
+std::set<State *> ENFA::getEClosure(State *) {
+
+}
