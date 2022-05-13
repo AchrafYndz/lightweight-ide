@@ -14,7 +14,7 @@ ENFA::ENFA(const std::string &file) {
 
     // parse alphabet
     for (const auto &ch : j["alphabet"]) alphabet.push_back(std::string(ch).front());
-    eps = std::string(j["epsilon"]).front();
+    eps = std::string(j["eps"]).front();
 
     // parse states
     for (const auto &state : j["states"]) {
@@ -124,16 +124,25 @@ DFA ENFA::toDFA() const {
         if (state->starting) start = state;
 
     // Get ε-Closure for start state
-    std::set<State *> startStates;
+    std::vector<State *> startClosure = closure(start);
 
     // Initialize new DFA properties
     std::map<std::string, State *> DFAStates;
     std::vector<Transition *> DFATransitions = {};
 
     // Initialize the algorithm
-    std::set<State *> init = {start};
+    std::set<State *> init(startClosure.begin(), startClosure.end());
     DFAStates.insert(
       {stateSetToName(init), new State{.name = stateSetToName(init), .starting = true, .accepting = start->accepting}});
 
-    std::vector<std::set<State *>> queue = {{start}};
+    std::vector<std::set<State *>> queue = {init};
+
+    // Continue the algorithm while we have items left in the queue
+    while (!queue.empty()) {
+        // Starting points
+        std::set<State *> starters = queue[0];
+        std::string starterName = stateSetToName(starters);
+        std::cout << starterName << std::endl;
+    }
+    return DFA();
 }
