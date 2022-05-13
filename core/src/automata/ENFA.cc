@@ -116,3 +116,6 @@ void ENFA::printStats(std::ostream &out) const {
 }
 
 void ENFA::printStats() const { printStats(std::cout); }
+
+DFA ENFA::toDFA() const {
+}

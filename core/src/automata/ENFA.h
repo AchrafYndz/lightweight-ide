@@ -25,6 +25,8 @@ class ENFA : public FA {
     void printStats() const;
 
     void setEpsilon(const char eps) { this->eps = eps; };
+
+    DFA toDFA() const;
 };
 
 #endif  // IDE_ENFA_H
