@@ -2,8 +2,8 @@
 #define IDE_ENFA_H
 
 #include "Components.h"
-#include "FA.h"
 #include "DFA.h"
+#include "FA.h"
 
 #include <cassert>
 
@@ -28,8 +28,6 @@ class ENFA : public FA {
     void setEpsilon(const char eps) { this->eps = eps; };
 
     DFA toDFA() const;
-
-    std::set<State *> getEClosure(State *);
 };
 
 #endif  // IDE_ENFA_H
