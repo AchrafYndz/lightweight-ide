@@ -53,8 +53,7 @@ DFA NFA::toDFA() const {
             // Create new state if necessary
             State *state = nullptr;
             if (DFAStates.end() == DFAStates.find(targetName)) {
-                // Create new state as it has not been done
-                // just yet
+                // Create new state as it has not been done just yet
                 state = new State{.name = targetName, .starting = false, .accepting = accepting};
                 DFAStates.insert({targetName, state});
 
