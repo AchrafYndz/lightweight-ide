@@ -7,8 +7,7 @@ NFA::NFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
 DFA NFA::toDFA() const {
     // Fetch starting state
     State *start;
-    for (auto state : states)
-        if (state->starting) start = state;
+    start = findStartingState();
 
     // Initialize new DFA properties
     std::map<std::string, State *> DFAStates;
