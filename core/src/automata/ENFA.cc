@@ -118,4 +118,23 @@ void ENFA::printStats(std::ostream &out) const {
 void ENFA::printStats() const { printStats(std::cout); }
 
 DFA ENFA::toDFA() const {
+    // Fetch starting state;
+    State *start;
+    for (auto state: states)
+        if (state->starting) start = state;
+
+    // Get ε-Closure for start state
+    std::set<State *> startStates;
+
+
+    // Initialize new DFA properties
+    std::map<std::string, State *> DFAStates;
+    std::vector<Transition *> DFATransitions = {};
+
+    // Initialize the algorithm
+    std::set<State *> init = {start};
+    DFAStates.insert(
+      {stateSetToName(init), new State{.name = stateSetToName(init), .starting = true, .accepting = start->accepting}});
+
+    std::vector<std::set<State *>> queue = {{start}};
 }
