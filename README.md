@@ -23,11 +23,20 @@ ___
 ```
 |
 |-- core (C++) - Core package that handles syntax highlighting and autocomplete logic 
+|   |-- ...
 |
 |-- data-collector (Python) - Tooling to analyze keyword and variable naming trends
+|   |-- analyze.py - Python script to analyze source code
 |   |-- data - Python project(s) to analyze
+|   |-- ...
 | 
 |-- data-visualizer (TypeScript) - Webpage built using ReactJS to visualize syntax highlighting results
+|   |-- src - React source code
+|       |-- App.tsx - React entrypoint
+|       |-- Editor.tsx - Editor component
+|       |-- ...
+|
+|-- ...
 ```
 
 ## Usage
