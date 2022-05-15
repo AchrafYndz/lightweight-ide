@@ -37,6 +37,9 @@ set(RELEASE_SOURCE_FILES
 
 set(TEST_SOURCE_FILES
     src/ideTest.cc
+    src/other/python_to_enfa.h
+    src/other/python_to_enfa.cpp
+    tests/otherTests/python_to_enfaTest.cc
     ${DOCTEST_LIB_FILES}
     ${JSON_LIB_FILES}
     ${PATH_LIB_FILES}
