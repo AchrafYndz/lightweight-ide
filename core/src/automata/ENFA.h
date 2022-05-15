@@ -2,6 +2,7 @@
 #define IDE_ENFA_H
 
 #include "Components.h"
+#include "DFA.h"
 #include "FA.h"
 
 #include <cassert>
@@ -25,6 +26,8 @@ class ENFA : public FA {
     void printStats() const;
 
     void setEpsilon(const char eps) { this->eps = eps; };
+
+    DFA toDFA() const;
 };
 
 #endif  // IDE_ENFA_H

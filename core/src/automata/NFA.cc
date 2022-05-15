@@ -7,8 +7,7 @@ NFA::NFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
 DFA NFA::toDFA() const {
     // Fetch starting state
     State *start;
-    for (auto state : states)
-        if (state->starting) start = state;
+    start = findStartingState();
 
     // Initialize new DFA properties
     std::map<std::string, State *> DFAStates;
@@ -42,7 +41,7 @@ DFA NFA::toDFA() const {
                 }
             }
 
-            // We now have all info for the specified letter
+            // We now have all the info for the specified letter
             // Let's create the new properties
             std::string targetName = stateSetToName(targets);
 
@@ -54,8 +53,7 @@ DFA NFA::toDFA() const {
             // Create new state if necessary
             State *state = nullptr;
             if (DFAStates.end() == DFAStates.find(targetName)) {
-                // Create new state as it has not been done
-                // just yet
+                // Create new state as it has not been done just yet
                 state = new State{.name = targetName, .starting = false, .accepting = accepting};
                 DFAStates.insert({targetName, state});
 
@@ -75,7 +73,6 @@ DFA NFA::toDFA() const {
             Transition *transition = new Transition{.from = from, .to = state, .input = letter};
             DFATransitions.push_back(transition);
         }
-
         // Erase the pair we just handled
         queue.erase(queue.begin());
     }
@@ -83,6 +80,7 @@ DFA NFA::toDFA() const {
     // Create states vector and alphabet
     std::set<char> DFAAlphabetSet = {};
     std::vector<State *> DFAStatesVector = {};
+    DFAStatesVector.reserve(DFAStates.size());
     for (auto &state : DFAStates) DFAStatesVector.push_back(state.second);
     for (auto &transition : DFATransitions) DFAAlphabetSet.insert(transition->input);
 

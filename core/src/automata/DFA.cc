@@ -5,7 +5,7 @@ DFA::DFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
     FA(alphabet, states, transitions) {}
 
 DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
-    // check that the alphabets are equa
+    // check that the alphabets are equal
     assert(dfa1.getAlphabet() == dfa2.getAlphabet());
 
     alphabet = dfa1.getAlphabet();
