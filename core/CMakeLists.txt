@@ -27,6 +27,8 @@ file(GLOB_RECURSE TEST_SOURCE_FILES tests/**/*.cc)
 
 set(RELEASE_SOURCE_FILES
     src/ide.cc
+    src/other/python_to_enfa.cpp
+    src/other/python_to_enfa.h
     ${JSON_LIB_FILES}
     ${PATH_LIB_FILES}
     ${ID_LIB_FILES}
