@@ -84,7 +84,7 @@ std::vector<State *> ENFA::closure(State *state) const {
         }
         currentStates = newCurrentStates;
     }
-    return std::vector<State *>(result.begin(), result.end());
+    return {result.begin(), result.end()};
 }
 
 void ENFA::printStats(std::ostream &out) const {
