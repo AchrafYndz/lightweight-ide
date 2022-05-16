@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <algorithm>
 
 class python_to_enfa {
   public:

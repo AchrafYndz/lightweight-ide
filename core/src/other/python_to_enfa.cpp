@@ -55,8 +55,18 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
 
     // SINGLE LINE COMMENTS
     int index = 0;
+    int chars_size = (int) chars.size();
+    std::vector<int> to_skip;
     std::vector<std::pair<char,std::pair<int,int>>>::iterator it;
     for (it = chars.begin(); it !=chars.end(); it++){
+
+        if (std::find(to_skip.begin(), to_skip.end(), index) != to_skip.end()){
+            index++;
+            continue;
+        }
+
+
+
         if (it->first == '#'){
             int row = it->second.second;
             int column = it->second.first;
@@ -93,15 +103,58 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
             if (quote_double_matched and quote_single_matched){
                 std::string comment;
 
-
+                int index_to_skip = 0;
                 std::vector<std::pair<char,std::pair<int,int>>>::iterator it3;
                 for (it3 = chars.begin(); it3 !=chars.end(); it3++){
                     if(it3->second.second == row and it3->second.first >= column and it3->first != '\n'){
                         comment += it3->first;
+                        to_skip.push_back(index_to_skip);
                     }
+                    index_to_skip++;
                 }
                 int str_length = (int) comment.length();
                 result[std::make_pair(std::make_pair(it->second.first, it->second.second),std::make_pair(it->second.first, it->second.second + str_length))] = comment;
+            }
+        }
+
+        if (index < chars_size - 5){
+            if(chars[index].first == '"' and chars[index+1].first == '"' and chars[index+2].first == '"' and chars[index].second.first == 0){
+                std::pair<int,int> start_p = std::make_pair(chars[index].second.first, chars[index].second.second);
+                std::string multi_l_comment = R"(""")";
+                to_skip.push_back(index);
+                to_skip.push_back(index+1);
+                to_skip.push_back(index+2);
+                int index_to_skip = index+3;
+
+                while(index_to_skip < chars_size -2){
+                    if (chars[index_to_skip].first == '"' and chars[index_to_skip+1].first == '"'
+                        and chars[index_to_skip+2].first == '"'){
+                        break;
+                    }
+                    if (std::find(to_skip.begin(), to_skip.end(), index_to_skip) == to_skip.end()){
+                        to_skip.push_back(index_to_skip);
+                    }
+                    multi_l_comment += chars[index_to_skip].first;
+                    index_to_skip++;
+                }
+                multi_l_comment += R"(""")";
+                to_skip.push_back(index_to_skip);
+                to_skip.push_back(index_to_skip+1);
+                to_skip.push_back(index_to_skip+2);
+
+                index_to_skip = index_to_skip + 2;
+                while(index_to_skip < chars_size){
+                    if(chars[index_to_skip+1].first !=  '"'){
+                        break;
+                    }
+                    else{
+                        multi_l_comment += '"';
+                        to_skip.push_back(index_to_skip+1);
+                    }
+                    index_to_skip++;
+                }
+                std::pair<int,int> end_p = std::make_pair(chars[index_to_skip].second.first, chars[index_to_skip].second.second);
+                result[std::make_pair(start_p, end_p)] = multi_l_comment;
             }
         }
         index++;
