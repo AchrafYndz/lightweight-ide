@@ -5,8 +5,8 @@
 #include "../../src/other/pythonToEnfa.h"
 #include "../../lib/path/path.h"
 
-TEST_SUITE("python_to_enfaTests") {
-    TEST_CASE("[python_to_enfaTests] scan0") {
+TEST_SUITE("pythonToEnfaTests") {
+    TEST_CASE("[pythonToEnfaTests] scan0") {
         pythonToEnfa p;
 
         const std::ifstream expectedFile(path::rootDirectory +
