@@ -76,16 +76,14 @@ std::vector<State *> ENFA::closure(State *state) const {
         std::vector<State *> newCurrentStates;
         for (const auto &currentState : currentStates) {
             const std::vector<Transition *> transitions = findTransition(currentState, eps);
-            if (!transitions.empty()) {
                 for (const auto &transition : transitions) {
+                    if (transition->to->name == state->name) continue;
                     result.insert(transition->to);
                     newCurrentStates.push_back(transition->to);
                 }
-            }
         }
         currentStates = newCurrentStates;
     }
-
     return std::vector<State *>(result.begin(), result.end());
 }
 
