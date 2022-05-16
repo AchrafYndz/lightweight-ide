@@ -22,28 +22,28 @@ AUX_SOURCE_DIRECTORY(lib/doctest DOCTEST_LIB_FILES)
 # object source files
 AUX_SOURCE_DIRECTORY(src/automata OBJECT_SOURCE_FILES)
 
+# parser/scanner source files
+AUX_SOURCE_DIRECTORY(src/other SCANNER_SOURCE_FIlES)
+
 # test source files
 file(GLOB_RECURSE TEST_SOURCE_FILES tests/**/*.cc)
 
 set(RELEASE_SOURCE_FILES
     src/ide.cc
-    src/other/python_to_enfa.cpp
-    src/other/python_to_enfa.h
     ${JSON_LIB_FILES}
     ${PATH_LIB_FILES}
     ${ID_LIB_FILES}
     ${OBJECT_SOURCE_FILES}
+    ${SCANNER_SOURCE_FIlES}
 )
 
 set(TEST_SOURCE_FILES
     src/ideTest.cc
-    src/other/python_to_enfa.h
-    src/other/python_to_enfa.cpp
-    tests/otherTests/python_to_enfaTest.cc
     ${DOCTEST_LIB_FILES}
     ${JSON_LIB_FILES}
     ${PATH_LIB_FILES}
     ${OBJECT_SOURCE_FILES}
+    ${SCANNER_SOURCE_FIlES}
     ${TEST_SOURCE_FILES}
 )
 

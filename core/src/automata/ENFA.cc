@@ -142,7 +142,7 @@ DFA ENFA::toDFA() const {
         // Starting points
         std::set<State *> starters = queue[0];
         std::string starterName = stateSetToName(starters);
-        std::cout << starterName << std::endl;
+        std::cout << starterName << '\n';
 
         // Go over every character in the alphabet
         for (const char letter : alphabet) {
@@ -167,7 +167,7 @@ DFA ENFA::toDFA() const {
             // Let's create the new properties
             std::string targetName = stateSetToName(targets);
 
-            std::cout << targetName << std::endl;
+            std::cout << targetName << '\n';
 
             // Check if accepted
             bool accepting = false;

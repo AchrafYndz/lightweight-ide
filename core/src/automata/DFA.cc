@@ -219,13 +219,13 @@ void DFA::printTable(TFA &t) {
             int colIndex = col - row->second.begin();
             if (colIndex <= rowIndex) std::cout << "	" << (col->second ? "X" : "-");
         }
-        std::cout << std::endl;
+        std::cout << '\n';
 
         // Print bottom names
         if (row == (t.end() - 1)) {
             std::cout << "	";
             for (auto &col : row->second) { std::cout << col.first << "	"; }
-            std::cout << std::endl;
+            std::cout << '\n';
         }
     }
 }
