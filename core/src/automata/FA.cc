@@ -40,17 +40,7 @@ FA::~FA() {
 }
 
 void FA::print() const {
-    // Initialize json object
-    nlohmann::json j;
-
-    // Add all properties
-    j["type"] = "DFA";
-    j["alphabet"] = alphabet;
-    j["states"] = states;
-    j["transitions"] = transitions;
-
-    // Print
-    std::cout << std::setw(4) << j << '\n';
+    print(std::cout);
 }
 
 void FA::print(std::ostream &out) const {
