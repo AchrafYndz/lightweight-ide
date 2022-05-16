@@ -6,8 +6,8 @@ project(ide VERSION 0.1.0)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")     # -Werror
 
 # ================== Library files ==================
-# nlohman-json library files
-AUX_SOURCE_DIRECTORY(lib/nlohman-json JSON_LIB_FILES)
+# nlohmann-json library files
+AUX_SOURCE_DIRECTORY(lib/nlohmann-json JSON_LIB_FILES)
 
 # path library files
 AUX_SOURCE_DIRECTORY(lib/path PATH_LIB_FILES)

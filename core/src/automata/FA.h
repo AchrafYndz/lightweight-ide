@@ -1,7 +1,7 @@
 #ifndef IDE_FA_H
 #define IDE_FA_H
 
-#include "../../lib/nlohman-json/json.hpp"
+#include "../../lib/nlohmann-json/json.hpp"
 #include "Components.h"
 
 #include <algorithm>
