@@ -14,7 +14,7 @@ ENFA::ENFA(const std::string &file) {
 
     // parse alphabet
     for (const auto &ch : j["alphabet"]) alphabet.push_back(std::string(ch).front());
-    eps = std::string(j["eps"]).front();
+    eps = std::string(j["epsilon"]).front();
 
     // parse states
     for (const auto &state : j["states"]) {
