@@ -6,6 +6,7 @@ cmake-build-*
 # ignore editor config
 .idea
 .cache
+.vscode
 .DS_STORE
 
 # ignore installed node modules
