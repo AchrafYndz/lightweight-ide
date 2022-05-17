@@ -1,0 +1,35 @@
+{
+    "alphabet": [
+        "x",
+        "y"
+    ],
+    "states": [
+        {
+            "accepting": false,
+            "name": "a",
+            "starting": false
+        },
+        {
+            "accepting": false,
+            "name": "b",
+            "starting": false
+        },
+        {
+            "accepting": true,
+            "name": "c",
+            "starting": false
+        },
+        {
+            "accepting": true,
+            "name": "d",
+            "starting": true
+        },
+        {
+            "accepting": false,
+            "name": "e",
+            "starting": false
+        }
+    ],
+    "transitions": null,
+    "type": "PDFA"
+}
