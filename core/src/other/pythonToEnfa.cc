@@ -100,7 +100,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                 }
                 int strLength = (int) comment.length();
                 result[std::make_pair(std::make_pair(it->second.first, it->second.second),
-                                      std::make_pair(it->second.first, it->second.second + strLength))] = comment;
+                                      std::make_pair(it->second.first + strLength-1, it->second.second))] = comment;
             }
         }
 
