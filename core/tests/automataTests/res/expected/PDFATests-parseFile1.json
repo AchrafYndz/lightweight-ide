@@ -30,6 +30,35 @@
             "starting": false
         }
     ],
-    "transitions": null,
+    "transitions": [
+        {
+            "from": "a",
+            "input": "x",
+            "to": [
+                {
+                    "chance": 0.5,
+                    "state": "b"
+                },
+                {
+                    "chance": 0.25,
+                    "state": "d"
+                },
+                {
+                    "chance": 0.25,
+                    "state": "e"
+                }
+            ]
+        },
+        {
+            "from": "b",
+            "input": "y",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "e"
+                }
+            ]
+        }
+    ],
     "type": "PDFA"
 }

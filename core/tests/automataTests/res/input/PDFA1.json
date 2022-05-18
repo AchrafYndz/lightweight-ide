@@ -30,29 +30,29 @@
     ],
     "transitions": [
         {
-            "from": "0",
-            "input": "c",
+            "from": "a",
+            "input": "x",
             "to": [
                 {
-                    "state": "1",
+                    "state": "b",
                     "chance": 0.5
                 },
                 {
-                    "state": "3",
+                    "state": "d",
                     "chance": 0.25
                 },
                 {
-                    "state": "4",
+                    "state": "e",
                     "chance": 0.25
                 }
             ]
         },
         {
-            "from": "1",
-            "input": "b",
+            "from": "b",
+            "input": "y",
             "to": [
                 {
-                    "state": "4",
+                    "state": "e",
                     "chance": 1
                 }
             ]
