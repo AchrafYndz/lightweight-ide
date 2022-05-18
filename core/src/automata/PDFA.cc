@@ -91,6 +91,7 @@ void PDFA::input(const std::string &in) {
 
         if (posTransitions.empty()) {
             stuck = true;
+            currentState = nullptr;
             return;
         }
 
@@ -115,4 +116,4 @@ void PDFA::input(const std::string &in) {
     }
 }
 
-const State *PDFA::getCurrentState() const { return currentState; }
+const State * PDFA::getCurrentState() const { return currentState; }
