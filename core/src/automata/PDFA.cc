@@ -32,7 +32,7 @@ PDFA::PDFA(const std::string &file) {
             totalChance += chance;
 
             Transition *transitionParsed = new Transition{.from = from, .to = to, .input = input};
-            chances[transitionParsed] = chance;
+            weights[transitionParsed] = chance;
 
             transitions.push_back(transitionParsed);
         }
@@ -58,7 +58,7 @@ void PDFA::print(std::ostream &out) const {
 
             nlohmann::json to;
             for (const auto &target : posTransitions)
-                to.push_back({{"state", target->to->name}, {"chance", chances.at(target)}});
+                to.push_back({{"state", target->to->name}, {"chance", weights.at(target)}});
 
             parsedTransitions.push_back({{"from", state->name}, {"input", std::string() + ch}, {"to", to}});
         }
@@ -101,7 +101,7 @@ void PDFA::input(const std::string &in) {
         double r = (double) std::rand() / RAND_MAX;
         Transition *chosen;
         for (Transition *transition : posTransitions) {
-            double w = chances.at(transition);
+            double w = weights.at(transition);
             r -= w;
             if (r < 0) {
                 chosen = transition;

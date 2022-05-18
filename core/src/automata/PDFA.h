@@ -10,7 +10,7 @@
 
 class PDFA : public FA {
     // Pair of a Transiton and a chance
-    std::map<const Transition *, double> chances;
+    std::map<const Transition *, double> weights;
 
     State *currentState = nullptr;
     bool stuck = false;
@@ -19,7 +19,7 @@ class PDFA : public FA {
     PDFA() = default;
     PDFA(const std::string &file);
     PDFA(const std::vector<char> alphabet, const std::vector<State *> &states,
-         const std::vector<Transition *> &transitions, const std::map<Transition *, double> &chances);
+         const std::vector<Transition *> &transitions, const std::map<Transition *, double> &weights);
 
     void print(std::ostream &out) const;
 
