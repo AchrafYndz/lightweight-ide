@@ -1,13 +1,2 @@
-## If the number is positive, "we print an appropriate message/n
-
-# hi
-
-num = 3
-if num > 0:
-    print(num, "is a positive number.") # test
-print("This is always printed.")
-print('#helloworld')
-#""" halllooooo
-"""
-hi
-"""""
+str = "hello" + ' he"s fine' # "str_in_comment"
+str2 = "she's 'd 'd ''"
