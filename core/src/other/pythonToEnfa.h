@@ -18,11 +18,10 @@ class pythonToEnfa {
     void scanToFile(std::ostream &out, const std::string &file) const;
 
     // splits text in potential tokens
-    std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> splitText(
-      const std::string &file) const;
+    std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> splitText(const std::string &file) const;
 
     void printMap(std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m,
-                   std::ostream &out) const;
+                  std::ostream &out) const;
 };
 
 #endif  // IDE_PYTHON_TO_ENFA_H

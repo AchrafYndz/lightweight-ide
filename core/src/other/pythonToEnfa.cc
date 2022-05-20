@@ -100,7 +100,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                 }
                 int strLength = (int) comment.length();
                 result[std::make_pair(std::make_pair(it->second.first, it->second.second),
-                                      std::make_pair(it->second.first + strLength-1, it->second.second))] = comment;
+                                      std::make_pair(it->second.first + strLength - 1, it->second.second))] = comment;
             }
         }
 
@@ -277,15 +277,15 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
         }
 
         // SINGLE LINE STRINGS
-        if (it->first == '"' or it->first == '\''){
+        if (it->first == '"' or it->first == '\'') {
             char ch;
-            if (it->first == '"'){
+            if (it->first == '"') {
                 ch = '"';
-            } else{
+            } else {
                 ch = '\'';
             }
             std::pair<int, int> posFirst = std::make_pair(it->second.first, it->second.second);
-            std::pair<int,int> posLast;
+            std::pair<int, int> posLast;
             int indexesToSkip = index;
 
             std::string strContent;
@@ -294,12 +294,12 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
 
             std::string str_content;
             bool matchingQuoteFound = false;
-            while(!matchingQuoteFound){
+            while (!matchingQuoteFound) {
                 indexesToSkip++;
                 char curChar = chars[indexesToSkip].first;
                 strContent += curChar;
                 toSkip.push_back(indexesToSkip);
-                if (curChar == ch){
+                if (curChar == ch) {
                     matchingQuoteFound = true;
                     posLast = std::make_pair(chars[indexesToSkip].second.first, chars[indexesToSkip].second.second);
                 }
@@ -313,7 +313,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
 }
 
 void pythonToEnfa::printMap(std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m,
-                               std::ostream &out) const {
+                            std::ostream &out) const {
     std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string>::iterator it;
     for (it = m.begin(); it != m.end(); it++) {
         int column1 = it->first.first.first;

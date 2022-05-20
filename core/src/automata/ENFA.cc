@@ -162,7 +162,6 @@ DFA ENFA::toDFA() const {
             // Let's create the new properties
             std::string targetName = stateSetToName(targets);
 
-
             // Check if accepted
             bool accepting = false;
             for (auto t : targets)
