@@ -306,9 +306,25 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
             }
             result[std::make_pair(posFirst, posLast)] = strContent;
         }
-
         index++;
     }
+
+    // SKIP SEPARATORS
+    std::vector<char> separators{'+', '-', '*', '/', '%', '<', '>', '&', '|', '^', '~', '=', '!', '(', ')', '[', ']',
+    '{', '}', ',', ':', '.', ';', ' ', '\n'};
+    index = 0;
+    for (it= chars.begin(); it != chars.end(); it++){
+        if (std::find(toSkip.begin(), toSkip.end(), index) != toSkip.end()) {
+            index++;
+            continue;
+        }
+        char currentChar = it->first;
+        if (std::find(separators.begin(), separators.end(), currentChar) == separators.end()){
+            toSkip.push_back(index);
+        }
+        index++;
+    }
+
     return result;
 }
 
