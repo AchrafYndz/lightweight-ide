@@ -1,0 +1,2 @@
+#aabb b"b ffc   dddd
+str a = "first string"

@@ -368,3 +368,85 @@ void pythonToEnfa::printMap(std::map<std::pair<std::pair<int, int>, std::pair<in
             << " " << str << '\n';
     }
 }
+
+bool pythonToEnfa::isKeyword(const std::string &str, const std::string &file) const {
+    bool result = false;
+
+    std::vector<std::string> keyw = getPythonKeyw(file);
+
+    std::vector<std::string>::iterator it;
+    for (it = keyw.begin(); it != keyw.end(); it++){
+        RE reg(*it,'%');
+        ENFA enfa = reg.toENFA();
+        if(enfa.accepts(str)){
+            result = true;
+        }
+    }
+    return result;
+}
+
+std::vector<char> pythonToEnfa::getSigma() const {
+    std::vector<char> result;
+    // note: i = 32 is space
+    for (int i = 33; i <= 127; i++){
+        // skip +, (, ), * and ?
+        if (i == 43 or i == 40 or i == 41 or i == 42 or i == 63){
+            continue;
+        }
+        result.push_back((char) i);
+    }
+    result.push_back('\n');
+    return result;
+}
+
+std::string pythonToEnfa::expand(std::vector<char> &inputSet) const {
+    std::string result;
+
+    std::vector<char>::iterator it;
+    for(it = inputSet.begin(); it != inputSet.end()-1; it++){
+        result += *it;
+        result += "+";
+    }
+    result += inputSet.back();
+
+    return result;
+}
+
+std::string pythonToEnfa::replaceRegexOp(const std::string &str) const {
+    std::string result;
+    result = str;
+    std::replace(result.begin(), result.end(), '+', 'a');
+    std::replace(result.begin(), result.end(), '(', 'a');
+    std::replace(result.begin(), result.end(), ')', 'a');
+    std::replace(result.begin(), result.end(), '*', 'a');
+    std::replace(result.begin(), result.end(), '?', 'a');
+    return result;
+}
+
+bool pythonToEnfa::isComment(const std::string &str) const {
+    bool result = false;
+    std::string strNoRegexOp = replaceRegexOp(str);
+    std::string regexStr;
+    std::vector<char> sigma = getSigma();
+
+    regexStr += "#(";
+    regexStr += expand(sigma);
+    regexStr += ")*";
+
+    RE reg(regexStr, ' ');
+    ENFA enfa = reg.toENFA();
+
+    if(enfa.accepts(strNoRegexOp)){
+        result = true;
+    }
+
+    return result;
+}
+
+
+std::string pythonToEnfa::recognizeToken(const std::string &str) const {
+
+
+    std::string result;
+    return result;
+}
