@@ -8,6 +8,7 @@ cmake-build-*
 .cache
 .vscode
 .DS_STORE
+.vimspector.*
 
 # ignore installed node modules
 node_modules
@@ -15,3 +16,7 @@ node_modules
 # Data collector
 data-collector/output.json
 data-collector/output.cpp
+
+# Tag data
+tags.*
+tags
