@@ -41,6 +41,10 @@ PDFA::PDFA(const std::string &file) {
     }
 }
 
+PDFA::PDFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
+           const std::vector<Transition *> &transitions, const std::map<const Transition *, double> &weights) :
+    FA(alphabet, states, transitions), weights(weights) {}
+
 void PDFA::print(std::ostream &out) const {
     // Initialize json object
     nlohmann::json j;

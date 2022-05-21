@@ -1,4 +1,5 @@
 #include "FA.h"
+#include "Components.h"
 
 FA::FA(const std::string &file) {
     // Load file
@@ -29,7 +30,7 @@ FA::FA(const std::string &file) {
     }
 }
 
-FA::FA(const std::vector<char> alphabet, const std::vector<State *> states,
+FA::FA(const std::vector<char> &alphabet, const std::vector<State *> states,
        const std::vector<Transition *> transitions) :
     alphabet(alphabet), states(states), transitions(transitions) {}
 
@@ -92,7 +93,11 @@ std::vector<Transition *> FA::findTransition(const State *from, const char input
 
 void FA::setStates(const std::vector<State *> &s) { states = s; }
 
+void FA::addState(State *state) { states.push_back(state); }
+
 void FA::setTransitions(const std::vector<Transition *> &t) { transitions = t; }
+
+void FA::addTransition(Transition *transition) { transitions.push_back(transition); }
 
 void FA::setAlphabet(const std::vector<char> &a) { alphabet = a; }
 

@@ -5,7 +5,6 @@
 
 #include "../../lib/nlohmann-json/json.hpp"
 
-#include <cstdlib>
 #include <ctime>
 
 class PDFA : public FA {
@@ -18,8 +17,8 @@ class PDFA : public FA {
   public:
     PDFA() = default;
     PDFA(const std::string &file);
-    PDFA(const std::vector<char> alphabet, const std::vector<State *> &states,
-         const std::vector<Transition *> &transitions, const std::map<Transition *, double> &weights);
+    PDFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
+         const std::vector<Transition *> &transitions, const std::map<const Transition *, double> &weights);
 
     void print(std::ostream &out) const;
 
