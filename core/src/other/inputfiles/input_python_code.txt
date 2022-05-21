@@ -1,5 +1,0 @@
-str = "hello" + ' he"s fine' # "str_in_comment"
-str2 = "she's 'd 'd ''"
-#ab
-    spaces
-print(False)

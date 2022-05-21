@@ -319,10 +319,35 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
             continue;
         }
         char currentChar = it->first;
-        if (std::find(separators.begin(), separators.end(), currentChar) == separators.end()){
+        if (std::find(separators.begin(), separators.end(), currentChar) != separators.end()){
+            std::cout << "this char got skipped " << currentChar << std::endl;
             toSkip.push_back(index);
         }
         index++;
+    }
+
+    // WORDS
+    for (index = 0; (unsigned long) index < chars.size(); index++){
+        if (std::find(toSkip.begin(), toSkip.end(), index) != toSkip.end()) {
+            continue;
+        }
+        std::string word;
+        bool endWordFound = false;
+        std::pair<int, int> posFirstLetter = std::make_pair(chars[index].second.first, chars[index].second.second);
+        std::pair<int, int> posLastLetter;
+
+        while (!endWordFound){
+            word += chars[index].first;
+            posLastLetter = std::make_pair(chars[index].second.first, chars[index].second.second);
+            if ((unsigned long) index == chars.size()-1){
+                endWordFound = true;
+            }
+            else if(std::find(toSkip.begin(), toSkip.end(), index+1) != toSkip.end()){
+                endWordFound = true;
+            }
+            index++;
+        }
+        result[std::make_pair(posFirstLetter, posLastLetter)] = word;
     }
 
     return result;
