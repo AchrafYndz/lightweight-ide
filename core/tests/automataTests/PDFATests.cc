@@ -51,4 +51,13 @@ TEST_SUITE("PDFATests") {
         const bool valid = currentStateName == "1" || currentStateName == "3" || currentStateName == "4";
         CHECK(valid);
     }
+
+    TEST_CASE("[PDFATests] autocomlete0") {
+        PDFA pdfa(path::rootDirectory + "/tests/automataTests/res/input/autocompletionPDFA0.json");
+
+        pdfa.input("asse");
+
+        const std::string &prediction = pdfa.predict();
+        CHECK_EQ("assert", prediction);
+    }
 }
