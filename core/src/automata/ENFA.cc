@@ -127,10 +127,15 @@ DFA ENFA::toDFA() const {
     std::map<std::string, State *> DFAStates;
     std::vector<Transition *> DFATransitions = {};
 
+    // Check if accepted
+    bool accepting = false;
+    for (auto s : startClosure)
+        if (s->accepting) accepting = true;
+
     // Initialize the algorithm
     std::set<State *> init(startClosure.begin(), startClosure.end());
     DFAStates.insert(
-      {stateSetToName(init), new State{.name = stateSetToName(init), .starting = true, .accepting = start->accepting}});
+      {stateSetToName(init), new State{.name = stateSetToName(init), .starting = true, .accepting = accepting}});
 
     std::vector<std::set<State *>> queue = {init};
 
