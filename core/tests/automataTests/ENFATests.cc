@@ -117,7 +117,7 @@ TEST_SUITE("ENFATests") {
 
         // load in expected file
         const std::ifstream expectedFile(path::rootDirectory +
-                                         "/tests/automataTests/res/expected/MSSC2.txt");
+                                         "/tests/automataTests/res/expected/ENFATests-MSSC2.txt");
         std::stringstream expected;
         expected << expectedFile.rdbuf();
 
