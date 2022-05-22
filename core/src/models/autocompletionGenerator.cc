@@ -80,7 +80,7 @@ PDFA models::genAutocompletionPDFA(const std::vector<std::string> &keywords,
         // amount of usage for all keywords in the posible transitions per state
         for (const auto &keyword : transitionPair.second) {
             // usage of this keyword
-            const unsigned int usage = frequenties.at(keyword);
+            const unsigned int usage = (frequenties.find(keyword) == frequenties.end()) ? 0 : frequenties.at(keyword);
             const double weight = (double) usage / (double) totalUsage[transitionPair.first];
 
             // get the keyword state
