@@ -25,6 +25,8 @@ class PDFA : public FA {
     void input(const std::string &in);
 
     const State *getCurrentState() const;
+
+    const std::string &predict();
 };
 
 #endif  // IDE_PDFA_H

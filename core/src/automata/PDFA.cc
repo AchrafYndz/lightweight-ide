@@ -120,4 +120,17 @@ void PDFA::input(const std::string &in) {
     }
 }
 
+const std::string &PDFA::predict() {
+    // because we do not want to update the PDFA, store the old state and reset it later
+    State *curr = currentState;
+
+    // input the 'epsilon' char
+    input("*");
+
+    const std::string &result = currentState->name;
+    currentState = curr;
+
+    return result;
+}
+
 const State *PDFA::getCurrentState() const { return currentState; }
