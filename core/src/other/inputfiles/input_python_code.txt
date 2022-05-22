@@ -1,2 +1,6 @@
 #aabb b"b ffc   dddd
-str a = "first string"
+str a = "first + string"
+'''
+text dada
+pldla '''
+a = "hallo 15"

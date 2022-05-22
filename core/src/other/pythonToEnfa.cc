@@ -194,7 +194,8 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
 
         // MULTILINE STRINGS with "
         if (index < charsSize - 5) {
-            if (chars[index].first == '"' and chars[index + 1].first == '"' and chars[index + 2].first == '"') {
+            if (chars[index].first == '"' and chars[index + 1].first == '"' and chars[index + 2].first == '"' and
+                chars[index].second.first != 0) {
                 std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
                 std::string multiLComment = R"(""")";
                 toSkip.push_back(index);
@@ -236,7 +237,8 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
 
         // MULTILINE STRINGS with '
         if (index < charsSize - 5) {
-            if (chars[index].first == '\'' and chars[index + 1].first == '\'' and chars[index + 2].first == '\'') {
+            if (chars[index].first == '\'' and chars[index + 1].first == '\'' and chars[index + 2].first == '\''
+                and chars[index].second.first != 0) {
                 std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
                 std::string multiLComment = R"(''')";
                 toSkip.push_back(index);
@@ -369,22 +371,6 @@ void pythonToEnfa::printMap(std::map<std::pair<std::pair<int, int>, std::pair<in
     }
 }
 
-bool pythonToEnfa::isKeyword(const std::string &str, const std::string &file) const {
-    bool result = false;
-
-    std::vector<std::string> keyw = getPythonKeyw(file);
-
-    std::vector<std::string>::iterator it;
-    for (it = keyw.begin(); it != keyw.end(); it++){
-        RE reg(*it,'%');
-        ENFA enfa = reg.toENFA();
-        if(enfa.accepts(str)){
-            result = true;
-        }
-    }
-    return result;
-}
-
 std::vector<char> pythonToEnfa::getSigma() const {
     std::vector<char> result;
     // note: i = 32 is space
@@ -397,6 +383,13 @@ std::vector<char> pythonToEnfa::getSigma() const {
     }
     result.push_back('\n');
     return result;
+}
+
+void pythonToEnfa::removeElementsFromSet(std::vector<char> &inputSet, char ch) const {
+    std::vector<char>::iterator position = std::find(inputSet.begin(),inputSet.end(), ch);
+    if (position != inputSet.end()){
+        inputSet.erase(position);
+    }
 }
 
 std::string pythonToEnfa::expand(std::vector<char> &inputSet) const {
@@ -423,30 +416,312 @@ std::string pythonToEnfa::replaceRegexOp(const std::string &str) const {
     return result;
 }
 
-bool pythonToEnfa::isComment(const std::string &str) const {
-    bool result = false;
-    std::string strNoRegexOp = replaceRegexOp(str);
+
+
+/*
+std::vector<ENFA> pythonToEnfa::generateEnfaKeywords(const std::string &file) const {
+    std::vector<ENFA> result;
+    std::vector<std::string> keyw = getPythonKeyw(file);
+    std::vector<std::string>::iterator it;
+    for (it = keyw.begin(); it != keyw.end(); it++) {
+        RE reg(*it, '%');
+        ENFA enfa = reg.toENFA();
+        result.push_back(enfa);
+    }
+    return result;
+}
+
+std::vector<ENFA> pythonToEnfa::generateEnfaComments() const {
+    std::vector<ENFA> result;
+
     std::string regexStr;
     std::vector<char> sigma = getSigma();
-
-    regexStr += "#(";
+    regexStr += "\n'''(";
     regexStr += expand(sigma);
-    regexStr += ")*";
-
+    regexStr += ")*'''";
     RE reg(regexStr, ' ');
     ENFA enfa = reg.toENFA();
+    result.push_back(enfa);
 
-    if(enfa.accepts(strNoRegexOp)){
-        result = true;
+    std::string regexStr2;
+    regexStr2 += "\n\"\"\"(";
+    regexStr2 += expand(sigma);
+    regexStr2 += ")*\"\"\"";
+    RE reg2(regexStr2, ' ');
+    ENFA enfa2 = reg2.toENFA();
+    result.push_back(enfa2);
+
+    std::string regexStr3;
+    regexStr3 += "#(";
+    regexStr3 += expand(sigma);
+    regexStr3 += ")*";
+    RE reg3(regexStr3, ' ');
+    ENFA enfa3 = reg3.toENFA();
+    result.push_back(enfa3);
+
+    return result;
+}
+
+std::vector<ENFA> pythonToEnfa::generateEnfaStrings() const {
+    std::vector<ENFA> result;
+
+    std::string regexStr;
+    std::vector<char> sigma = getSigma();
+    removeElementsFromSet(sigma, '"');
+    removeElementsFromSet(sigma, '\n');
+    regexStr += "\"(";
+    regexStr += expand(sigma);
+    regexStr += ")*\"";
+    RE reg(regexStr, ' ');
+    ENFA enfa = reg.toENFA();
+    result.push_back(enfa);
+
+    std::string regexStr2;
+    sigma = getSigma();
+    removeElementsFromSet(sigma, '\'');
+    removeElementsFromSet(sigma, '\n');
+    regexStr2 += "\'(";
+    regexStr2 += expand(sigma);
+    regexStr2 += ")*\'";
+    RE reg2(regexStr2, ' ');
+    ENFA enfa2 = reg2.toENFA();
+    result.push_back(enfa2);
+
+    std::string regexStr3;
+    sigma = getSigma();
+    regexStr3 += "\"\"\"(";
+    regexStr3 += expand(sigma);
+    regexStr3 += ")*\"\"\"";
+    RE reg3(regexStr3, ' ');
+    ENFA enfa3 = reg3.toENFA();
+    result.push_back(enfa3);
+
+    std::string regexStr4;
+    regexStr4 += "'''(";
+    regexStr4 += expand(sigma);
+    regexStr4 += ")*'''";
+    RE reg4(regexStr4, ' ');
+    ENFA enfa4 = reg4.toENFA();
+    result.push_back(enfa4);
+
+    return result;
+}
+
+bool pythonToEnfa::isKeyword(const std::string &str, std::vector<ENFA> &enfaKeyw) const {
+    bool result = false;
+
+    std::vector<ENFA>::iterator it;
+    for (it = enfaKeyw.begin(); it != enfaKeyw.end(); it++){
+        if(it->accepts(str)){
+            result = true;
+        }
     }
 
     return result;
 }
 
+bool pythonToEnfa::isComment(const std::string &str, std::vector<ENFA> &enfaComments) const {
+    bool result = false;
 
-std::string pythonToEnfa::recognizeToken(const std::string &str) const {
+    std::string strNoOp = replaceRegexOp(str);
+    std::vector<ENFA>::iterator it;
+    for (it = enfaComments.begin(); it != enfaComments.end(); it++){
+        if(it->accepts(strNoOp)){
+            result = true;
+        }
+    }
 
-
-    std::string result;
     return result;
+}
+
+bool pythonToEnfa::isString(const std::string &str, std::vector<ENFA> &enfaStrings) const {
+    bool result = false;
+
+    std::string strNoOp = replaceRegexOp(str);
+    std::vector<ENFA>::iterator it;
+    for (it = enfaStrings.begin(); it != enfaStrings.end(); it++){
+        if(it->accepts(strNoOp)){
+            result = true;
+        }
+    }
+
+    return result;
+}
+*/
+
+void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m,
+                                  const std::string &fileKeyw){
+
+    // OLD METHOD USES CONTAINERS
+    /*
+    std::vector<ENFA> enfaKeywords = generateEnfaKeywords(fileKeyw);
+    std::vector<ENFA> enfaComments = generateEnfaComments();
+    std::vector<ENFA> enfaStrings = generateEnfaStrings();
+
+    std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string>::const_iterator it;
+
+    for (it = m.begin(); it!= m.end(); it++){
+        std::string str = it->second;
+
+        bool identified = false;
+        bool isaKeyw = false;
+        bool isaComment = false;
+        bool isaString = false;
+
+
+        std::pair<pos,pos> positions;
+
+        isaKeyw = isKeyword(str, enfaKeywords);
+        if (isaKeyw){
+            positions = it->first;
+            keywords.push_back(positions);
+            identified = true;
+        }
+        if(!identified){
+            isaComment = isComment(str, enfaComments);
+            if (isaComment){
+                positions = it->first;
+                comments.push_back(positions);
+                identified = true;
+            }
+        }
+        if(!identified){
+            isaString = isString(str, enfaStrings);
+            if (isaString){
+                positions = it->first;
+                strings.push_back(positions);
+            }
+        }
+    }
+     */
+
+    std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string>::const_iterator it;
+
+    std::string regexStr;
+    std::vector<char> sigma = getSigma();
+    removeElementsFromSet(sigma, '"');
+    removeElementsFromSet(sigma, '\n');
+    regexStr += "\"(";
+    regexStr += expand(sigma);
+    regexStr += ")*\"";
+    RE reg(regexStr, ' ');
+    ENFA enfaStr1 = reg.toENFA();
+
+    std::string regexStr2;
+    sigma = getSigma();
+    removeElementsFromSet(sigma, '\'');
+    removeElementsFromSet(sigma, '\n');
+    regexStr2 += "\'(";
+    regexStr2 += expand(sigma);
+    regexStr2 += ")*\'";
+    RE reg2(regexStr2, ' ');
+    ENFA enfaStr2 = reg2.toENFA();
+
+    std::string regexStr3;
+    sigma = getSigma();
+    regexStr3 += "\"\"\"(";
+    regexStr3 += expand(sigma);
+    regexStr3 += ")*\"\"\"";
+    RE reg3(regexStr3, ' ');
+    ENFA enfaStr3 = reg3.toENFA();
+
+    std::string regexStr4;
+    regexStr4 += "'''(";
+    regexStr4 += expand(sigma);
+    regexStr4 += ")*'''";
+    RE reg4(regexStr4, ' ');
+    ENFA enfaStr4 = reg4.toENFA();
+
+    std::string regexStr5;
+    sigma = getSigma();
+    regexStr5 += "\n'''(";
+    regexStr5 += expand(sigma);
+    regexStr5 += ")*'''";
+    RE reg5(regexStr5, ' ');
+    ENFA enfaCom1 = reg5.toENFA();
+
+    std::string regexStr6;
+    regexStr6 += "\n\"\"\"(";
+    regexStr6 += expand(sigma);
+    regexStr6 += ")*\"\"\"";
+    RE reg6(regexStr6, ' ');
+    ENFA enfaCom2 = reg6.toENFA();
+
+    std::string regexStr7;
+    regexStr7 += "#(";
+    regexStr7 += expand(sigma);
+    regexStr7 += ")*";
+    RE reg7(regexStr7, ' ');
+    ENFA enfaCom3 = reg7.toENFA();
+
+    for (it = m.begin(); it!= m.end(); it++) {
+        std::string str = it->second;
+
+        bool identified = false;
+        bool isaKeyw = false;
+
+        std::pair<pos,pos> positions;
+        std::vector<std::string> keyw = getPythonKeyw(fileKeyw);
+        std::vector<std::string>::iterator it2;
+
+        for (it2 = keyw.begin(); it2 != keyw.end(); it2++) {
+            RE rege(*it2, '%');
+            ENFA enfa = rege.toENFA();
+            if (enfa.accepts(str)){
+                isaKeyw = true;
+            }
+        }
+        if(isaKeyw){
+            positions = it->first;
+            keywords.push_back(positions);
+            identified = true;
+        }
+        if(!identified){
+            std::string strNoOp = replaceRegexOp(str);
+            if (enfaCom1.accepts(strNoOp) or enfaCom2.accepts(strNoOp) or enfaCom3.accepts(strNoOp)){
+                positions = it->first;
+                comments.push_back(positions);
+                identified = true;
+            }
+        }
+        if(!identified) {
+            std::string strNoOp = replaceRegexOp(str);
+            if (enfaStr1.accepts((strNoOp)) or enfaStr2.accepts((strNoOp)) or enfaStr3.accepts((strNoOp)) or enfaStr4.accepts((strNoOp))) {
+                positions = it->first;
+                strings.push_back(positions);
+                identified = true;
+            }
+        }
+    }
+}
+
+void pythonToEnfa::printIdentifiedTokens(std::ostream &out) const {
+    std::vector<std::pair<pos,pos>>::const_iterator it;
+
+    if (keywords.empty()){
+        out << "There are no keywords." << std::endl;
+    } else{
+        out << "Keywords:" << std::endl;
+        for(it = keywords.begin(); it != keywords.end(); it++){
+            out << "(" << it->first.first << ", " << it->first.second << ") " << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
+        }
+    }
+
+    if (comments.empty()){
+        out << "There are no comments." << std::endl;
+    } else{
+        out << "Comments:" << std::endl;
+        for(it = comments.begin(); it != comments.end(); it++){
+            out << "(" << it->first.first << ", " << it->first.second << ") " << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
+        }
+    }
+
+    if (strings.empty()){
+        out << "There are no strings." << std::endl;
+    } else{
+        out << "Strings:" << std::endl;
+        for(it = strings.begin(); it != strings.end(); it++){
+            out << "(" << it->first.first << ", " << it->first.second << ") " << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
+        }
+    }
 }
