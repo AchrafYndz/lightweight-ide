@@ -17,6 +17,9 @@ class DFA : public FA {
     void printTable();
     void printTable(TFA &t);
 
+    void printStats(std::ostream &out) const;
+    void printStats() const;
+
     DFA() = default;
     DFA(const std::string &file) : FA(file){};
     DFA(const std::vector<char> &alphabet, const std::vector<State *> &states,

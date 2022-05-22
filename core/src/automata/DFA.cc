@@ -343,3 +343,27 @@ bool DFA::operator==(DFA &rhs) {
     // or not.
     return !pairCrossed(t, startingL->name, startingR->name);
 }
+
+void DFA::printStats(std::ostream &out) const {
+    out << "no_of_states=" << states.size() << '\n';
+
+    std::map<char, unsigned int> transitionCount;
+    for (const auto &transition : transitions) { ++transitionCount[transition->input]; }
+
+    // print other char transitions
+    for (const char ch : alphabet) out << "no_of_transitions[" << ch << "]=" << transitionCount[ch] << '\n';
+
+    // collect degree information
+    std::map<int, int> degreeCounter;
+    for (const auto &state : states) {
+        unsigned int count = 0;
+        for (const auto &transition : transitions)
+            if (transition->from == state) ++count;
+
+        ++degreeCounter[count];
+    }
+
+    for (const auto &degreeCount : degreeCounter)
+        out << "degree[" << degreeCount.first << "]=" << degreeCount.second << '\n';
+}
+void DFA::printStats() const { printStats(std::cout); }
