@@ -67,6 +67,15 @@ DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
     }
 }
 
+DFA::DFA(std::vector<DFA> dfas, bool cross) {
+    DFA currentDFA = dfas.front();
+    for (const DFA& dfa : dfas) {
+        if (currentDFA == dfas.front()) continue;
+        currentDFA = DFA(currentDFA, dfa, cross);
+    }
+    *this = currentDFA;
+}
+
 bool DFA::pairCrossed(TFA &t, const std::string &s1, const std::string &s2) {
     for (auto &row : t) {
         std::string pName = row.first;
