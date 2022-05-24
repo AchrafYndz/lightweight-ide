@@ -27,6 +27,7 @@ class DFA : public FA {
     DFA(const DFA &dfa1, const DFA &dfa2, bool cross);
 
     bool operator==(DFA &rhs);
+    DFA& operator=(DFA const &rhs);
 };
 
 #endif  // IDE_DFA_H

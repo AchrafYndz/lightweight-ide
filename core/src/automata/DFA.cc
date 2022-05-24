@@ -344,6 +344,14 @@ bool DFA::operator==(DFA &rhs) {
     return !pairCrossed(t, startingL->name, startingR->name);
 }
 
+DFA& DFA::operator=(DFA const &rhs) {
+    alphabet = rhs.alphabet;
+    states = rhs.states;
+    transitions = rhs.transitions;
+
+    return *this;
+}
+
 void DFA::printStats(std::ostream &out) const {
     out << "no_of_states=" << states.size() << '\n';
 
