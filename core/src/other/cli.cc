@@ -2,6 +2,10 @@
 #include <iostream>
 
 namespace cli {
+    void clearConsole() {
+        std::cout << "\033[2J\033[1;1H";
+    }
+
     Action waitForAction() {
         // Wait for input
         std::cout << "#######################################################" << std::endl;
@@ -14,7 +18,14 @@ namespace cli {
         std::cout << std::endl;
 
         std::cout << "\x1B[32m>>\033[0m ";
-       
-       
+
+        // Get user input
+        int x;
+        scanf("%d",&x);
+
+        clearConsole();
+
+        if (x == 0) return Action::Autocomplete;
+        else if (x == 1) return Action::SyntaxHighlighting;
     }
 }
