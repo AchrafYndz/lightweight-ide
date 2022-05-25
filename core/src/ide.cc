@@ -8,8 +8,11 @@
 
 int main() {
     // CLI
-    cli::Action action = cli::waitForAction();
-    
+    // cli::Action action = cli::waitForAction();
+    std::string path = cli::waitForPath();
+    std::cout << path << std::endl;
+    return 0;
+
     const std::unordered_map<std::string, unsigned int> frequenties = {
       {"if", 842},     {"return", 682}, {"def", 578},   {"elif", 193},    {"is", 183},    {"for", 155},
       {"import", 114}, {"from", 92},    {"class", 90},  {"and", 83},      {"in", 67},     {"not", 60},
