@@ -55,4 +55,22 @@ namespace cli {
         if (path.length() == 0) path = "./input.py";
         return path;
     }
+
+    std::string waitForInput() {
+        // Wait for input
+        std::cout << "#########################################" << std::endl;
+        std::cout << "# Please enter the text to autocomplete #" << std::endl;
+        std::cout << "#########################################" << std::endl;
+        std::cout << std::endl;
+        std::cout << "\x1B[32m>>\033[0m ";
+
+        // Get user input
+        std::string input;
+        getline(std::cin, input);
+
+        // Clear console
+        clearConsole();
+
+        return input;
+    }
 }
