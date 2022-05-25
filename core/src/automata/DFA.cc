@@ -62,18 +62,19 @@ DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
                 newStates.push_back(newState);
             }
         }
-
         currentStates = newStates;
     }
 }
 
 DFA::DFA(std::vector<DFA> dfas, bool cross) {
-    DFA currentDFA = dfas.front();
-    for (const DFA& dfa : dfas) {
-        if (currentDFA == dfas.front()) continue;
+    DFA currentDFA = dfas[0];
+    for (const DFA &dfa : dfas) {
+        if (currentDFA == dfas[0]) continue;
         currentDFA = DFA(currentDFA, dfa, cross);
     }
-    *this = currentDFA;
+    alphabet = currentDFA.alphabet;
+    states = currentDFA.states;
+    transitions = currentDFA.transitions;
 }
 
 bool DFA::pairCrossed(TFA &t, const std::string &s1, const std::string &s2) {
