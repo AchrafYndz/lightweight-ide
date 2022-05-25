@@ -1,0 +1,4 @@
+no_of_states=3
+no_of_transitions[j]=3
+no_of_transitions[k]=3
+degree[2]=3

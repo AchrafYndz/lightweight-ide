@@ -111,4 +111,24 @@ TEST_SUITE("ENFATests") {
             CHECK_FALSE(enfa.accepts("cc"));
         }
     }
+
+    TEST_CASE("[ENFATests] MSSC2") {
+        ENFA enfa(path::rootDirectory + "/tests/automataTests/res/input/ENFA2.json");
+
+        // load in expected file
+        const std::ifstream expectedFile(path::rootDirectory +
+                                         "/tests/automataTests/res/expected/ENFATests-MSSC2.txt");
+        std::stringstream expected;
+        expected << expectedFile.rdbuf();
+
+        std::stringstream actual("");
+
+        DFA dfa = enfa.toDFA();
+
+        // std::ofstream tmp(path::rootDirectory + "/tests/automataTests/res/expected/ENFATests-MSSC2.txt");
+
+        dfa.printStats(actual);
+
+        CHECK_EQ(expected.str(), actual.str());
+    }
 }

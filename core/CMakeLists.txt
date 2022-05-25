@@ -6,8 +6,8 @@ project(ide VERSION 0.1.0)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")     # -Werror
 
 # ================== Library files ==================
-# nlohman-json library files
-AUX_SOURCE_DIRECTORY(lib/nlohman-json JSON_LIB_FILES)
+# nlohmann-json library files
+AUX_SOURCE_DIRECTORY(lib/nlohmann-json JSON_LIB_FILES)
 
 # path library files
 AUX_SOURCE_DIRECTORY(lib/path PATH_LIB_FILES)
@@ -22,17 +22,23 @@ AUX_SOURCE_DIRECTORY(lib/doctest DOCTEST_LIB_FILES)
 # object source files
 AUX_SOURCE_DIRECTORY(src/automata OBJECT_SOURCE_FILES)
 
+# parser/scanner source files
+AUX_SOURCE_DIRECTORY(src/other SCANNER_SOURCE_FIlES)
+
+# model source files
+AUX_SOURCE_DIRECTORY(src/models MODELS_SOURCE_FILES)
+
 # test source files
 file(GLOB_RECURSE TEST_SOURCE_FILES tests/**/*.cc)
 
 set(RELEASE_SOURCE_FILES
     src/ide.cc
-    src/other/python_to_enfa.cpp
-    src/other/python_to_enfa.h
     ${JSON_LIB_FILES}
     ${PATH_LIB_FILES}
     ${ID_LIB_FILES}
     ${OBJECT_SOURCE_FILES}
+    ${SCANNER_SOURCE_FIlES}
+    ${MODELS_SOURCE_FILES}
 )
 
 set(TEST_SOURCE_FILES
@@ -41,6 +47,8 @@ set(TEST_SOURCE_FILES
     ${JSON_LIB_FILES}
     ${PATH_LIB_FILES}
     ${OBJECT_SOURCE_FILES}
+    ${SCANNER_SOURCE_FIlES}
+    ${MODELS_SOURCE_FILES}
     ${TEST_SOURCE_FILES}
 )
 

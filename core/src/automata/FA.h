@@ -1,7 +1,7 @@
 #ifndef IDE_FA_H
 #define IDE_FA_H
 
-#include "../../lib/nlohman-json/json.hpp"
+#include "../../lib/nlohmann-json/json.hpp"
 #include "Components.h"
 
 #include <algorithm>
@@ -19,7 +19,7 @@ class FA {
   public:
     FA() = default;
     FA(const std::string &file);
-    FA(const std::vector<char> alphabet, const std::vector<State *> states,
+    FA(const std::vector<char> &alphabet, const std::vector<State *> states,
        const std::vector<Transition *> transitions);
     virtual ~FA();
 
@@ -33,8 +33,10 @@ class FA {
     void print() const;
 
     void setStates(const std::vector<State *> &states);
+    void addState(State *state);
     void setAlphabet(const std::vector<char> &states);
     void setTransitions(const std::vector<Transition *> &states);
+    void addTransition(Transition *transition);
     void renameState(const std::string &s, const std::string &n);
     void removeUnused();
 

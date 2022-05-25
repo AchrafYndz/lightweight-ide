@@ -1,4 +1,5 @@
 #include "FA.h"
+#include "Components.h"
 
 FA::FA(const std::string &file) {
     // Load file
@@ -29,7 +30,7 @@ FA::FA(const std::string &file) {
     }
 }
 
-FA::FA(const std::vector<char> alphabet, const std::vector<State *> states,
+FA::FA(const std::vector<char> &alphabet, const std::vector<State *> states,
        const std::vector<Transition *> transitions) :
     alphabet(alphabet), states(states), transitions(transitions) {}
 
@@ -39,28 +40,14 @@ FA::~FA() {
     for (auto transition : transitions) { delete transition; }
 }
 
-void FA::print() const {
-    // Initialize json object
-    nlohmann::json j;
-
-    // Add all properties
-    j["type"] = "DFA";
-    j["alphabet"] = alphabet;
-    j["states"] = states;
-    j["transitions"] = transitions;
-
-    // Print
-    std::cout << std::setw(4) << j << '\n';
-}
+void FA::print() const { print(std::cout); }
 
 void FA::print(std::ostream &out) const {
     // Initialize json object
     nlohmann::json j;
 
     std::vector<std::string> stringAlphabet;
-    for (const char ch : alphabet) {
-        stringAlphabet.push_back(std::string() + ch);
-    }
+    for (const char ch : alphabet) { stringAlphabet.push_back(std::string() + ch); }
 
     // Add all properties
     j["type"] = "DFA";
@@ -106,7 +93,11 @@ std::vector<Transition *> FA::findTransition(const State *from, const char input
 
 void FA::setStates(const std::vector<State *> &s) { states = s; }
 
+void FA::addState(State *state) { states.push_back(state); }
+
 void FA::setTransitions(const std::vector<Transition *> &t) { transitions = t; }
+
+void FA::addTransition(Transition *transition) { transitions.push_back(transition); }
 
 void FA::setAlphabet(const std::vector<char> &a) { alphabet = a; }
 
@@ -139,22 +130,26 @@ State *FA::findStartingState() const {
     return nullptr;
 }
 
-bool FA::anyStarting(std::set<State *>& s) {
-     for (auto c : s) if (c->starting) return c->starting;
+bool FA::anyStarting(std::set<State *> &s) {
+    for (auto c : s)
+        if (c->starting) return c->starting;
     return false;
 }
 
-bool FA::anyStarting(std::vector<State *>& s) {
-    for (auto c : s) if (c->starting) return c->starting;
-    return false; 
+bool FA::anyStarting(std::vector<State *> &s) {
+    for (auto c : s)
+        if (c->starting) return c->starting;
+    return false;
 }
 
-bool FA::anyAccepting(std::vector<State *>& s) {
-    for (auto c : s) if (c->accepting) return c->accepting;
-    return false; 
+bool FA::anyAccepting(std::vector<State *> &s) {
+    for (auto c : s)
+        if (c->accepting) return c->accepting;
+    return false;
 }
 
-bool FA::anyAccepting(std::set<State *>& s) {
-    for (auto c : s) if (c->accepting) return c->accepting;
-    return false; 
+bool FA::anyAccepting(std::set<State *> &s) {
+    for (auto c : s)
+        if (c->accepting) return c->accepting;
+    return false;
 }

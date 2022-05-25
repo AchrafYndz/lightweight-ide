@@ -14,7 +14,7 @@ ENFA::ENFA(const std::string &file) {
 
     // parse alphabet
     for (const auto &ch : j["alphabet"]) alphabet.push_back(std::string(ch).front());
-    eps = std::string(j["eps"]).front();
+    eps = std::string(j["epsilon"]).front();
 
     // parse states
     for (const auto &state : j["states"]) {
@@ -76,17 +76,15 @@ std::vector<State *> ENFA::closure(State *state) const {
         std::vector<State *> newCurrentStates;
         for (const auto &currentState : currentStates) {
             const std::vector<Transition *> transitions = findTransition(currentState, eps);
-            if (!transitions.empty()) {
-                for (const auto &transition : transitions) {
-                    result.insert(transition->to);
-                    newCurrentStates.push_back(transition->to);
-                }
+            for (const auto &transition : transitions) {
+                if (transition->to->name == state->name) continue;
+                result.insert(transition->to);
+                newCurrentStates.push_back(transition->to);
             }
         }
         currentStates = newCurrentStates;
     }
-
-    return std::vector<State *>(result.begin(), result.end());
+    return {result.begin(), result.end()};
 }
 
 void ENFA::printStats(std::ostream &out) const {
@@ -120,8 +118,7 @@ void ENFA::printStats() const { printStats(std::cout); }
 DFA ENFA::toDFA() const {
     // Fetch starting state;
     State *start;
-    for (auto state : states)
-        if (state->starting) start = state;
+    start = findStartingState();
 
     // Get ε-Closure for start state
     std::vector<State *> startClosure = closure(start);
@@ -130,10 +127,15 @@ DFA ENFA::toDFA() const {
     std::map<std::string, State *> DFAStates;
     std::vector<Transition *> DFATransitions = {};
 
+    // Check if accepted
+    bool accepting = false;
+    for (auto s : startClosure)
+        if (s->accepting) accepting = true;
+
     // Initialize the algorithm
     std::set<State *> init(startClosure.begin(), startClosure.end());
     DFAStates.insert(
-      {stateSetToName(init), new State{.name = stateSetToName(init), .starting = true, .accepting = start->accepting}});
+      {stateSetToName(init), new State{.name = stateSetToName(init), .starting = true, .accepting = accepting}});
 
     std::vector<std::set<State *>> queue = {init};
 
@@ -142,7 +144,6 @@ DFA ENFA::toDFA() const {
         // Starting points
         std::set<State *> starters = queue[0];
         std::string starterName = stateSetToName(starters);
-        std::cout << starterName << std::endl;
 
         // Go over every character in the alphabet
         for (const char letter : alphabet) {
@@ -154,11 +155,10 @@ DFA ENFA::toDFA() const {
                 // Check for transitions with this input
                 for (auto transition : transitions) {
                     if (transition->from == from && transition->input == letter) {
-                        targets.insert(transition->to->copy());
                         // Get the ε-closure of this target
-                        std::vector<State *> targetsClosures = closure(transition->to);
+                        std::vector<State *> targetClosures = closure(transition->to);
                         // Add all the ε-closure's states to the targets
-                        for (State *targetsClosure : targetsClosures) { targets.insert(targetsClosure); }
+                        for (State *targetClosure : targetClosures) { targets.insert(targetClosure); }
                     }
                 }
             }
@@ -166,8 +166,6 @@ DFA ENFA::toDFA() const {
             // We now have all the info for the specified letter
             // Let's create the new properties
             std::string targetName = stateSetToName(targets);
-
-            std::cout << targetName << std::endl;
 
             // Check if accepted
             bool accepting = false;

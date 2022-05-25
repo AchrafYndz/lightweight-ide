@@ -67,6 +67,15 @@ DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
     }
 }
 
+DFA::DFA(std::vector<DFA> dfas, bool cross) {
+    DFA currentDFA = dfas.front();
+    for (const DFA& dfa : dfas) {
+        if (currentDFA == dfas.front()) continue;
+        currentDFA = DFA(currentDFA, dfa, cross);
+    }
+    *this = currentDFA;
+}
+
 bool DFA::pairCrossed(TFA &t, const std::string &s1, const std::string &s2) {
     for (auto &row : t) {
         std::string pName = row.first;
@@ -219,13 +228,13 @@ void DFA::printTable(TFA &t) {
             int colIndex = col - row->second.begin();
             if (colIndex <= rowIndex) std::cout << "	" << (col->second ? "X" : "-");
         }
-        std::cout << std::endl;
+        std::cout << '\n';
 
         // Print bottom names
         if (row == (t.end() - 1)) {
             std::cout << "	";
             for (auto &col : row->second) { std::cout << col.first << "	"; }
-            std::cout << std::endl;
+            std::cout << '\n';
         }
     }
 }
@@ -343,3 +352,35 @@ bool DFA::operator==(DFA &rhs) {
     // or not.
     return !pairCrossed(t, startingL->name, startingR->name);
 }
+
+DFA& DFA::operator=(DFA const &rhs) {
+    alphabet = rhs.alphabet;
+    states = rhs.states;
+    transitions = rhs.transitions;
+
+    return *this;
+}
+
+void DFA::printStats(std::ostream &out) const {
+    out << "no_of_states=" << states.size() << '\n';
+
+    std::map<char, unsigned int> transitionCount;
+    for (const auto &transition : transitions) { ++transitionCount[transition->input]; }
+
+    // print other char transitions
+    for (const char ch : alphabet) out << "no_of_transitions[" << ch << "]=" << transitionCount[ch] << '\n';
+
+    // collect degree information
+    std::map<int, int> degreeCounter;
+    for (const auto &state : states) {
+        unsigned int count = 0;
+        for (const auto &transition : transitions)
+            if (transition->from == state) ++count;
+
+        ++degreeCounter[count];
+    }
+
+    for (const auto &degreeCount : degreeCounter)
+        out << "degree[" << degreeCount.first << "]=" << degreeCount.second << '\n';
+}
+void DFA::printStats() const { printStats(std::cout); }

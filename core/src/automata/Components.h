@@ -2,7 +2,7 @@
 #define IDE_COMPONENTS_H
 
 #include "../../lib/id/Id.h"
-#include "../../lib/nlohman-json/json.hpp"
+#include "../../lib/nlohmann-json/json.hpp"
 
 #include <string>
 
