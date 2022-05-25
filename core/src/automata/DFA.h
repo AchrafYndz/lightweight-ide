@@ -28,7 +28,6 @@ class DFA : public FA {
     DFA(std::vector<DFA> dfas, bool cross);
 
     bool operator==(DFA &rhs);
-    DFA& operator=(DFA const &rhs);
 };
 
 #endif  // IDE_DFA_H
