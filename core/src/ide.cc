@@ -6,6 +6,8 @@
 #include <vector>
 
 int main() {
+    // CLI
+    
     const std::unordered_map<std::string, unsigned int> frequenties = {
       {"if", 842},     {"return", 682}, {"def", 578},   {"elif", 193},    {"is", 183},    {"for", 155},
       {"import", 114}, {"from", 92},    {"class", 90},  {"and", 83},      {"in", 67},     {"not", 60},
