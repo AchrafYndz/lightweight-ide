@@ -1,5 +1,6 @@
 #include "../lib/path/path.h"
 #include "models/autocompletionGenerator.h"
+#include "other/cli.h"
 
 #include <fstream>
 #include <unordered_map>
@@ -7,6 +8,7 @@
 
 int main() {
     // CLI
+    cli::Action action = cli::waitForAction();
     
     const std::unordered_map<std::string, unsigned int> frequenties = {
       {"if", 842},     {"return", 682}, {"def", 578},   {"elif", 193},    {"is", 183},    {"for", 155},
