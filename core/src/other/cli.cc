@@ -24,8 +24,10 @@ namespace cli {
         int x;
         scanf("%d",&x);
 
+        // Clear console
         clearConsole();
 
+        // process input
         if (x == 0) return Action::Autocomplete;
         else if (x == 1) return Action::SyntaxHighlighting;
 
@@ -43,13 +45,12 @@ namespace cli {
 
         // Get user input
         std::string path;
+        getline(std::cin, path);
 
-        while (true) {
-            getline(std::cin, path);
-            if (std::cin.get() == '\n') break;
-        }
-
+        // Clear console
         clearConsole();
+
+        // Process path
         if ((path[0] == '\'' || path[0] == '"') && (path[path.length() - 1] == '\'' || path[path.length() - 1] == '"')) path = path.substr(1, path.length() - 2);
         if (path.length() == 0) path = "./input.py";
         return path;
