@@ -1,0 +1,64 @@
+{
+    "alphabet": [
+        "x",
+        "y"
+    ],
+    "states": [
+        {
+            "accepting": false,
+            "name": "a",
+            "starting": false
+        },
+        {
+            "accepting": false,
+            "name": "b",
+            "starting": false
+        },
+        {
+            "accepting": true,
+            "name": "c",
+            "starting": false
+        },
+        {
+            "accepting": true,
+            "name": "d",
+            "starting": true
+        },
+        {
+            "accepting": false,
+            "name": "e",
+            "starting": false
+        }
+    ],
+    "transitions": [
+        {
+            "from": "a",
+            "input": "x",
+            "to": [
+                {
+                    "chance": 0.5,
+                    "state": "b"
+                },
+                {
+                    "chance": 0.25,
+                    "state": "d"
+                },
+                {
+                    "chance": 0.25,
+                    "state": "e"
+                }
+            ]
+        },
+        {
+            "from": "b",
+            "input": "y",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "e"
+                }
+            ]
+        }
+    ],
+    "type": "PDFA"
+}

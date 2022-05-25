@@ -1,6 +1,22 @@
+# ignore compiled code/binaries
+build
+dist
+cmake-build-*
+
+# ignore editor config
 .idea
 .cache
-build
-cmake-build-debug
-node_modules
+.vscode
 .DS_STORE
+.vimspector.*
+
+# ignore installed node modules
+node_modules
+
+# Data collector
+data-collector/output.json
+data-collector/output.cpp
+
+# Tag data
+tags.*
+tags
