@@ -2,14 +2,15 @@
 #include <sstream>
 #include "../../lib/doctest/doctest.h"
 
-#include "../../src/automata/DFA.h"
 #include "../../lib/path/path.h"
+#include "../../src/automata/DFA.h"
 
 TEST_SUITE("DFATests") {
     TEST_CASE("[DFATests] parseFile0") {
         const DFA dfa(path::rootDirectory + "/tests/automataTests/res/input/DFA0.json");
 
-        const std::ifstream expectedFile(path::rootDirectory + "/tests/automataTests/res/expected/DFATests-parseFile0.json");
+        const std::ifstream expectedFile(path::rootDirectory +
+                                         "/tests/automataTests/res/expected/DFATests-parseFile0.json");
         std::stringstream expected;
         expected << expectedFile.rdbuf();
 
@@ -25,7 +26,8 @@ TEST_SUITE("DFATests") {
     TEST_CASE("[DFATests] parseFile1") {
         const DFA dfa(path::rootDirectory + "/tests/automataTests/res/input/DFA1.json");
 
-        const std::ifstream expectedFile(path::rootDirectory + "/tests/automataTests/res/expected/DFATests-parseFile1.json");
+        const std::ifstream expectedFile(path::rootDirectory +
+                                         "/tests/automataTests/res/expected/DFATests-parseFile1.json");
         std::stringstream expected;
         expected << expectedFile.rdbuf();
 
@@ -44,7 +46,8 @@ TEST_SUITE("DFATests") {
 
         const DFA product(dfa0, dfa1, false);
 
-         const std::ifstream expectedFile(path::rootDirectory + "/tests/automataTests/res/expected/DFATests-productDFAUnion0.json");
+        const std::ifstream expectedFile(path::rootDirectory +
+                                         "/tests/automataTests/res/expected/DFATests-productDFAUnion0.json");
         std::stringstream expected;
         expected << expectedFile.rdbuf();
 
@@ -63,7 +66,8 @@ TEST_SUITE("DFATests") {
 
         const DFA product(dfa0, dfa1, true);
 
-         const std::ifstream expectedFile(path::rootDirectory + "/tests/automataTests/res/expected/DFATests-productDFAUnion1.json");
+        const std::ifstream expectedFile(path::rootDirectory +
+                                         "/tests/automataTests/res/expected/DFATests-productDFAUnion1.json");
         std::stringstream expected;
         expected << expectedFile.rdbuf();
 

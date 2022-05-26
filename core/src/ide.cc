@@ -33,7 +33,7 @@ int main() {
         while (true) {
             // load the autocompletion models
             PDFA model(path::rootDirectory + "/res/autocomplete.json");
-            
+
             std::cin.clear(), std::cin.sync();
             std::string input = cli::waitForInput();
 

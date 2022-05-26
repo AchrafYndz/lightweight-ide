@@ -116,8 +116,7 @@ TEST_SUITE("ENFATests") {
         ENFA enfa(path::rootDirectory + "/tests/automataTests/res/input/ENFA2.json");
 
         // load in expected file
-        const std::ifstream expectedFile(path::rootDirectory +
-                                         "/tests/automataTests/res/expected/ENFATests-MSSC2.txt");
+        const std::ifstream expectedFile(path::rootDirectory + "/tests/automataTests/res/expected/ENFATests-MSSC2.txt");
         std::stringstream expected;
         expected << expectedFile.rdbuf();
 

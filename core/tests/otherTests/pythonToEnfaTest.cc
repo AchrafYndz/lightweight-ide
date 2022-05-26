@@ -1,8 +1,8 @@
 #include <sstream>
 #include "../../lib/doctest/doctest.h"
 
-#include "../../src/other/pythonToEnfa.h"
 #include "../../lib/path/path.h"
+#include "../../src/other/pythonToEnfa.h"
 
 TEST_SUITE("pythonToEnfaTests") {
     TEST_CASE("[pythonToEnfaTests] scan0") {
