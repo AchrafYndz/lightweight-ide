@@ -1065,15 +1065,15 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.8645833333333334,
+                    "chance": 0.04081443346783544,
                     "state": "and"
                 },
                 {
-                    "chance": 0.03125,
+                    "chance": 0.10041278233848151,
                     "state": "as"
                 },
                 {
-                    "chance": 0.10416666666666667,
+                    "chance": 0.8587727841936831,
                     "state": "assert"
                 }
             ]
@@ -1273,11 +1273,11 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.7317073170731707,
+                    "chance": 0.8540080030979734,
                     "state": "class"
                 },
                 {
-                    "chance": 0.2682926829268293,
+                    "chance": 0.14599199690202658,
                     "state": "continue"
                 }
             ]
@@ -1487,11 +1487,11 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.9292604501607717,
+                    "chance": 0.9936004266382241,
                     "state": "def"
                 },
                 {
-                    "chance": 0.0707395498392283,
+                    "chance": 0.006399573361775881,
                     "state": "del"
                 }
             ]
@@ -1511,11 +1511,11 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.9292604501607717,
+                    "chance": 0.9936004266382241,
                     "state": "def"
                 },
                 {
-                    "chance": 0.0707395498392283,
+                    "chance": 0.006399573361775881,
                     "state": "del"
                 }
             ]
@@ -1545,15 +1545,15 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.772,
+                    "chance": 0.2907494145199063,
                     "state": "elif"
                 },
                 {
-                    "chance": 0.192,
+                    "chance": 0.14730679156908666,
                     "state": "else"
                 },
                 {
-                    "chance": 0.036,
+                    "chance": 0.561943793911007,
                     "state": "except"
                 }
             ]
@@ -1583,11 +1583,11 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.8008298755186722,
+                    "chance": 0.6637262763966854,
                     "state": "elif"
                 },
                 {
-                    "chance": 0.1991701244813278,
+                    "chance": 0.33627372360331464,
                     "state": "else"
                 }
             ]
@@ -1737,15 +1737,15 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.10830324909747292,
+                    "chance": 0.002214378475575239,
                     "state": "finally"
                 },
                 {
-                    "chance": 0.5595667870036101,
+                    "chance": 0.09986347440977657,
                     "state": "for"
                 },
                 {
-                    "chance": 0.33212996389891697,
+                    "chance": 0.8979221471146482,
                     "state": "from"
                 }
             ]
@@ -2045,19 +2045,19 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.6981757877280266,
+                    "chance": 0.2707301493255816,
                     "state": "if"
                 },
                 {
-                    "chance": 0.0945273631840796,
+                    "chance": 0.5917755209731621,
                     "state": "import"
                 },
                 {
-                    "chance": 0.05555555555555555,
+                    "chance": 0.06220202001499736,
                     "state": "in"
                 },
                 {
-                    "chance": 0.1517412935323383,
+                    "chance": 0.0752923096862589,
                     "state": "is"
                 }
             ]
@@ -2287,11 +2287,11 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.3333333333333333,
+                    "chance": 0.02481692432872254,
                     "state": "nonlocal"
                 },
                 {
-                    "chance": 0.6666666666666666,
+                    "chance": 0.9751830756712775,
                     "state": "not"
                 }
             ]
@@ -2311,11 +2311,11 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.3333333333333333,
+                    "chance": 0.02481692432872254,
                     "state": "nonlocal"
                 },
                 {
-                    "chance": 0.6666666666666666,
+                    "chance": 0.9751830756712775,
                     "state": "not"
                 }
             ]
@@ -2525,11 +2525,11 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.042134831460674156,
+                    "chance": 0.08113446042028756,
                     "state": "raise"
                 },
                 {
-                    "chance": 0.9578651685393258,
+                    "chance": 0.9188655395797124,
                     "state": "return"
                 }
             ]
@@ -2739,11 +2739,11 @@
             "input": "*",
             "to": [
                 {
-                    "chance": 0.9302325581395349,
+                    "chance": 0.02574364521362899,
                     "state": "while"
                 },
                 {
-                    "chance": 0.06976744186046512,
+                    "chance": 0.974256354786371,
                     "state": "with"
                 }
             ]
@@ -2815,4 +2815,139 @@
                 {
                     "chance": 1.0,
                     "state": "while"
-            
+                }
+            ]
+        },
+        {
+            "from": "whil",
+            "input": "e",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "while"
+                }
+            ]
+        },
+        {
+            "from": "wi",
+            "input": "*",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "with"
+                }
+            ]
+        },
+        {
+            "from": "wi",
+            "input": "t",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "wit"
+                }
+            ]
+        },
+        {
+            "from": "wit",
+            "input": "*",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "with"
+                }
+            ]
+        },
+        {
+            "from": "wit",
+            "input": "h",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "with"
+                }
+            ]
+        },
+        {
+            "from": "y",
+            "input": "*",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "yield"
+                }
+            ]
+        },
+        {
+            "from": "y",
+            "input": "i",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "yi"
+                }
+            ]
+        },
+        {
+            "from": "yi",
+            "input": "*",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "yield"
+                }
+            ]
+        },
+        {
+            "from": "yi",
+            "input": "e",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "yie"
+                }
+            ]
+        },
+        {
+            "from": "yie",
+            "input": "*",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "yield"
+                }
+            ]
+        },
+        {
+            "from": "yie",
+            "input": "l",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "yiel"
+                }
+            ]
+        },
+        {
+            "from": "yiel",
+            "input": "*",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "yield"
+                }
+            ]
+        },
+        {
+            "from": "yiel",
+            "input": "d",
+            "to": [
+                {
+                    "chance": 1.0,
+                    "state": "yield"
+                }
+            ]
+        }
+    ],
+    "type": "PDFA"
+}

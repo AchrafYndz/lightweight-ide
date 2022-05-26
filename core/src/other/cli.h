@@ -12,6 +12,8 @@ namespace cli {
     Action waitForAction();
     std::string waitForPath();
     std::string waitForInput();
+
+    void clearConsole();
 }
 
 #endif // __PROJECTS_LIGHTWEIGHT_IDE_CORE_SRC_OTHER_CLI_H_

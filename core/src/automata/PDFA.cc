@@ -3,6 +3,9 @@
 PDFA::PDFA(const std::string &file) {
     // parse the file
     std::ifstream f(file);
+
+    if (!f.is_open()) throw std::runtime_error("[PDFA] Could not load file: '" + file + '\'');
+
     const nlohmann::json j = nlohmann::json::parse(f);
 
     // check the automata type
@@ -24,26 +27,25 @@ PDFA::PDFA(const std::string &file) {
         State *from = findState(transition["from"]);
         const char input = std::string(transition["input"]).front();
 
-        double totalChance = 0;
         for (const auto &chancePair : transition["to"]) {
             State *to = findState(chancePair["state"]);
             const double chance = chancePair["chance"];
-
-            totalChance += chance;
 
             Transition *transitionParsed = new Transition{.from = from, .to = to, .input = input};
             weights[transitionParsed] = chance;
 
             transitions.push_back(transitionParsed);
         }
-
-        assert(totalChance == 1);
     }
+
+    currentState = findStartingState();
 }
 
 PDFA::PDFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
            const std::vector<Transition *> &transitions, const std::map<const Transition *, double> &weights) :
-    FA(alphabet, states, transitions), weights(weights) {}
+    FA(alphabet, states, transitions), weights(weights) {
+    currentState = findStartingState();
+}
 
 void PDFA::print(std::ostream &out) const {
     // Initialize json object
@@ -94,9 +96,13 @@ void PDFA::input(const std::string &in) {
         std::vector<Transition *> posTransitions = findTransition(currentState, ch);
 
         if (posTransitions.empty()) {
-            stuck = true;
-            currentState = nullptr;
-            return;
+            if (ch == '*') {
+                return;
+            } else {
+                stuck = true;
+                currentState = nullptr;
+                return;
+            }
         }
 
         // select a random weighted transition
@@ -120,14 +126,16 @@ void PDFA::input(const std::string &in) {
     }
 }
 
-const std::string &PDFA::predict() {
+std::string PDFA::predict() {
+    if (stuck) return "";
+
     // because we do not want to update the PDFA, store the old state and reset it later
     State *curr = currentState;
 
     // input the 'epsilon' char
     input("*");
 
-    const std::string &result = currentState->name;
+    const std::string result = currentState->name;
     currentState = curr;
 
     return result;

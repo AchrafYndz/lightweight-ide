@@ -7,38 +7,47 @@
 #include <vector>
 
 int main() {
+    // const std::unordered_map<std::string, unsigned int> frequenties = {
+    //   {"assert", 74064}, {"import", 63923}, {"def", 59620},     {"await", 58217}, {"from", 53931},  {"None", 52338},
+    //   {"return", 34893}, {"async", 29284},  {"if", 29244},      {"True", 18886},  {"False", 11808}, {"with", 9007},
+    //   {"as", 8660},      {"is", 8133},      {"not", 7191},      {"in", 6719},     {"class", 6616},  {"for", 5998},
+    //   {"except", 4799},  {"try", 3717},     {"and", 3520},      {"raise", 3081},  {"or", 2619},     {"elif", 2483},
+    //   {"lambda", 1430},  {"else", 1258},    {"continue", 1131}, {"yield", 932},   {"del", 384},     {"break", 320},
+    //   {"pass", 245},     {"while", 238},    {"nonlocal", 183},  {"finally", 133}, {"global", 18}};
+
+    // std::ifstream keywordFile(path::rootDirectory + "/res/keywords.txt");
+    // std::vector<std::string> keywords;
+
+    // {
+    //     std::string keyword;
+    //     while (std::getline(keywordFile, keyword)) keywords.push_back(keyword);
+    // }
+
+    // std::ofstream pdfaFile(path::rootDirectory + "/res/autocomplete.json");
+    // models::genAutocompletionPDFAToFile(keywords, frequenties, pdfaFile);
+
     // CLI
     cli::Action action = cli::waitForAction();
 
     if (action == cli::Action::Autocomplete) {
-        const std::unordered_map<std::string, unsigned int> frequenties = {
-          {"if", 842},     {"return", 682}, {"def", 578},   {"elif", 193},    {"is", 183},    {"for", 155},
-          {"import", 114}, {"from", 92},    {"class", 90},  {"and", 83},      {"in", 67},     {"not", 60},
-          {"else", 48},    {"del", 44},     {"while", 40},  {"continue", 33}, {"or", 33},     {"pass", 33},
-          {"False", 30},   {"None", 30},    {"True", 30},   {"finally", 30},  {"global", 30}, {"nonlocal", 30},
-          {"raise", 30},   {"break", 24},   {"lambda", 15}, {"assert", 10},   {"try", 9},     {"except", 9},
-          {"with", 3},     {"as", 3},       {"yield", 1}};
-
-        // read python keywords from input file to build the pdfa from
-        std::ifstream keywordsFile(path::rootDirectory + "/res/keywords.txt");
-
-        std::vector<std::string> keywords;
-
-        // exit the program with an error if the file is not opened
-        if (!keywordsFile.is_open()) return 1;
-
-        // anomimous scope (to prevent shadowing of variable 'keyword'
-        {
-            std::string keyword;
-            while (std::getline(keywordsFile, keyword)) { keywords.push_back(keyword); }
-        }
-
-        std::ofstream pdfaFile(path::rootDirectory + "/res/autocompletion.json");
-        models::genAutocompletionPDFAToFile(keywords, frequenties, pdfaFile);
-
-        while (true) { 
+        while (true) {
+            // load the autocompletion models
+            PDFA model(path::rootDirectory + "/res/autocomplete.json");
+            
+            std::cin.clear(), std::cin.sync();
             std::string input = cli::waitForInput();
-            // TODO @Jonas: process input for autocomplete
+
+            // feed the data to the model
+            model.input(input);
+
+            // ask for a prediction
+            std::cout << "Prediction: '" << model.predict() << "'\n";
+
+            // wait for random input before continuing
+            std::cin.get();
+
+            // Clear console
+            cli::clearConsole();
         }
     } else if (action == cli::Action::SyntaxHighlighting) {
         std::string path = cli::waitForPath();

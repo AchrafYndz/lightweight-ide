@@ -3,9 +3,7 @@
 #include <iostream>
 
 namespace cli {
-    void clearConsole() {
-        std::cout << "\033[2J\033[1;1H";
-    }
+    void clearConsole() { std::cout << "\033[2J\033[1;1H"; }
 
     Action waitForAction() {
         // Wait for input
@@ -21,15 +19,19 @@ namespace cli {
         std::cout << "\x1B[32m>>\033[0m ";
 
         // Get user input
-        int x;
-        scanf("%d",&x);
+        std::string tmp;
+        std::getline(std::cin, tmp);
+
+        const int x = std::stoi(tmp);
 
         // Clear console
         clearConsole();
 
         // process input
-        if (x == 0) return Action::Autocomplete;
-        else if (x == 1) return Action::SyntaxHighlighting;
+        if (x == 0)
+            return Action::Autocomplete;
+        else if (x == 1)
+            return Action::SyntaxHighlighting;
 
         throw "Invalid input";
     }
@@ -45,13 +47,14 @@ namespace cli {
 
         // Get user input
         std::string path;
-        getline(std::cin, path);
+        std::cin >> path;
 
         // Clear console
         clearConsole();
 
         // Process path
-        if ((path[0] == '\'' || path[0] == '"') && (path[path.length() - 1] == '\'' || path[path.length() - 1] == '"')) path = path.substr(1, path.length() - 2);
+        if ((path[0] == '\'' || path[0] == '"') && (path[path.length() - 1] == '\'' || path[path.length() - 1] == '"'))
+            path = path.substr(1, path.length() - 2);
         if (path.length() == 0) path = "./input.py";
         return path;
     }
@@ -66,11 +69,9 @@ namespace cli {
 
         // Get user input
         std::string input;
-        getline(std::cin, input);
-
-        // Clear console
-        clearConsole();
+        std::cin.clear(), std::cin.sync();
+        std::getline(std::cin, input);
 
         return input;
     }
-}
+}  // namespace cli
