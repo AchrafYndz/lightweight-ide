@@ -1,6 +1,4 @@
 #include "cli.h"
-#include <cstdio>
-#include <iostream>
 
 namespace cli {
     void clearConsole() { std::cout << "\033[2J\033[1;1H"; }
@@ -14,6 +12,7 @@ namespace cli {
         std::cout << std::endl;
         std::cout << "\x1B[32m[0]\033[0m Autocomplete" << std::endl;
         std::cout << "\x1B[32m[1]\033[0m Syntax highlighting" << std::endl;
+        std::cout << "\x1B[32m[2]\033[0m Regenerate model" << std::endl;
         std::cout << std::endl;
 
         std::cout << "\x1B[32m>>\033[0m ";
@@ -22,7 +21,8 @@ namespace cli {
         std::string tmp;
         std::getline(std::cin, tmp);
 
-        const int x = std::stoi(tmp);
+        // check for valid input
+        const int x = utils::stoi(tmp);
 
         // Clear console
         clearConsole();
@@ -32,6 +32,8 @@ namespace cli {
             return Action::Autocomplete;
         else if (x == 1)
             return Action::SyntaxHighlighting;
+        else if (x == 2)
+            return Action::ModelGeneration;
 
         throw "Invalid input";
     }
