@@ -18,6 +18,8 @@ class FA {
 
   public:
     FA() = default;
+    FA(const FA& fa);
+    FA& operator=(const FA& fa);
     FA(const std::string &file);
     FA(const std::vector<char> &alphabet, const std::vector<State *> states,
        const std::vector<Transition *> transitions);

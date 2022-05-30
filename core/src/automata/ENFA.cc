@@ -218,3 +218,35 @@ DFA ENFA::toDFA() const {
     // All done!
     return dfa;
 }
+
+ENFA::ENFA(const ENFA &enfa): FA(){
+    alphabet = enfa.getAlphabet();
+    eps = enfa.eps;
+    for (auto state:enfa.getStates()){
+        State* stateNew = new State{.name = state->name, .starting = state->starting, .accepting = state->accepting};
+        states.push_back(stateNew);
+    }
+    for (auto transition:enfa.getTransitions()){
+        Transition* transitionNew = new Transition;
+        auto it = find_if(states.begin(), states.end(), [&] (State* s) {return s->name == transition->from->name;});
+        if (it!=states.end()){
+            transitionNew->from = *it;
+        } else{
+            transitionNew->from = transition->from;
+        }
+        auto it2 = find_if(states.begin(), states.end(), [&] (State* s) {return s->name == transition->to->name;});
+        if (it2!=states.end()){
+            transitionNew->to = *it2;
+        } else{
+            transitionNew->to = transition->to;
+        }
+        transitionNew->input = transition->input;
+        transitions.push_back(transitionNew);
+    }
+}
+
+ENFA &ENFA::operator=(const ENFA& enfa) {
+    FA::operator=(enfa);
+    eps = enfa.eps;
+    return *this;
+}

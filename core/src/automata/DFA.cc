@@ -377,3 +377,10 @@ void DFA::printStats(std::ostream &out) const {
         out << "degree[" << degreeCount.first << "]=" << degreeCount.second << '\n';
 }
 void DFA::printStats() const { printStats(std::cout); }
+
+DFA::DFA(const DFA &dfa):FA(dfa) {}
+
+DFA &DFA::operator=(const DFA& dfa) {
+    FA::operator=(dfa);
+    return *this;
+}

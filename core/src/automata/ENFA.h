@@ -12,6 +12,8 @@ class ENFA : public FA {
 
   public:
     ENFA() = default;
+    ENFA(const ENFA& enfa);
+    ENFA& operator=(const ENFA& enfa);
     ENFA(const std::string &file);
     ENFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
          const std::vector<Transition *> &transitions, const char eps);
