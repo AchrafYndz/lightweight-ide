@@ -181,8 +181,29 @@ FA::FA(const FA &fa) {
 }
 
 FA &FA::operator=(const FA& fa) {
-    alphabet = fa.alphabet;
-    setStates(fa.getStates());
-    setTransitions(fa.getTransitions());
+    alphabet = fa.getAlphabet();
+    states.clear();
+    transitions.clear();
+    for (auto state:fa.getStates()){
+        State* stateNew = new State{.name = state->name, .starting = state->starting, .accepting = state->accepting};
+        states.push_back(stateNew);
+    }
+    for (auto transition:fa.getTransitions()){
+        Transition* transitionNew = new Transition;
+        auto it = find_if(states.begin(), states.end(), [&] (State* s) {return s->name == transition->from->name;});
+        if (it!=states.end()){
+            transitionNew->from = *it;
+        } else{
+            transitionNew->from = transition->from;
+        }
+        auto it2 = find_if(states.begin(), states.end(), [&] (State* s) {return s->name == transition->to->name;});
+        if (it2!=states.end()){
+            transitionNew->to = *it2;
+        } else{
+            transitionNew->to = transition->to;
+        }
+        transitionNew->input = transition->input;
+        transitions.push_back(transitionNew);
+    }
     return *this;
 }
