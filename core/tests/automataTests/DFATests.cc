@@ -79,4 +79,35 @@ TEST_SUITE("DFATests") {
 
         CHECK_EQ(expected.str(), actual.str());
     }
+
+    TEST_CASE("[DFATests] accepts0") {
+        const DFA dfa0(path::rootDirectory + "/tests/automataTests/res/input/DFA0.json");
+
+        SUBCASE("[ENFATests]-accepts expectTrue") { CHECK(dfa0.accepts("xx")); }
+
+        SUBCASE("[ENFATests]-accepts expectFalse") {
+            CHECK_FALSE(dfa0.accepts(""));
+            CHECK_FALSE(dfa0.accepts("x"));
+            CHECK_FALSE(dfa0.accepts("xxx"));
+            CHECK_FALSE(dfa0.accepts("xxxxx"));
+        }
+    }
+
+    TEST_CASE("[DFATests] accepts0") {
+        const DFA dfa0(path::rootDirectory + "/tests/automataTests/res/input/DFA1.json");
+
+        SUBCASE("[ENFATests]-accepts expectTrue") {
+            CHECK(dfa0.accepts("xx"));
+            CHECK(dfa0.accepts("xxxxx"));
+            CHECK(dfa0.accepts("xxxxxxxx"));
+        }
+
+        SUBCASE("[ENFATests]-accepts expectFalse") {
+            CHECK_FALSE(dfa0.accepts(""));
+            CHECK_FALSE(dfa0.accepts("x"));
+            CHECK_FALSE(dfa0.accepts("xxx"));
+            CHECK_FALSE(dfa0.accepts("xxxx"));
+            CHECK_FALSE(dfa0.accepts("xxxxxx"));
+        }
+    }
 }

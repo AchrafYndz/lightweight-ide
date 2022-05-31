@@ -28,6 +28,7 @@ class DFA : public FA {
         const std::vector<Transition *> &transitions);
     DFA(const DFA &dfa1, const DFA &dfa2, bool cross);
     DFA(std::vector<DFA> dfas, bool cross);
+    bool accepts(const std::string &str) const;
 
     bool operator==(DFA &rhs);
 

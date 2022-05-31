@@ -384,3 +384,16 @@ DFA &DFA::operator=(const DFA& dfa) {
     FA::operator=(dfa);
     return *this;
 }
+bool DFA::accepts(const std::string &str) const {
+    State *curState = findStartingState();
+    for (const char ch : str) {
+        const std::vector<Transition *> tmp = findTransition(curState, ch);
+        for(const auto& transition : tmp){
+            curState = findState(transition->to->name);
+        }
+    }
+    if(curState->accepting){
+        return true;
+    }
+    return false;
+}
