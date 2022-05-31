@@ -387,6 +387,9 @@ DFA &DFA::operator=(const DFA& dfa) {
 bool DFA::accepts(const std::string &str) const {
     State *curState = findStartingState();
     for (const char ch : str) {
+        if (std::find(alphabet.begin(), alphabet.end(), ch) == alphabet.end()) {
+            return false;
+        }
         const std::vector<Transition *> tmp = findTransition(curState, ch);
         for(const auto& transition : tmp){
             curState = findState(transition->to->name);
