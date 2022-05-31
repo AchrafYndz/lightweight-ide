@@ -21,13 +21,17 @@ int main() {
             // feed the data to the model
             model.input(input);
 
+            if (input == "exit()") {
+                break;
+            }
+
             // ask for a prediction
             std::cout << "Prediction: '" << model.predict() << "'\n";
 
             // wait for random input before continuing
             std::cin.get();
 
-            // Clear console
+            // clear console
             cli::clearConsole();
         }
     } else if (action == cli::Action::SyntaxHighlighting) {
