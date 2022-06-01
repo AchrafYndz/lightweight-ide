@@ -2,6 +2,7 @@
 #define __PROJECTS_LIGHTWEIGHT_IDE_CORE_SRC_OTHER_CLI_H_
 
 #include "../../lib/utils/utils.h"
+#include "../../lib/path/path.h"
 
 #include <exception>
 #include <iostream>

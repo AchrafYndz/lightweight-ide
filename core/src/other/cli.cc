@@ -48,17 +48,23 @@ namespace cli {
         std::cout << "\x1B[32m>>\033[0m ";
 
         // Get user input
-        std::string path;
-        std::cin >> path;
+        std::string inPath;
+        std::getline(std::cin, inPath);
 
         // Clear console
         clearConsole();
 
         // Process path
-        if ((path[0] == '\'' || path[0] == '"') && (path[path.length() - 1] == '\'' || path[path.length() - 1] == '"'))
-            path = path.substr(1, path.length() - 2);
-        if (path.length() == 0) path = "./input.py";
-        return path;
+        if (inPath.length() == 0)
+            inPath = path::rootDirectory + '/' + "input.py";
+        else if ((inPath[0] == '\'' || inPath[0] == '"') &&
+                 (inPath[inPath.length() - 1] == '\'' || inPath[inPath.length() - 1] == '"'))
+            inPath = inPath.substr(1, inPath.length() - 2);
+
+        // add rootDirectory if path is relative
+        if (inPath[0] != '/')
+            inPath = path::rootDirectory + '/' + inPath;
+        return inPath;
     }
 
     std::string waitForInput() {

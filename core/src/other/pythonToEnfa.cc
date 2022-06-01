@@ -1,4 +1,5 @@
 #include "pythonToEnfa.h"
+#include <stdexcept>
 
 std::vector<std::string> pythonToEnfa::getPythonKeyw(const std::string &file) const {
     std::vector<std::string> result;
@@ -17,6 +18,9 @@ std::vector<std::pair<char, std::pair<int, int>>> pythonToEnfa::scan(const std::
 
     // read the file char by char without skipping whitespace
     std::ifstream infile(file);
+    
+    if (!infile.is_open()) throw std::runtime_error("Could not open file: '" + file + "'\n");
+
     while (infile >> std::noskipws >> ch) {
         result.emplace_back(ch, std::make_pair(i, j));
         if (ch == '\n') {
