@@ -31,21 +31,27 @@ class pythonToEnfa {
     std::string expand(std::vector<char> &inputSet) const;
     std::string replaceRegexOp(const std::string &str) const;
 
-    // std::vector<ENFA> generateEnfaKeywords(const std::string& file) const;   // NOT USED BECAUSE ENFA STORE ISSUE
-    // std::vector<ENFA> generateEnfaComments() const;  // NOT USED BECAUSE ENFA STORE ISSUE
-    // std::vector<ENFA> generateEnfaStrings() const;   // NOT USED BECAUSE ENFA STORE ISSUE
+    std::vector<ENFA> generateEnfaKeywords(const std::string& file) const;
+    std::vector<ENFA> generateEnfaComments() const;
+    std::vector<ENFA> generateEnfaStrings() const;
+    void generateDfaFromEnfas(const std::vector<ENFA>& enfas);
+    void generateAutomata(const std::string& file);
 
-    // bool isKeyword(const std::string& str, std::vector<ENFA>& enfaKeyw) const;  // NOT USED BECAUSE ENFA STORE ISSUE
-    // bool isComment(const std::string& str, std::vector<ENFA>& enfaComments) const;  // NOT USED BECAUSE ENFA STORE
-    // ISSUE bool isString(const std::string& str, std::vector<ENFA>& enfaStrings) const;    // NOT USED BECAUSE ENFA
-    // STORE ISSUE
+    bool isKeyword(const std::string& str, std::vector<ENFA>& enfaKeyw) const;
+    bool isComment(const std::string& str, std::vector<ENFA>& enfaComments) const;
+    bool isString(const std::string& str, std::vector<ENFA>& enfaStrings) const;
 
-    void identifyTokens(const std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m,
-                        const std::string &fileKeyw);
+    void identifyTokens(const std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m);
+    void splitAndIdentify(const std::string &file);
     void printIdentifiedTokens(std::ostream &out) const;
     std::vector<std::pair<pos, pos>> keywords;
     std::vector<std::pair<pos, pos>> comments;
     std::vector<std::pair<pos, pos>> strings;
+
+    DFA dfaKeyw;
+    std::vector<ENFA> enfasKeyw;
+    std::vector<ENFA> enfasComments;
+    std::vector<ENFA> enfasStrings;
 };
 
 #endif  // IDE_PYTHON_TO_ENFA_H

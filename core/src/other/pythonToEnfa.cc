@@ -322,7 +322,6 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
         }
         char currentChar = it->first;
         if (std::find(separators.begin(), separators.end(), currentChar) != separators.end()) {
-            std::cout << "this char got skipped " << currentChar << std::endl;
             toSkip.push_back(index);
         }
         index++;
@@ -409,7 +408,7 @@ std::string pythonToEnfa::replaceRegexOp(const std::string &str) const {
     return result;
 }
 
-/*
+
 std::vector<ENFA> pythonToEnfa::generateEnfaKeywords(const std::string &file) const {
     std::vector<ENFA> result;
     std::vector<std::string> keyw = getPythonKeyw(file);
@@ -538,15 +537,10 @@ bool pythonToEnfa::isString(const std::string &str, std::vector<ENFA> &enfaStrin
 
     return result;
 }
-*/
 
-void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m,
-                                  const std::string &fileKeyw) {
+
+void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m) {
     // OLD METHOD USES CONTAINERS
-    /*
-    std::vector<ENFA> enfaKeywords = generateEnfaKeywords(fileKeyw);
-    std::vector<ENFA> enfaComments = generateEnfaComments();
-    std::vector<ENFA> enfaStrings = generateEnfaStrings();
 
     std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string>::const_iterator it;
 
@@ -554,21 +548,21 @@ void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, 
         std::string str = it->second;
 
         bool identified = false;
-        bool isaKeyw = false;
-        bool isaComment = false;
-        bool isaString = false;
+        bool isaKeyw;
+        bool isaComment;
+        bool isaString;
 
 
         std::pair<pos,pos> positions;
 
-        isaKeyw = isKeyword(str, enfaKeywords);
+        isaKeyw = isKeyword(str, enfasKeyw);
         if (isaKeyw){
             positions = it->first;
             keywords.push_back(positions);
             identified = true;
         }
         if(!identified){
-            isaComment = isComment(str, enfaComments);
+            isaComment = isComment(str, enfasComments);
             if (isaComment){
                 positions = it->first;
                 comments.push_back(positions);
@@ -576,14 +570,14 @@ void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, 
             }
         }
         if(!identified){
-            isaString = isString(str, enfaStrings);
+            isaString = isString(str, enfasStrings);
             if (isaString){
                 positions = it->first;
                 strings.push_back(positions);
             }
         }
     }
-     */
+    /*
 
     std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string>::const_iterator it;
 
@@ -682,6 +676,7 @@ void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, 
             }
         }
     }
+     */
 }
 
 void pythonToEnfa::printIdentifiedTokens(std::ostream &out) const {
@@ -716,4 +711,34 @@ void pythonToEnfa::printIdentifiedTokens(std::ostream &out) const {
                 << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
         }
     }
+}
+
+void pythonToEnfa::generateDfaFromEnfas(const std::vector<ENFA> &enfas) {
+    // FUNCTION DOES NOT WORK CORRECTLY (error in product automaton?)
+    // convert ENFAS to DFAS
+    std::vector<DFA> dfas;
+    for(auto& enfa : enfas){
+        dfas.push_back(enfa.toDFA());
+    }
+    unsigned int size = dfas.size();
+    // if only one dfa present
+    if (size == 1){
+        dfaKeyw = dfas[0];
+    }
+    else{
+        // if more than one dfa present
+        DFA curDFA = dfas[0];
+        for(unsigned int i = 1; i < size; i++){
+            curDFA = DFA(curDFA,dfas[i], false);
+        }
+        dfaKeyw = curDFA;
+    }
+}
+void pythonToEnfa::generateAutomata(const std::string &file) {
+    enfasKeyw = generateEnfaKeywords(file);
+    enfasComments = generateEnfaComments();
+    enfasStrings = generateEnfaStrings();
+}
+void pythonToEnfa::splitAndIdentify(const std::string &file) {
+    identifyTokens(splitText(file));
 }
