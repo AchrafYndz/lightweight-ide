@@ -99,8 +99,8 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                     indexToSkip++;
                 }
                 int strLength = (int) comment.length();
-                result[std::make_pair(std::make_pair(it->second.first, it->second.second),
-                                      std::make_pair(it->second.first + strLength - 1, it->second.second))] = comment;
+                result[std::make_pair(std::make_pair(it->second.second, it->second.first),
+                                      std::make_pair(it->second.second, it->second.first + strLength - 1))] = comment;
             }
         }
 
@@ -123,7 +123,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                     }
                 }
                 if (whiteSpaceInFront){
-                    std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.second, chars[index].second.first);
                     std::string multiLComment = "\n";
                     multiLComment += R"(""")";
                     toSkip.push_back(index);
@@ -158,7 +158,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                         indexToSkip++;
                     }
                     std::pair<int, int> endP =
-                      std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
+                      std::make_pair(chars[indexToSkip].second.second, chars[indexToSkip].second.first);
                     result[std::make_pair(startP, endP)] = multiLComment;
                 }
             }
@@ -183,7 +183,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                     }
                 }
                 if (whiteSpaceInFront){
-                    std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.second, chars[index].second.first);
                     std::string multiLComment = "\n";
                     multiLComment += R"(''')";
                     toSkip.push_back(index);
@@ -218,7 +218,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                         indexToSkip++;
                     }
                     std::pair<int, int> endP =
-                      std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
+                      std::make_pair(chars[indexToSkip].second.second, chars[indexToSkip].second.first);
                     result[std::make_pair(startP, endP)] = multiLComment;
                 }
             }
@@ -244,7 +244,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                     }
                 }
                 if (!whiteSpaceInFront){
-                    std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.second, chars[index].second.first);
                     std::string multiLComment = R"(""")";
                     toSkip.push_back(index);
                     toSkip.push_back(index + 1);
@@ -278,7 +278,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                         indexToSkip++;
                     }
                     std::pair<int, int> endP =
-                      std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
+                      std::make_pair(chars[indexToSkip].second.second, chars[indexToSkip].second.first);
                     result[std::make_pair(startP, endP)] = multiLComment;
                 }
             }
@@ -304,7 +304,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                     }
                 }
                 if (!whiteSpaceInFront){
-                    std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.second, chars[index].second.first);
                     std::string multiLComment = R"(''')";
                     toSkip.push_back(index);
                     toSkip.push_back(index + 1);
@@ -338,7 +338,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                         indexToSkip++;
                     }
                     std::pair<int, int> endP =
-                      std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
+                      std::make_pair(chars[indexToSkip].second.second, chars[indexToSkip].second.first);
                     result[std::make_pair(startP, endP)] = multiLComment;
                 }
             }
@@ -357,7 +357,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
             } else {
                 ch = '\'';
             }
-            std::pair<int, int> posFirst = std::make_pair(it->second.first, it->second.second);
+            std::pair<int, int> posFirst = std::make_pair(it->second.second, it->second.first);
             std::pair<int, int> posLast;
             int indexesToSkip = index;
 
@@ -374,7 +374,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                 toSkip.push_back(indexesToSkip);
                 if (curChar == ch) {
                     matchingQuoteFound = true;
-                    posLast = std::make_pair(chars[indexesToSkip].second.first, chars[indexesToSkip].second.second);
+                    posLast = std::make_pair(chars[indexesToSkip].second.second, chars[indexesToSkip].second.first);
                 }
             }
             result[std::make_pair(posFirst, posLast)] = strContent;
@@ -403,12 +403,12 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
         if (std::find(toSkip.begin(), toSkip.end(), index) != toSkip.end()) { continue; }
         std::string word;
         bool endWordFound = false;
-        std::pair<int, int> posFirstLetter = std::make_pair(chars[index].second.first, chars[index].second.second);
+        std::pair<int, int> posFirstLetter = std::make_pair(chars[index].second.second, chars[index].second.first);
         std::pair<int, int> posLastLetter;
 
         while (!endWordFound) {
             word += chars[index].first;
-            posLastLetter = std::make_pair(chars[index].second.first, chars[index].second.second);
+            posLastLetter = std::make_pair(chars[index].second.second, chars[index].second.first);
             if ((unsigned long) index == chars.size() - 1) {
                 endWordFound = true;
             } else if (std::find(toSkip.begin(), toSkip.end(), index + 1) != toSkip.end()) {
