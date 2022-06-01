@@ -106,89 +106,121 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
 
         // MULTILINE COMMENTS with "
         if (index < charsSize - 5) {
-            if (chars[index].first == '"' and chars[index + 1].first == '"' and chars[index + 2].first == '"' and
-                chars[index].second.first == 0) {
-                std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
-                std::string multiLComment = "\n";
-                multiLComment += R"(""")";
-                toSkip.push_back(index);
-                toSkip.push_back(index + 1);
-                toSkip.push_back(index + 2);
-                int indexToSkip = index + 3;
-
-                while (indexToSkip < charsSize - 2) {
-                    if (chars[indexToSkip].first == '"' and chars[indexToSkip + 1].first == '"' and
-                        chars[indexToSkip + 2].first == '"') {
-                        break;
+            if (chars[index].first == '"' and chars[index + 1].first == '"' and chars[index + 2].first == '"') {
+                // check if only whitespace in front
+                bool whiteSpaceInFront = true;
+                if (chars[index].second.first == 0){
+                    // char is at start of line
+                    whiteSpaceInFront = true;
+                } else{
+                    int indexIt = index;
+                    while(indexIt>0 and chars[indexIt].second.first > 0 and whiteSpaceInFront){
+                        indexIt --;
+                        // if char not = ' ', not only white space in front
+                        if (chars[indexIt].first != ' '){
+                            whiteSpaceInFront = false;
+                        }
                     }
-                    if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
-                        toSkip.push_back(indexToSkip);
-                    }
-                    multiLComment += chars[indexToSkip].first;
-                    indexToSkip++;
                 }
-                multiLComment += R"(""")";
-                toSkip.push_back(indexToSkip);
-                toSkip.push_back(indexToSkip + 1);
-                toSkip.push_back(indexToSkip + 2);
+                if (whiteSpaceInFront){
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
+                    std::string multiLComment = "\n";
+                    multiLComment += R"(""")";
+                    toSkip.push_back(index);
+                    toSkip.push_back(index + 1);
+                    toSkip.push_back(index + 2);
+                    int indexToSkip = index + 3;
 
-                indexToSkip = indexToSkip + 2;
-                while (indexToSkip < charsSize) {
-                    if (chars[indexToSkip + 1].first != '"') {
-                        break;
-                    } else {
-                        multiLComment += '"';
-                        toSkip.push_back(indexToSkip + 1);
+                    while (indexToSkip < charsSize - 2) {
+                        if (chars[indexToSkip].first == '"' and chars[indexToSkip + 1].first == '"' and
+                            chars[indexToSkip + 2].first == '"') {
+                            break;
+                        }
+                        if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
+                            toSkip.push_back(indexToSkip);
+                        }
+                        multiLComment += chars[indexToSkip].first;
+                        indexToSkip++;
                     }
-                    indexToSkip++;
+                    multiLComment += R"(""")";
+                    toSkip.push_back(indexToSkip);
+                    toSkip.push_back(indexToSkip + 1);
+                    toSkip.push_back(indexToSkip + 2);
+
+                    indexToSkip = indexToSkip + 2;
+                    while (indexToSkip < charsSize) {
+                        if (chars[indexToSkip + 1].first != '"') {
+                            break;
+                        } else {
+                            multiLComment += '"';
+                            toSkip.push_back(indexToSkip + 1);
+                        }
+                        indexToSkip++;
+                    }
+                    std::pair<int, int> endP =
+                      std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
+                    result[std::make_pair(startP, endP)] = multiLComment;
                 }
-                std::pair<int, int> endP =
-                  std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
-                result[std::make_pair(startP, endP)] = multiLComment;
             }
         }
 
         // MULTILINE COMMENTS with '
         if (index < charsSize - 5) {
-            if (chars[index].first == '\'' and chars[index + 1].first == '\'' and chars[index + 2].first == '\'' and
-                chars[index].second.first == 0) {
-                std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
-                std::string multiLComment = "\n";
-                multiLComment += R"(''')";
-                toSkip.push_back(index);
-                toSkip.push_back(index + 1);
-                toSkip.push_back(index + 2);
-                int indexToSkip = index + 3;
-
-                while (indexToSkip < charsSize - 2) {
-                    if (chars[indexToSkip].first == '\'' and chars[indexToSkip + 1].first == '\'' and
-                        chars[indexToSkip + 2].first == '\'') {
-                        break;
+            if (chars[index].first == '\'' and chars[index + 1].first == '\'' and chars[index + 2].first == '\'') {
+                // check if only whitespace in front
+                bool whiteSpaceInFront = true;
+                if (chars[index].second.first == 0){
+                    // char is at start of line
+                    whiteSpaceInFront = true;
+                } else{
+                    int indexIt = index;
+                    while(indexIt>0 and chars[indexIt].second.first > 0 and whiteSpaceInFront){
+                        indexIt --;
+                        // if char not = ' ', not only white space in front
+                        if (chars[indexIt].first != ' '){
+                            whiteSpaceInFront = false;
+                        }
                     }
-                    if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
-                        toSkip.push_back(indexToSkip);
-                    }
-                    multiLComment += chars[indexToSkip].first;
-                    indexToSkip++;
                 }
-                multiLComment += R"(''')";
-                toSkip.push_back(indexToSkip);
-                toSkip.push_back(indexToSkip + 1);
-                toSkip.push_back(indexToSkip + 2);
+                if (whiteSpaceInFront){
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
+                    std::string multiLComment = "\n";
+                    multiLComment += R"(''')";
+                    toSkip.push_back(index);
+                    toSkip.push_back(index + 1);
+                    toSkip.push_back(index + 2);
+                    int indexToSkip = index + 3;
 
-                indexToSkip = indexToSkip + 2;
-                while (indexToSkip < charsSize) {
-                    if (chars[indexToSkip + 1].first != '\'') {
-                        break;
-                    } else {
-                        multiLComment += '\'';
-                        toSkip.push_back(indexToSkip + 1);
+                    while (indexToSkip < charsSize - 2) {
+                        if (chars[indexToSkip].first == '\'' and chars[indexToSkip + 1].first == '\'' and
+                            chars[indexToSkip + 2].first == '\'') {
+                            break;
+                        }
+                        if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
+                            toSkip.push_back(indexToSkip);
+                        }
+                        multiLComment += chars[indexToSkip].first;
+                        indexToSkip++;
                     }
-                    indexToSkip++;
+                    multiLComment += R"(''')";
+                    toSkip.push_back(indexToSkip);
+                    toSkip.push_back(indexToSkip + 1);
+                    toSkip.push_back(indexToSkip + 2);
+
+                    indexToSkip = indexToSkip + 2;
+                    while (indexToSkip < charsSize) {
+                        if (chars[indexToSkip + 1].first != '\'') {
+                            break;
+                        } else {
+                            multiLComment += '\'';
+                            toSkip.push_back(indexToSkip + 1);
+                        }
+                        indexToSkip++;
+                    }
+                    std::pair<int, int> endP =
+                      std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
+                    result[std::make_pair(startP, endP)] = multiLComment;
                 }
-                std::pair<int, int> endP =
-                  std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
-                result[std::make_pair(startP, endP)] = multiLComment;
             }
         }
 
@@ -196,42 +228,59 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
         if (index < charsSize - 5) {
             if (chars[index].first == '"' and chars[index + 1].first == '"' and chars[index + 2].first == '"' and
                 chars[index].second.first != 0) {
-                std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
-                std::string multiLComment = R"(""")";
-                toSkip.push_back(index);
-                toSkip.push_back(index + 1);
-                toSkip.push_back(index + 2);
-                int indexToSkip = index + 3;
-
-                while (indexToSkip < charsSize - 2) {
-                    if (chars[indexToSkip].first == '"' and chars[indexToSkip + 1].first == '"' and
-                        chars[indexToSkip + 2].first == '"') {
-                        break;
+                // check if only whitespace in front
+                bool whiteSpaceInFront = true;
+                if (chars[index].second.first == 0){
+                    // char is at start of line
+                    whiteSpaceInFront = true;
+                } else{
+                    int indexIt = index;
+                    while(indexIt>0 and chars[indexIt].second.first > 0 and whiteSpaceInFront){
+                        indexIt --;
+                        // if char not = ' ', not only white space in front
+                        if (chars[indexIt].first != ' '){
+                            whiteSpaceInFront = false;
+                        }
                     }
-                    if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
-                        toSkip.push_back(indexToSkip);
-                    }
-                    multiLComment += chars[indexToSkip].first;
-                    indexToSkip++;
                 }
-                multiLComment += R"(""")";
-                toSkip.push_back(indexToSkip);
-                toSkip.push_back(indexToSkip + 1);
-                toSkip.push_back(indexToSkip + 2);
+                if (!whiteSpaceInFront){
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
+                    std::string multiLComment = R"(""")";
+                    toSkip.push_back(index);
+                    toSkip.push_back(index + 1);
+                    toSkip.push_back(index + 2);
+                    int indexToSkip = index + 3;
 
-                indexToSkip = indexToSkip + 2;
-                while (indexToSkip < charsSize) {
-                    if (chars[indexToSkip + 1].first != '"') {
-                        break;
-                    } else {
-                        multiLComment += '"';
-                        toSkip.push_back(indexToSkip + 1);
+                    while (indexToSkip < charsSize - 2) {
+                        if (chars[indexToSkip].first == '"' and chars[indexToSkip + 1].first == '"' and
+                            chars[indexToSkip + 2].first == '"') {
+                            break;
+                        }
+                        if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
+                            toSkip.push_back(indexToSkip);
+                        }
+                        multiLComment += chars[indexToSkip].first;
+                        indexToSkip++;
                     }
-                    indexToSkip++;
+                    multiLComment += R"(""")";
+                    toSkip.push_back(indexToSkip);
+                    toSkip.push_back(indexToSkip + 1);
+                    toSkip.push_back(indexToSkip + 2);
+
+                    indexToSkip = indexToSkip + 2;
+                    while (indexToSkip < charsSize) {
+                        if (chars[indexToSkip + 1].first != '"') {
+                            break;
+                        } else {
+                            multiLComment += '"';
+                            toSkip.push_back(indexToSkip + 1);
+                        }
+                        indexToSkip++;
+                    }
+                    std::pair<int, int> endP =
+                      std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
+                    result[std::make_pair(startP, endP)] = multiLComment;
                 }
-                std::pair<int, int> endP =
-                  std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
-                result[std::make_pair(startP, endP)] = multiLComment;
             }
         }
 
@@ -239,47 +288,69 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
         if (index < charsSize - 5) {
             if (chars[index].first == '\'' and chars[index + 1].first == '\'' and chars[index + 2].first == '\'' and
                 chars[index].second.first != 0) {
-                std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
-                std::string multiLComment = R"(''')";
-                toSkip.push_back(index);
-                toSkip.push_back(index + 1);
-                toSkip.push_back(index + 2);
-                int indexToSkip = index + 3;
-
-                while (indexToSkip < charsSize - 2) {
-                    if (chars[indexToSkip].first == '\'' and chars[indexToSkip + 1].first == '\'' and
-                        chars[indexToSkip + 2].first == '\'') {
-                        break;
+                // check if only whitespace in front
+                bool whiteSpaceInFront = true;
+                if (chars[index].second.first == 0){
+                    // char is at start of line
+                    whiteSpaceInFront = true;
+                } else{
+                    int indexIt = index;
+                    while(indexIt>0 and chars[indexIt].second.first > 0 and whiteSpaceInFront){
+                        indexIt --;
+                        // if char not = ' ', not only white space in front
+                        if (chars[indexIt].first != ' '){
+                            whiteSpaceInFront = false;
+                        }
                     }
-                    if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
-                        toSkip.push_back(indexToSkip);
-                    }
-                    multiLComment += chars[indexToSkip].first;
-                    indexToSkip++;
                 }
-                multiLComment += R"(''')";
-                toSkip.push_back(indexToSkip);
-                toSkip.push_back(indexToSkip + 1);
-                toSkip.push_back(indexToSkip + 2);
+                if (!whiteSpaceInFront){
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
+                    std::string multiLComment = R"(''')";
+                    toSkip.push_back(index);
+                    toSkip.push_back(index + 1);
+                    toSkip.push_back(index + 2);
+                    int indexToSkip = index + 3;
 
-                indexToSkip = indexToSkip + 2;
-                while (indexToSkip < charsSize) {
-                    if (chars[indexToSkip + 1].first != '\'') {
-                        break;
-                    } else {
-                        multiLComment += '\'';
-                        toSkip.push_back(indexToSkip + 1);
+                    while (indexToSkip < charsSize - 2) {
+                        if (chars[indexToSkip].first == '\'' and chars[indexToSkip + 1].first == '\'' and
+                            chars[indexToSkip + 2].first == '\'') {
+                            break;
+                        }
+                        if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
+                            toSkip.push_back(indexToSkip);
+                        }
+                        multiLComment += chars[indexToSkip].first;
+                        indexToSkip++;
                     }
-                    indexToSkip++;
+                    multiLComment += R"(''')";
+                    toSkip.push_back(indexToSkip);
+                    toSkip.push_back(indexToSkip + 1);
+                    toSkip.push_back(indexToSkip + 2);
+
+                    indexToSkip = indexToSkip + 2;
+                    while (indexToSkip < charsSize) {
+                        if (chars[indexToSkip + 1].first != '\'') {
+                            break;
+                        } else {
+                            multiLComment += '\'';
+                            toSkip.push_back(indexToSkip + 1);
+                        }
+                        indexToSkip++;
+                    }
+                    std::pair<int, int> endP =
+                      std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
+                    result[std::make_pair(startP, endP)] = multiLComment;
                 }
-                std::pair<int, int> endP =
-                  std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
-                result[std::make_pair(startP, endP)] = multiLComment;
             }
         }
 
         // SINGLE LINE STRINGS
         if (it->first == '"' or it->first == '\'') {
+            // check if particular " or ' is already in token
+            if (std::find(toSkip.begin(), toSkip.end(), index) != toSkip.end()) {
+                index++;
+                continue;
+            }
             char ch;
             if (it->first == '"') {
                 ch = '"';
@@ -498,44 +569,41 @@ std::vector<ENFA> pythonToEnfa::generateEnfaStrings() const {
 }
 
 bool pythonToEnfa::isKeyword(const std::string &str, std::vector<ENFA> &enfaKeyw) const {
-    bool result = false;
 
     std::vector<ENFA>::iterator it;
     for (it = enfaKeyw.begin(); it != enfaKeyw.end(); it++){
         if(it->accepts(str)){
-            result = true;
+            return true;
         }
     }
 
-    return result;
+    return false;
 }
 
 bool pythonToEnfa::isComment(const std::string &str, std::vector<ENFA> &enfaComments) const {
-    bool result = false;
 
     std::string strNoOp = replaceRegexOp(str);
     std::vector<ENFA>::iterator it;
     for (it = enfaComments.begin(); it != enfaComments.end(); it++){
         if(it->accepts(strNoOp)){
-            result = true;
+            return true;
         }
     }
 
-    return result;
+    return false;
 }
 
 bool pythonToEnfa::isString(const std::string &str, std::vector<ENFA> &enfaStrings) const {
-    bool result = false;
 
     std::string strNoOp = replaceRegexOp(str);
     std::vector<ENFA>::iterator it;
     for (it = enfaStrings.begin(); it != enfaStrings.end(); it++){
         if(it->accepts(strNoOp)){
-            result = true;
+            return true;
         }
     }
 
-    return result;
+    return false;
 }
 
 
