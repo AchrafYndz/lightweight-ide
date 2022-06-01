@@ -39,11 +39,11 @@ int main() {
         std::string path = cli::waitForPath();
         pythonToEnfa p;
         // generates all automata
-        p.generateAutomata(path::rootDirectory + "/src/other/inputfiles/python_keyw.txt");
+        p.generateAutomata(path::rootDirectory + "/src/other/inputfiles/pythonKeyw.txt");
         // splits text into tokens and identifies
         p.splitAndIdentify(path);
         // print results (should be commented out once highlighting done)
-        // p.printIdentifiedTokens(std::cout);
+        p.printIdentifiedTokens(std::cout);
 
         // highlight based on information in p.keywords, p.comments and p.strings:
 
