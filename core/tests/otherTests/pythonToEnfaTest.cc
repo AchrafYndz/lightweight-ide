@@ -16,9 +16,43 @@ TEST_SUITE("pythonToEnfaTests") {
 
         std::stringstream actual("");
 
-        // std::ofstream tmp(path::rootDirectory + "/tests/automataTests/res/expected/DFATests-parseFile0.json");
-
         p.scanToFile(actual, path::rootDirectory + "/tests/otherTests/res/input/scan0.txt");
+
+        CHECK_EQ(expected.str(), actual.str());
+    }
+
+    TEST_CASE("[pythonToEnfaTests] splitAndIdentify0") {
+        pythonToEnfa p;
+
+        const std::ifstream expectedFile(path::rootDirectory +
+                                         "/tests/otherTests/res/expected/splitAndIdentify0exp.txt");
+
+        std::stringstream expected;
+        expected << expectedFile.rdbuf();
+
+        std::stringstream actual("");
+
+        p.generateAutomata(path::rootDirectory + "/tests/otherTests/res/input/pythonKeyw.txt");
+        p.splitAndIdentify(path::rootDirectory + "/tests/otherTests/res/input/splitAndIdentify0.py");
+        p.printIdentifiedTokens(actual);
+
+        CHECK_EQ(expected.str(), actual.str());
+    }
+
+    TEST_CASE("[pythonToEnfaTests] splitAndIdentify1") {
+        pythonToEnfa p;
+
+        const std::ifstream expectedFile(path::rootDirectory +
+                                         "/tests/otherTests/res/expected/splitAndIdentify1exp.txt");
+
+        std::stringstream expected;
+        expected << expectedFile.rdbuf();
+
+        std::stringstream actual("");
+
+        p.generateAutomata(path::rootDirectory + "/tests/otherTests/res/input/pythonKeyw.txt");
+        p.splitAndIdentify(path::rootDirectory + "/tests/otherTests/res/input/splitAndIdentify1.py");
+        p.printIdentifiedTokens(actual);
 
         CHECK_EQ(expected.str(), actual.str());
     }
