@@ -68,9 +68,9 @@ DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
 
 DFA::DFA(std::vector<DFA> &dfas, bool cross) {
     DFA &currentDFA = dfas[0];
-    for (const DFA &dfa : dfas) {
-        if (currentDFA == dfas[0]) continue;
-        currentDFA = DFA(currentDFA, dfa, cross);
+    for (auto it =dfas.begin(); it !=dfas.end(); it++) {
+        if (dfas.begin() == it) continue;
+        currentDFA = DFA(currentDFA, *it, cross);
     }
     alphabet = currentDFA.alphabet;
     states = currentDFA.states;
