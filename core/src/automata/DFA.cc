@@ -74,11 +74,9 @@ unsigned int DFA::count = 0;
 
 DFA::DFA(std::vector<DFA> &dfas, bool cross) {
     DFA &currentDFA = dfas[0];
-    for (auto it = dfas.begin(); it != dfas.end(); it++) {
+    for (auto it =dfas.begin(); it !=dfas.end(); it++) {
         if (dfas.begin() == it) continue;
-
         currentDFA = DFA(currentDFA, *it, cross);
-        std::cout << count++ << '\n';
     }
     alphabet = currentDFA.alphabet;
     states = currentDFA.states;
