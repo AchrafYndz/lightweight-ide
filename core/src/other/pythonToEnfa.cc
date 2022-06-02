@@ -491,6 +491,12 @@ std::vector<ENFA> pythonToEnfa::generateEnfaKeywords(const std::string &file) co
     for (it = keyw.begin(); it != keyw.end(); it++) {
         RE reg(*it, '%');
         ENFA enfa = reg.toENFA();
+        std::vector<char> alphabet;
+        for (char a = 'a'; a != ('z' + 1); a++) {
+            alphabet.push_back(a);
+        }
+
+        enfa.setAlphabet(alphabet);
         result.push_back(enfa);
     }
     return result;
