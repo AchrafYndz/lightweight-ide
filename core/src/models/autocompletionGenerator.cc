@@ -61,7 +61,7 @@ PDFA models::genAutocompletionPDFA(const std::vector<std::string> &keywords,
     for (const auto transition : transitions) { weights[transition] = 1; }
 
     // determine the weight for the possible keywords
-    // first determine the posible transitions along with the total usage for all transitions from that state
+    // first determine the possible transitions along with the total usage for all transitions from that state
     std::unordered_map<State *, std::vector<std::string>> posTransitions;
     std::unordered_map<const State *, unsigned int> totalUsage;
     for (const auto state : states) {
@@ -77,7 +77,7 @@ PDFA models::genAutocompletionPDFA(const std::vector<std::string> &keywords,
     }
 
     for (const auto &transitionPair : posTransitions) {
-        // amount of usage for all keywords in the posible transitions per state
+        // amount of usage for all keywords in the possible transitions per state
         for (const auto &keyword : transitionPair.second) {
             // usage of this keyword
             const unsigned int usage = (frequenties.find(keyword) == frequenties.end()) ? 0 : frequenties.at(keyword);
