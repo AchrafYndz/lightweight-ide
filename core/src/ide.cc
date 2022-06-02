@@ -22,9 +22,7 @@ int main() {
             // feed the data to the model
             model.input(input);
 
-            if (input == "exit()") {
-                break;
-            }
+            if (input == "exit()") { break; }
 
             // ask for a prediction
             std::cout << "Prediction: '" << model.predict() << "'\n";
@@ -70,7 +68,7 @@ int main() {
 
         std::ofstream pdfaFile(path::rootDirectory + "/res/autocomplete.json");
         models::genAutocompletionPDFAToFile(keywords, frequenties, pdfaFile);
-
+        pdfaFile.close();
         std::cout << "Model generation complete, model can be found at: '" << path::rootDirectory
                   << "/res/autocomplete.json'\n";
         std::cin.get();
