@@ -43,6 +43,7 @@ class pythonToEnfa {
 
     void identifyTokens(const std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m);
     void splitAndIdentify(const std::string &file);
+    void outputTokesAsJson(nlohmann::json &out) const;
     void printIdentifiedTokens(std::ostream &out) const;
     std::vector<std::pair<pos, pos>> keywords;
     std::vector<std::pair<pos, pos>> comments;

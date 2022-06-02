@@ -49,8 +49,10 @@ DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
 
                 // create new state and transition
                 State *newState;
+                bool present = false;
                 if (findState(newStateName)) {
                     newState = findState(newStateName);
+                    present = true;
                 } else {
                     newState = new State{.name = newStateName, .starting = false, .accepting = newStateAccepting};
                     states.push_back(newState);
@@ -63,18 +65,16 @@ DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
 
                 transitions.push_back(trans);
 
-                newStates.push_back(newState);
+                if (!present) newStates.push_back(newState);
             }
         }
         currentStates = newStates;
     }
 }
 
-unsigned int DFA::count = 0;
-
 DFA::DFA(std::vector<DFA> &dfas, bool cross) {
     DFA &currentDFA = dfas[0];
-    for (auto it =dfas.begin(); it !=dfas.end(); it++) {
+    for (auto it = dfas.begin(); it != dfas.end(); it++) {
         if (dfas.begin() == it) continue;
         currentDFA = DFA(currentDFA, *it, cross);
     }
