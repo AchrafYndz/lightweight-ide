@@ -3,9 +3,11 @@
 
 #include "FA.h"
 
+
 using TFA = std::vector<std::pair<std::string, std::vector<std::pair<std::string, bool>>>>;
 
 class DFA : public FA {
+static unsigned int count;
   private:  // table filling algorithm
     TFA generateTFA();
     static bool pairCrossed(TFA &t, const std::string &s1, const std::string &s2);

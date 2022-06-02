@@ -38,6 +38,7 @@ int main() {
         pythonToEnfa p;
         // generates all automata
         p.generateAutomata(path::rootDirectory + "/src/other/inputfiles/pythonKeyw.txt");
+        p.generateDfaFromEnfas(p.enfasKeyw);
         // splits text into tokens and identifies
         p.splitAndIdentify(path);
         // print results (should be commented out once highlighting done)
