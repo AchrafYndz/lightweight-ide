@@ -69,16 +69,16 @@ int main() {
 
         cli::clearConsole();
     } else if (action == cli::Action::ModelGeneration) {
-        // load frequenties from file
-        std::ifstream frequentyFile(path::rootDirectory + "/res/frequenties.json");
+        // load frequencies from file
+        std::ifstream frequentyFile(path::rootDirectory + "/res/frequencies.json");
 
         if (!frequentyFile.is_open())
             throw std::runtime_error("[ModelGeneration] Cannot open file: '" + path::rootDirectory +
-                                     "/res/frequenties.json'");
+                                     "/res/frequencies.json'");
 
         // parse the frequenty file
         nlohmann::json j = nlohmann::json::parse(frequentyFile);
-        const std::unordered_map<std::string, unsigned int> frequenties = j["keywords"];
+        const std::unordered_map<std::string, unsigned int> frequencies = j["keywords"];
 
         std::ifstream keywordFile(path::rootDirectory + "/res/keywords.txt");
         std::vector<std::string> keywords;
@@ -89,7 +89,7 @@ int main() {
         }
 
         std::ofstream pdfaFile(path::rootDirectory + "/res/autocomplete.json");
-        models::genAutocompletionPDFAToFile(keywords, frequenties, pdfaFile);
+        models::genAutocompletionPDFAToFile(keywords, frequencies, pdfaFile);
         pdfaFile.close();
         std::cout << "Model generation complete, model can be found at: '" << path::rootDirectory
                   << "/res/autocomplete.json'\n";

@@ -1,7 +1,7 @@
 #include "autocompletionGenerator.h"
 
 PDFA models::genAutocompletionPDFA(const std::vector<std::string> &keywords,
-                                   const std::unordered_map<std::string, unsigned int> &frequenties) {
+                                   const std::unordered_map<std::string, unsigned int> &frequencies) {
     // go over all words, add subsets of the words to the set and add new chars to alphabet
     std::set<char> alphabetSet;
     std::set<std::string> subsets;
@@ -71,7 +71,7 @@ PDFA models::genAutocompletionPDFA(const std::vector<std::string> &keywords,
         for (const auto &keyword : keywords) {
             if (state->name == keyword.substr(0, state->name.size())) {
                 posTransitions[state].push_back(keyword);
-                totalUsage[state] += frequenties.at(keyword);
+                totalUsage[state] += frequencies.at(keyword);
             }
         }
     }
@@ -80,7 +80,7 @@ PDFA models::genAutocompletionPDFA(const std::vector<std::string> &keywords,
         // amount of usage for all keywords in the possible transitions per state
         for (const auto &keyword : transitionPair.second) {
             // usage of this keyword
-            const unsigned int usage = (frequenties.find(keyword) == frequenties.end()) ? 0 : frequenties.at(keyword);
+            const unsigned int usage = (frequencies.find(keyword) == frequencies.end()) ? 0 : frequencies.at(keyword);
             const double weight = (double) usage / (double) totalUsage[transitionPair.first];
 
             // get the keyword state
@@ -111,7 +111,7 @@ PDFA models::genAutocompletionPDFA(const std::vector<std::string> &keywords,
 }
 
 void models::genAutocompletionPDFAToFile(const std::vector<std::string> &keywords,
-                                         const std::unordered_map<std::string, unsigned int> &frequenties,
+                                         const std::unordered_map<std::string, unsigned int> &frequencies,
                                          std::ostream &out) {
-    genAutocompletionPDFA(keywords, frequenties).print(out);
+    genAutocompletionPDFA(keywords, frequencies).print(out);
 }

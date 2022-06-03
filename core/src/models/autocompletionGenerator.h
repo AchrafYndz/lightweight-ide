@@ -13,10 +13,10 @@
 
 namespace models {
     PDFA genAutocompletionPDFA(const std::vector<std::string> &keywords,
-                               const std::unordered_map<std::string, unsigned int> &frequenties);
+                               const std::unordered_map<std::string, unsigned int> &frequencies);
 
     void genAutocompletionPDFAToFile(const std::vector<std::string> &keywords,
-                                     const std::unordered_map<std::string, unsigned int> &frequenties,
+                                     const std::unordered_map<std::string, unsigned int> &frequencies,
                                      std::ostream &out);
 }  // namespace models
 
