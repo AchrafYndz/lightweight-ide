@@ -144,3 +144,47 @@ std::string PDFA::predict() {
 const std::map<const Transition *, double> &PDFA::getWeights() const { return weights; }
 
 const State *PDFA::getCurrentState() const { return currentState; }
+
+PDFA PDFA::minimize() {
+    const double THRESHOLD = 0.10;
+
+    std::vector<char> minAlphabet = alphabet;
+    std::vector<State *> minStates = {};
+    std::vector<Transition *> minTransitions = {};
+    std::map<const Transition *, double> minWeights = {};
+
+    for (std::pair<const Transition *, double> p : weights) {
+        // Ignore transitions with low weights
+        if (p.second < THRESHOLD) continue;
+        // Determine minimized states
+        if (find(minStates.begin(), minStates.end(), p.first->from) == minStates.end())
+            minStates.push_back(p.first->from);
+        if (find(minStates.begin(), minStates.end(), p.first->to) == minStates.end()) minStates.push_back(p.first->to);
+        // Add all other transitions
+        minWeights.insert(p);
+    }
+
+    // Fix the weights
+    for (State *s : minStates) {
+        std::map<const Transition *, double> curWeights;
+        for (std::pair<const Transition *, double> p : minWeights) {
+            if (p.first->from == s) curWeights.insert(p);
+        }
+        // Calculate total weight
+        double total = 0.0;
+        for (std::pair<const Transition *, double> p : curWeights) { total += p.second; }
+        // Rebalance to 1
+        for (std::pair<const Transition *, double> p : curWeights) {
+            double newWeight = p.second / total;
+            minWeights[p.first] = newWeight;
+        }
+    }
+
+    // Push all the transitions from weights to the transitions vector
+    minTransitions.reserve(minWeights.size());
+    for (std::pair<const Transition *, double> p : minWeights) {
+        minTransitions.push_back(const_cast<Transition *>(p.first));
+    }
+
+    return PDFA(alphabet, minStates, minTransitions, minWeights);
+}

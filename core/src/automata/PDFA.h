@@ -20,6 +20,8 @@ class PDFA : public FA {
     PDFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
          const std::vector<Transition *> &transitions, const std::map<const Transition *, double> &weights);
 
+    PDFA minimize();
+
     void print(std::ostream &out) const;
 
     void input(const std::string &in);
