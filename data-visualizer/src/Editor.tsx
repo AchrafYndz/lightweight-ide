@@ -32,7 +32,8 @@ const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpec
     return <p className="whitespace-pre">{n}</p>
 }
 
-const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecs, theme: Theme }) => {
+const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecs | null, theme: Theme }) => {
+    if (!highlightSpecs) return <></>
     const lines = highlightSpecs.code.split("\n")
 
     return <>

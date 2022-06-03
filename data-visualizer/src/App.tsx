@@ -38,7 +38,7 @@ const Header = ({ fileName }: { fileName: string }) => {
     </>
 }
 
-const App = async () => {
+const App = () => {
     const [highlightSpecs, setHighlightSpecs] = useState<HighlightSpecs | null>(null)
     useEffect(() => {
         const getHighlightSpecs = async () => setHighlightSpecs(JSON.parse((await fs.readFile("./input.json")).toString()) as HighlightSpecs)
