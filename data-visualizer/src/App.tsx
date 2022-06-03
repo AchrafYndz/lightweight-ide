@@ -1,6 +1,6 @@
 import Editor from "./Editor"
 import { promises as fs } from "fs"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 export type Bounds = number[]
 type HexColor = string
@@ -39,25 +39,11 @@ const Header = ({ fileName }: { fileName: string }) => {
 }
 
 const App = async () => {
+    const [highlightSpecs, setHighlightSpecs] = useState<HighlightSpecs | null>(null)
     useEffect(() => {
-        function getHighlightSpecs()
+        const getHighlightSpecs = async () => setHighlightSpecs(JSON.parse((await fs.readFile("./input.json")).toString()) as HighlightSpecs)
+        getHighlightSpecs()
     }, [])
-    const highlightSpecs: HighlightSpecs = {
-        "code": "from string import ascii_lowercase\n\ndef main():\n    # This is a comment!\n    message = \"Hello, alphabet!\"\n    print(message, ascii_lowercase)\n\nmain()",
-        "bounds": {
-            "strings": [
-                [87, 105]
-            ],
-            "comments": [
-                [52, 72]
-            ],
-            "keywords": [
-                [0, 4],
-                [12, 18],
-                [36, 39]
-            ]
-        }
-    }
 
     const themes: Theme[] = [
         {
