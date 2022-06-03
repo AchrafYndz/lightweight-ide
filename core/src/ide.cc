@@ -4,6 +4,7 @@
 #include "other/pythonToEnfa.h"
 
 #include <fstream>
+#include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
@@ -42,11 +43,25 @@ int main() {
         // splits text into tokens and identifies
         p.splitAndIdentify(path);
         // print results (should be commented out once highlighting done)
-        p.printIdentifiedTokens(std::cout);
+        nlohmann::json j;
+        p.outputTokesAsJson(j);
+        // p.printIdentifiedTokens(std::cout);
 
-        // highlight based on information in p.keywords, p.comments and p.strings:
+        std::cout << "Please enter the path you want to store the generated results.\nIt needs to be a relative path starting from the root of the project.\n";
+        std::string outputPath;
+        std::getline(std::cin, outputPath);
 
-        // TODO @Michel: process file for syntax highlighting
+        std::ofstream outputFile(path::rootDirectory + '/' + outputPath);
+
+        if (!outputFile.is_open()) throw std::runtime_error("Could not open file: '" + path::rootDirectory + '/' + outputPath + '\'');
+
+        outputFile << std::setw(4) << j << '\n';
+        outputFile.close();
+
+        std::cout << "Succesfully generated results, stored at " << path::rootDirectory << '/' << outputPath << '\n';
+        std::cin.get();
+
+        cli::clearConsole();
     } else if (action == cli::Action::ModelGeneration) {
         // load frequenties from file
         std::ifstream frequentyFile(path::rootDirectory + "/res/frequenties.json");

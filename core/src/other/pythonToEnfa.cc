@@ -483,9 +483,7 @@ std::vector<ENFA> pythonToEnfa::generateEnfaKeywords(const std::string &file) co
         RE reg(*it, '%');
         ENFA enfa = reg.toENFA();
         std::vector<char> alphabet;
-        for (char a = 'a'; a != ('z' + 1); a++) {
-            alphabet.push_back(a);
-        }
+        for (char a = 'a'; a != ('z' + 1); a++) { alphabet.push_back(a); }
 
         enfa.setAlphabet(alphabet);
         result.push_back(enfa);
@@ -772,10 +770,20 @@ void pythonToEnfa::printIdentifiedTokens(std::ostream &out) const {
 }
 
 void pythonToEnfa::outputTokesAsJson(nlohmann::json &out) const {
-    for (const auto &commentBounds : comments) {
-        if (out["comments"].empty()) out["comments"] = std::vector<nlohmann::basic_json<>>();
-        out["comments"].push_back({commentBounds.first, commentBounds.second});
-    }
+    nlohmann::json commentBounds = nlohmann::json::array();
+    nlohmann::json stringBounds = nlohmann::json::array();
+    nlohmann::json keywordBounds = nlohmann::json::array();
+
+    for (const auto &commentBound : comments)
+        commentBounds.push_back(nlohmann::json::object({{"begin", commentBound.first}, {"end", commentBound.second}}));
+    for (const auto &stringBound : strings)
+        stringBounds.push_back(nlohmann::json::object({{"begin", stringBound.first}, {"end", stringBound.second}}));
+    for (const auto &keywordBound : keywords)
+        keywordBounds.push_back(nlohmann::json::object({{"begin", keywordBound.first}, {"end", keywordBound.second}}));
+
+    out["comments"] = commentBounds;
+    out["strings"] = stringBounds;
+    out["keywords"] = keywordBounds;
 }
 
 void pythonToEnfa::generateDfaFromEnfas(const std::vector<ENFA> &enfas) {
@@ -799,4 +807,5 @@ void pythonToEnfa::generateAutomata(const std::string &file) {
     enfasComments = generateEnfaComments();
     enfasStrings = generateEnfaStrings();
 }
+
 void pythonToEnfa::splitAndIdentify(const std::string &file) { identifyTokens(splitText(file)); }
