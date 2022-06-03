@@ -53,12 +53,28 @@ const App = () => {
         }
     ] 
 
-    return (
-        <div className="flex flex-col w-screen h-screen text-white">
-            <Header fileName="main.py" />
-            <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
+    const [{ opacity }, dragRef] = useDrag(
+        () => ({
+          type: ItemTypes.CARD,
+          item: { text },
+          collect: (monitor) => ({
+            opacity: monitor.isDragging() ? 0.5 : 1
+          })
+        }),
+        []
+      )
+      return (
+        <div ref={dragRef} style={{ opacity }}>
+          {text}
         </div>
-  );
+      )
+
+//     return (
+//         <div className="flex flex-col w-screen h-screen text-white">
+//             <Header fileName="main.py" />
+//             <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
+//         </div>
+//   );
 }
 
 export default App
