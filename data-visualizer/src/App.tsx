@@ -39,7 +39,8 @@ const Header = ({ fileName }: { fileName: string }) => {
     </>
 }
 
-function MyDropzone({ setHighlightSpecs }: { setHighlightSpecs: (raw: string) => void }) {
+// Inspiration taken from examples, found at: https://www.npmjs.com/package/react-dropzone
+function Dropzone({ setHighlightSpecs }: { setHighlightSpecs: (raw: string) => void }) {
     const onDrop = useCallback((acceptedFiles: any) => {
       acceptedFiles.forEach((file: any) => {
         const reader = new FileReader()
@@ -78,7 +79,7 @@ const App = () => {
     return (
         <div className="flex flex-col w-screen h-screen text-white">
             <Header fileName="main.py" />
-            <MyDropzone setHighlightSpecs={(raw: string) => setHighlightSpecs(JSON.parse(raw))}></MyDropzone>
+            <Dropzone setHighlightSpecs={(raw: string) => setHighlightSpecs(JSON.parse(raw))}></Dropzone>
             {/* <Editor highlightSpecs={highlightSpecs} theme={themes[0]} /> */}
         </div>
   );
