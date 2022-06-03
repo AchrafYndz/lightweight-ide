@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -43,7 +44,12 @@ int main() {
         // splits text into tokens and identifies
         p.splitAndIdentify(path);
         // print results (should be commented out once highlighting done)
+
+        std::ifstream sourceFile(path);
         nlohmann::json j;
+        std::stringstream tmp("");
+        tmp << sourceFile.rdbuf();
+        j["code"] = tmp.str();
         p.outputTokesAsJson(j);
         // p.printIdentifiedTokens(std::cout);
 
