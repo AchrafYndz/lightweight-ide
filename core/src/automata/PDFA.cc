@@ -141,4 +141,6 @@ std::string PDFA::predict() {
     return result;
 }
 
+const std::map<const Transition *, double> &PDFA::getWeights() const { return weights; }
+
 const State *PDFA::getCurrentState() const { return currentState; }

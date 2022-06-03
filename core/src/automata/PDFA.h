@@ -26,6 +26,8 @@ class PDFA : public FA {
 
     const State *getCurrentState() const;
 
+    const std::map<const Transition *, double> &getWeights() const;
+
     std::string predict();
 };
 
