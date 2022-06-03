@@ -1,6 +1,7 @@
 import Editor from "./Editor"
-import { promises as fs } from "fs"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
+import { useDropzone } from 'react-dropzone'
+
 
 export type Bounds = number[]
 type HexColor = string
@@ -38,12 +39,33 @@ const Header = ({ fileName }: { fileName: string }) => {
     </>
 }
 
+function MyDropzone({ setHighlightSpecs }: { setHighlightSpecs: (raw: string) => void }) {
+    const onDrop = useCallback((acceptedFiles: any) => {
+      acceptedFiles.forEach((file: any) => {
+        const reader = new FileReader()
+  
+        reader.onabort = () => console.log('file reading was aborted')
+        reader.onerror = () => console.log('file reading has failed')
+        reader.onload = () => {
+            setHighlightSpecs(reader.result as string)
+        }
+
+        reader.readAsText(file)
+      })
+      
+    }, [setHighlightSpecs])
+    
+    const {getRootProps, getInputProps} = useDropzone({onDrop})
+    return (
+      <div {...getRootProps()} className="w-full h-full flex items-center justify-center text-black">
+        <input {...getInputProps()} />
+        <p>Drag 'n drop your input file here</p>
+      </div>
+    )
+  }
+
 const App = () => {
     const [highlightSpecs, setHighlightSpecs] = useState<HighlightSpecs | null>(null)
-    useEffect(() => {
-        const getHighlightSpecs = async () => setHighlightSpecs(JSON.parse((await fs.readFile("./input.json")).toString()) as HighlightSpecs)
-        getHighlightSpecs()
-    }, [])
 
     const themes: Theme[] = [
         {
@@ -56,7 +78,8 @@ const App = () => {
     return (
         <div className="flex flex-col w-screen h-screen text-white">
             <Header fileName="main.py" />
-            <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
+            <MyDropzone setHighlightSpecs={(raw: string) => setHighlightSpecs(JSON.parse(raw))}></MyDropzone>
+            {/* <Editor highlightSpecs={highlightSpecs} theme={themes[0]} /> */}
         </div>
   );
 }
