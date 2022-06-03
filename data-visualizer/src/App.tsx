@@ -1,4 +1,6 @@
 import Editor from "./Editor"
+import { promises as fs } from "fs"
+import { useEffect } from "react"
 
 export type Bounds = number[]
 type HexColor = string
@@ -36,7 +38,10 @@ const Header = ({ fileName }: { fileName: string }) => {
     </>
 }
 
-const App = () => {
+const App = async () => {
+    useEffect(() => {
+        function getHighlightSpecs()
+    }, [])
     const highlightSpecs: HighlightSpecs = {
         "code": "from string import ascii_lowercase\n\ndef main():\n    # This is a comment!\n    message = \"Hello, alphabet!\"\n    print(message, ascii_lowercase)\n\nmain()",
         "bounds": {
