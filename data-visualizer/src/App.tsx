@@ -47,9 +47,7 @@ function Dropzone({ setHighlightSpecs }: { setHighlightSpecs: (raw: string) => v
   
         reader.onabort = () => console.log('file reading was aborted')
         reader.onerror = () => console.log('file reading has failed')
-        reader.onload = () => {
-            setHighlightSpecs(reader.result as string)
-        }
+        reader.onload = () => setHighlightSpecs(reader.result as string)
 
         reader.readAsText(file)
       })
@@ -58,7 +56,7 @@ function Dropzone({ setHighlightSpecs }: { setHighlightSpecs: (raw: string) => v
     
     const {getRootProps, getInputProps} = useDropzone({onDrop})
     return (
-      <div {...getRootProps()} className="w-full h-full flex items-center justify-center text-black">
+      <div {...getRootProps()} className="bg-neutral-800 w-full h-full flex items-center justify-center text-white">
         <input {...getInputProps()} />
         <p>Drag 'n drop your input file here</p>
       </div>
@@ -79,8 +77,11 @@ const App = () => {
     return (
         <div className="flex flex-col w-screen h-screen text-white">
             <Header fileName="main.py" />
-            <Dropzone setHighlightSpecs={(raw: string) => setHighlightSpecs(JSON.parse(raw))}></Dropzone>
-            {/* <Editor highlightSpecs={highlightSpecs} theme={themes[0]} /> */}
+            {
+                !highlightSpecs 
+                ? <Dropzone setHighlightSpecs={(raw: string) => setHighlightSpecs(JSON.parse(raw))}></Dropzone> 
+                : <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
+            }
         </div>
   );
 }
