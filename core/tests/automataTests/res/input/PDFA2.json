@@ -53,11 +53,23 @@
       "to": [
         {
           "state": "e",
-          "chance": 1
+          "chance": 0.6
         },
         {
           "state": "b",
-          "chance": 0
+          "chance": 0.06
+        },
+        {
+          "state":"d",
+          "chance": 0.10
+        },
+        {
+          "state": "f",
+          "chance": 0.18
+        },
+        {
+          "state": "h",
+          "chance": 0.06
         }
       ]
     }
