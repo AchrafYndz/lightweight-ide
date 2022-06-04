@@ -33,6 +33,7 @@ TEST_SUITE("pythonToEnfaTests") {
         std::stringstream actual("");
 
         p.generateAutomata(path::rootDirectory + "/tests/otherTests/res/input/pythonKeyw.txt");
+        p.generateDfaFromEnfas(p.enfasKeyw);
         p.splitAndIdentify(path::rootDirectory + "/tests/otherTests/res/input/splitAndIdentify0.py");
         p.printIdentifiedTokens(actual);
 
@@ -51,6 +52,7 @@ TEST_SUITE("pythonToEnfaTests") {
         std::stringstream actual("");
 
         p.generateAutomata(path::rootDirectory + "/tests/otherTests/res/input/pythonKeyw.txt");
+        p.generateDfaFromEnfas(p.enfasKeyw);
         p.splitAndIdentify(path::rootDirectory + "/tests/otherTests/res/input/splitAndIdentify1.py");
         p.printIdentifiedTokens(actual);
 
