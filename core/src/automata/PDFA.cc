@@ -109,7 +109,6 @@ void PDFA::input(const std::string &in) {
         // seed the random number generator
         std::srand((unsigned int) time(nullptr));
         double r = (double) (std::rand() % 100000) / (double) 100000;
-        std::cout << r << '\n';
         Transition *chosen;
         for (Transition *transition : posTransitions) {
             double w = weights.at(transition);
