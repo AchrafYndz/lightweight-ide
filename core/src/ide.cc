@@ -21,7 +21,10 @@ int main() {
             std::cin.clear(), std::cin.sync();
             std::string input = cli::waitForInput();
 
-            if (input == "") continue;
+            if (input.empty()) {
+                cli::clearConsole();
+                continue;
+            }
 
             // feed the data to the model
             model.input(input);
