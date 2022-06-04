@@ -106,9 +106,10 @@ void PDFA::input(const std::string &in) {
         }
 
         // select a random weighted transition
-        // seed the random number generator
-        std::srand((unsigned int) time(nullptr));
-        double r = (double) std::rand() / RAND_MAX;
+        // seed the random number generator [source](https://codingnest.com/generating-random-numbers-using-c-standard-library-the-problems/)
+        std::mt19937 rng(std::random_device{}());
+        std::uniform_int_distribution<> dist(0, RAND_MAX);
+        double r = (double) dist(rng) / RAND_MAX;
         Transition *chosen;
         for (Transition *transition : posTransitions) {
             double w = weights.at(transition);
