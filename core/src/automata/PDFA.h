@@ -6,6 +6,7 @@
 #include "../../lib/nlohmann-json/json.hpp"
 
 #include <ctime>
+#include <random>
 
 class PDFA : public FA {
     // Pair of a Transiton and a chance
