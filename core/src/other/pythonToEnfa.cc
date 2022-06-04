@@ -476,15 +476,14 @@ std::string pythonToEnfa::replaceRegexOp(const std::string &str) const {
 }
 
 std::vector<ENFA> pythonToEnfa::generateEnfaKeywords(const std::string &file) const {
+    std::vector<char> alphabet{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k', 'l', 'm', 'n',
+                               'o', 'p', 'r', 's', 't', 'u', 'w', 'x', 'y', 'F', 'N', 'T'};
     std::vector<ENFA> result;
     std::vector<std::string> keyw = getPythonKeyw(file);
     std::vector<std::string>::iterator it;
     for (it = keyw.begin(); it != keyw.end(); it++) {
         RE reg(*it, '%');
         ENFA enfa = reg.toENFA();
-        std::vector<char> alphabet;
-        for (char a = 'a'; a != ('z' + 1); a++) { alphabet.push_back(a); }
-
         enfa.setAlphabet(alphabet);
         result.push_back(enfa);
     }
