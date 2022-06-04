@@ -37,7 +37,7 @@ class pythonToEnfa {
     void generateDfaFromEnfas(const std::vector<ENFA>& enfas);
     void generateAutomata(const std::string& file);
 
-    bool isKeyword(const std::string& str, std::vector<ENFA>& enfaKeyw) const;
+    bool isKeyword(const std::string& str) const;
     bool isComment(const std::string& str, std::vector<ENFA>& enfaComments) const;
     bool isString(const std::string& str, std::vector<ENFA>& enfaStrings) const;
 

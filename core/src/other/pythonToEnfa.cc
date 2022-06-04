@@ -567,12 +567,16 @@ std::vector<ENFA> pythonToEnfa::generateEnfaStrings() const {
     return result;
 }
 
-bool pythonToEnfa::isKeyword(const std::string &str, std::vector<ENFA> &enfaKeyw) const {
+bool pythonToEnfa::isKeyword(const std::string &str) const {
+    /*
     std::vector<ENFA>::iterator it;
     for (it = enfaKeyw.begin(); it != enfaKeyw.end(); it++) {
         if (it->accepts(str)) { return true; }
     }
 
+    return false;
+     */
+    if (dfaKeyw.accepts(str)) { return true; }
     return false;
 }
 
@@ -611,7 +615,7 @@ void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, 
 
         std::pair<pos, pos> positions;
 
-        isaKeyw = isKeyword(str, enfasKeyw);
+        isaKeyw = isKeyword(str);
         if (isaKeyw) {
             positions = it->first;
             keywords.push_back(positions);
