@@ -21,6 +21,8 @@ int main() {
             std::cin.clear(), std::cin.sync();
             std::string input = cli::waitForInput();
 
+            if (input == "") continue;
+
             // feed the data to the model
             model.input(input);
 
@@ -100,3 +102,14 @@ int main() {
 
     return 0;
 }
+
+//int main() {
+//    PDFA pdfa("../tests/automataTests/res/input/PDFA2.json");
+//    PDFA minimized = pdfa.minimize();
+//    double total = 0.0;
+//    for (auto p: minimized.getWeights()) {
+//        std::cout << p.second << "\n";
+//        total += p.second;
+//    }
+//    std::cout << total << std::endl;
+//}
