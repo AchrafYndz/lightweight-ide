@@ -61,7 +61,6 @@ const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: stri
             const start = coords[0]
             const end = coords[1]
 
-            // All on one line
             const beginIndex = lines.slice(0, start[0]).reduce((total, line) => total + line.length, 0) + (start[0]) * '\n'.length + start[1];
             const endIndex = lines.slice(0, end[0]).reduce((total, line) => total + line.length, 0) + (end[0]) * '\n'.length + end[1] + 1;
 
