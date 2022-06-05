@@ -62,8 +62,7 @@ namespace cli {
             inPath = inPath.substr(1, inPath.length() - 2);
 
         // add rootDirectory if path is relative
-        if (inPath[0] != '/')
-            inPath = path::rootDirectory + '/' + inPath;
+        if (inPath[0] != '/') inPath = path::rootDirectory + '/' + inPath;
         return inPath;
     }
 

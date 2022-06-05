@@ -35,9 +35,9 @@ FA::FA(const std::vector<char> &alphabet, const std::vector<State *> states,
     alphabet(alphabet), states(states), transitions(transitions) {}
 
 FA::~FA() {
-    for (auto state : states) {delete state;}
+    for (auto state : states) { delete state; }
 
-    for (auto transition : transitions) {delete transition;}
+    for (auto transition : transitions) { delete transition; }
 }
 
 void FA::print() const { print(std::cout); }
@@ -156,50 +156,49 @@ bool FA::anyAccepting(std::set<State *> &s) {
 
 FA::FA(const FA &fa) {
     alphabet = fa.getAlphabet();
-    for (auto state:fa.getStates()){
-        State* stateNew = new State{.name = state->name, .starting = state->starting, .accepting = state->accepting};
+    for (auto state : fa.getStates()) {
+        State *stateNew = new State{.name = state->name, .starting = state->starting, .accepting = state->accepting};
         states.push_back(stateNew);
     }
-    for (auto transition:fa.getTransitions()){
-        Transition* transitionNew = new Transition;
-        auto it = find_if(states.begin(), states.end(), [&] (State* s) {return s->name == transition->from->name;});
-        if (it!=states.end()){
+    for (auto transition : fa.getTransitions()) {
+        Transition *transitionNew = new Transition;
+        auto it = find_if(states.begin(), states.end(), [&](State *s) { return s->name == transition->from->name; });
+        if (it != states.end()) {
             transitionNew->from = *it;
-        } else{
+        } else {
             transitionNew->from = transition->from;
         }
-        auto it2 = find_if(states.begin(), states.end(), [&] (State* s) {return s->name == transition->to->name;});
-        if (it2!=states.end()){
+        auto it2 = find_if(states.begin(), states.end(), [&](State *s) { return s->name == transition->to->name; });
+        if (it2 != states.end()) {
             transitionNew->to = *it2;
-        } else{
+        } else {
             transitionNew->to = transition->to;
         }
         transitionNew->input = transition->input;
         transitions.push_back(transitionNew);
     }
-
 }
 
-FA &FA::operator=(const FA& fa) {
+FA &FA::operator=(const FA &fa) {
     alphabet = fa.getAlphabet();
     states.clear();
     transitions.clear();
-    for (auto state:fa.getStates()){
-        State* stateNew = new State{.name = state->name, .starting = state->starting, .accepting = state->accepting};
+    for (auto state : fa.getStates()) {
+        State *stateNew = new State{.name = state->name, .starting = state->starting, .accepting = state->accepting};
         states.push_back(stateNew);
     }
-    for (auto transition:fa.getTransitions()){
-        Transition* transitionNew = new Transition;
-        auto it = find_if(states.begin(), states.end(), [&] (State* s) {return s->name == transition->from->name;});
-        if (it!=states.end()){
+    for (auto transition : fa.getTransitions()) {
+        Transition *transitionNew = new Transition;
+        auto it = find_if(states.begin(), states.end(), [&](State *s) { return s->name == transition->from->name; });
+        if (it != states.end()) {
             transitionNew->from = *it;
-        } else{
+        } else {
             transitionNew->from = transition->from;
         }
-        auto it2 = find_if(states.begin(), states.end(), [&] (State* s) {return s->name == transition->to->name;});
-        if (it2!=states.end()){
+        auto it2 = find_if(states.begin(), states.end(), [&](State *s) { return s->name == transition->to->name; });
+        if (it2 != states.end()) {
             transitionNew->to = *it2;
-        } else{
+        } else {
             transitionNew->to = transition->to;
         }
         transitionNew->input = transition->input;

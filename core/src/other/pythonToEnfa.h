@@ -31,15 +31,15 @@ class pythonToEnfa {
     std::string expand(std::vector<char> &inputSet) const;
     std::string replaceRegexOp(const std::string &str) const;
 
-    std::vector<ENFA> generateEnfaKeywords(const std::string& file) const;
+    std::vector<ENFA> generateEnfaKeywords(const std::string &file) const;
     std::vector<ENFA> generateEnfaComments() const;
     std::vector<ENFA> generateEnfaStrings() const;
-    void generateDfaFromEnfas(const std::vector<ENFA>& enfas);
-    void generateAutomata(const std::string& file);
+    void generateDfaFromEnfas(const std::vector<ENFA> &enfas);
+    void generateAutomata(const std::string &file);
 
-    bool isKeyword(const std::string& str) const;
-    bool isComment(const std::string& str, std::vector<ENFA>& enfaComments) const;
-    bool isString(const std::string& str, std::vector<ENFA>& enfaStrings) const;
+    bool isKeyword(const std::string &str) const;
+    bool isComment(const std::string &str, std::vector<ENFA> &enfaComments) const;
+    bool isString(const std::string &str, std::vector<ENFA> &enfaStrings) const;
 
     void identifyTokens(const std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m);
     void splitAndIdentify(const std::string &file);

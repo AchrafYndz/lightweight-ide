@@ -58,13 +58,15 @@ int main() {
         p.outputTokesAsJson(j);
         // p.printIdentifiedTokens(std::cout);
 
-        std::cout << "Please enter the path you want to store the generated results.\nIt needs to be a relative path starting from the root of the project.\n";
+        std::cout << "Please enter the path you want to store the generated results.\nIt needs to be a relative path "
+                     "starting from the root of the project.\n";
         std::string outputPath;
         std::getline(std::cin, outputPath);
 
         std::ofstream outputFile(path::rootDirectory + '/' + outputPath);
 
-        if (!outputFile.is_open()) throw std::runtime_error("Could not open file: '" + path::rootDirectory + '/' + outputPath + '\'');
+        if (!outputFile.is_open())
+            throw std::runtime_error("Could not open file: '" + path::rootDirectory + '/' + outputPath + '\'');
 
         outputFile << std::setw(4) << j << '\n';
         outputFile.close();
@@ -106,7 +108,7 @@ int main() {
     return 0;
 }
 
-//int main() {
+// int main() {
 //    PDFA pdfa("../tests/automataTests/res/input/PDFA2.json");
 //    PDFA minimized = pdfa.minimize();
 //    double total = 0.0;
