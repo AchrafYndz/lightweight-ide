@@ -32,10 +32,6 @@ const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpec
     return <p className="whitespace-pre">{n}</p>
 }
 
-const getLineLength = () => {
-    return 10
-}
-
 const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: string}): HighlightSpecsBounds => {
     const newBounds = {} as HighlightSpecsBounds;
     const lines = code.split('\n');
@@ -46,19 +42,22 @@ const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: stri
         const boundsOriginal = bounds[type as keyof HighlightSpecsBounds]
         const boundsNew = []
 
-        for (const bounds of boundsOriginal) {
-            if (bounds[0][1] === bounds[1][1]) boundsNew.push(bounds)
+        for (const pair of boundsOriginal) {
+            if (pair[0][0] === pair[1][0]) boundsNew.push(pair)
             else {
-                for (let i = bounds[0][1]; i < bounds[1][1]; i++) {
-                    boundsNew.push([0, i], [Math.min(getLineLength()), i])
+                for (let i = pair[0][0]; i <= pair[1][0]; i++) {
+                    // Start
+                    if (i === 0) boundsNew.push([[i, pair[0][1]], [i, lines[i].length - 1, ]])
+                    // End
+                    else if (i === pair[1][0]) boundsNew.push([[i, 0], [i, pair[1][0]]])
+                    // Other
+                    else boundsNew.push([[i, 0], [i, lines[i].length - 1]])
                 }
             }
         }
-        
-
 
         // Convert to indexes
-        for (const coords of bounds[type as keyof HighlightSpecsBounds]) {
+        for (const coords of boundsNew) {
             const start = coords[0]
             const end = coords[1]
 
@@ -86,8 +85,6 @@ const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecsRaw, 
         bounds: convert(highlightSpecs), 
         code: highlightSpecs.code
     }
-
-    console.log(newHighlightSpecs.bounds);
 
     return <>
         <div className="flex flex-col w-full h-full bg-neutral-800 p-5">
