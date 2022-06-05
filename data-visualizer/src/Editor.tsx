@@ -84,7 +84,7 @@ const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecsRaw, 
     }
 
     return <>
-        <div className="flex flex-col w-full h-full bg-neutral-800 p-5">
+        <div className="flex flex-col w-full h-full bg-neutral-800 p-5 overflow-scroll">
             {
                 lines.map((line, i) => {
                     const startIndex = lines.slice(0, i).reduce((total, line) => total + line.length, 0) + i * "\n".length;
