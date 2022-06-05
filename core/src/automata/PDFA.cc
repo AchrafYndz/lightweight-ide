@@ -127,7 +127,7 @@ void PDFA::input(const std::string &in) {
 }
 
 std::string PDFA::predict() {
-    if (stuck) return "";
+    if (stuck || currentState->name == "START") return "";
 
     // because we do not want to update the PDFA, store the old state and reset it later
     State *curr = currentState;
