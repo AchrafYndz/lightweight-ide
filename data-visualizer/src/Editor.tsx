@@ -39,8 +39,11 @@ const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: stri
 
     for (const type of Object.keys(bounds)) {
         for (const coords of bounds[type as keyof HighlightSpecsBounds]) {
-            const beginIndex = lines.slice(0, coords[0][0]).reduce((total, line) => total + line.length, 0) + (coords[0][0]) * '\n'.length + coords[0][1];
-            const endIndex = lines.slice(0, coords[1][0]).reduce((total, line) => total + line.length, 0) + (coords[1][0]) * '\n'.length + coords[1][1] + 1;
+            const start = coords[0]
+            const end = coords[1]
+
+            const beginIndex = lines.slice(0, start[0]).reduce((total, line) => total + line.length, 0) + (start[0]) * '\n'.length + start[1];
+            const endIndex = lines.slice(0, end[0]).reduce((total, line) => total + line.length, 0) + (end[0]) * '\n'.length + end[1] + 1;
 
             if (newBounds[type as keyof HighlightSpecsBounds] === undefined) {
                 newBounds[type as keyof HighlightSpecsBounds] = [];
