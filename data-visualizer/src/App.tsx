@@ -1,5 +1,5 @@
 import Editor from "./Editor"
-import { useEffect, useState, useCallback } from "react"
+import { useState, useCallback } from "react"
 import { useDropzone } from 'react-dropzone'
 
 
@@ -21,6 +21,28 @@ export interface Theme {
     strings: HexColor,
     comments: HexColor,
     keywords: HexColor,
+}
+
+export const convert = ({ bounds, code } : {bounds: HighlightSpecsBounds, code: string}): HighlightSpecsBounds => {
+    const newBounds: HighlightSpecsBounds = {} as HighlightSpecsBounds;
+
+    const lines = code.split('\n');
+
+    for (const type of Object.keys(bounds)) {
+        for (const foo of bounds[type as keyof HighlightSpecsBounds]) {
+            const coord = foo as unknown as Bounds[]; // ts thinks coord is a bounds instaid of a Bounds[]
+            const beginIndex = lines.slice(0, coord[0][0]).reduce((total, line) => total + line.length, 0) + (coord[0][0]) * '\n'.length + coord[0][1];
+            const endIndex = lines.slice(0, coord[1][0]).reduce((total, line) => total + line.length, 0) + (coord[1][0]) * '\n'.length + coord[1][1] + 1;
+
+            if (newBounds[type as keyof HighlightSpecsBounds] === undefined) {
+                newBounds[type as keyof HighlightSpecsBounds] = [];
+            }
+
+            newBounds[type as keyof HighlightSpecsBounds].push([beginIndex, endIndex]);
+        }
+    }
+
+    return newBounds;
 }
 
 const Header = ({ fileName }: { fileName: string }) => {

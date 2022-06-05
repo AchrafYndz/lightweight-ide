@@ -1,4 +1,4 @@
-import { HighlightSpecs, HighlightSpecsBounds, Theme } from "./App"
+import { HighlightSpecs, HighlightSpecsBounds, Theme, convert } from "./App"
 
 const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpecsBounds: HighlightSpecsBounds, theme: Theme, startIndex: number, text: string }) => {
     let n: JSX.Element[] = [];
@@ -13,8 +13,8 @@ const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpec
 
     for (let i = 0; i < text.length; i++) {
         for (const type of Object.keys(highlightSpecsBounds)) {
-            if (highlightSpecsBounds[type as keyof HighlightSpecsBounds].find(bounds => bounds[0] === (i + startIndex))) {
-                pushContent()
+            if (highlightSpecsBounds[type as keyof HighlightSpecsBounds].find(bounds => bounds[0] <= (i + startIndex) && bounds[1] >= (i + startIndex))) {
+                // pushContent()
                 currentColor = theme[type as keyof Theme];
             }
 
@@ -36,6 +36,13 @@ const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecs, the
     if (!highlightSpecs) return <></>
     const lines = highlightSpecs.code.split("\n")
 
+    const newHighlightSpecs: HighlightSpecs = {
+        bounds: convert(highlightSpecs), 
+        code: highlightSpecs.code
+    }
+
+    console.log(newHighlightSpecs.bounds);
+
     return <>
         <div className="flex flex-col w-full h-full bg-neutral-800 p-5">
             {
@@ -43,7 +50,7 @@ const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecs, the
                     const startIndex = lines.slice(0, i).reduce((total, line) => total + line.length, 0) + i * "\n".length;
                     return <div className="flex gap-10" key={i}>
                                 <div className="w-4 overflow-hidden text-right">{i + 1}</div>
-                                <Line highlightSpecsBounds={highlightSpecs.bounds} theme={theme} startIndex={startIndex} text={line}></Line>
+                                <Line highlightSpecsBounds={newHighlightSpecs.bounds} theme={theme} startIndex={startIndex} text={line}></Line>
                     </div>
                 })
             }
