@@ -4,6 +4,7 @@ import { useDropzone } from 'react-dropzone'
 
 
 export type Bounds = number[]
+export type Pair = Bounds[]
 type HexColor = string
 
 export interface HighlightSpecsBounds {
@@ -13,9 +14,9 @@ export interface HighlightSpecsBounds {
 }
 
 export interface HighlightSpecsBoundsRaw {
-    strings: Bounds[][],
-    comments: Bounds[][],
-    keywords: Bounds[][]
+    strings: Pair[],
+    comments: Pair[],
+    keywords: Pair[]
 }
 
 export interface HighlightSpecs {

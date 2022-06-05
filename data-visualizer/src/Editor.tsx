@@ -32,16 +32,37 @@ const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpec
     return <p className="whitespace-pre">{n}</p>
 }
 
+const getLineLength = () => {
+    return 10
+}
+
 const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: string}): HighlightSpecsBounds => {
     const newBounds = {} as HighlightSpecsBounds;
-
     const lines = code.split('\n');
 
     for (const type of Object.keys(bounds)) {
+        // Let's start off by pre-processing the data
+        // We have to make sure that all pairs are on the same line before continueing
+        const boundsOriginal = bounds[type as keyof HighlightSpecsBounds]
+        const boundsNew = []
+
+        for (const bounds of boundsOriginal) {
+            if (bounds[0][1] === bounds[1][1]) boundsNew.push(bounds)
+            else {
+                for (let i = bounds[0][1]; i < bounds[1][1]; i++) {
+                    boundsNew.push([0, i], [Math.min(getLineLength()), i])
+                }
+            }
+        }
+        
+
+
+        // Convert to indexes
         for (const coords of bounds[type as keyof HighlightSpecsBounds]) {
             const start = coords[0]
             const end = coords[1]
 
+            // All on one line
             const beginIndex = lines.slice(0, start[0]).reduce((total, line) => total + line.length, 0) + (start[0]) * '\n'.length + start[1];
             const endIndex = lines.slice(0, end[0]).reduce((total, line) => total + line.length, 0) + (end[0]) * '\n'.length + end[1] + 1;
 
@@ -50,6 +71,7 @@ const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: stri
             }
 
             newBounds[type as keyof HighlightSpecsBounds].push([beginIndex, endIndex]);
+
         }
     }
 
