@@ -1,4 +1,3 @@
-import { createLogicalOr } from "typescript";
 import { HighlightSpecs, HighlightSpecsBounds, Theme, HighlightSpecsRaw, HighlightSpecsBoundsRaw } from "./App"
 
 const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpecsBounds: HighlightSpecsBounds, theme: Theme, startIndex: number, text: string }) => {
