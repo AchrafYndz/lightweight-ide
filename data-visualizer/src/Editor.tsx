@@ -89,7 +89,7 @@ const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecsRaw, 
                 lines.map((line, i) => {
                     const startIndex = lines.slice(0, i).reduce((total, line) => total + line.length, 0) + i * "\n".length;
                     return <div className="flex gap-10" key={i}>
-                                <div className="w-4 overflow-hidden text-right">{i + 1}</div>
+                                <div className="w-5 overflow-hidden text-right">{i + 1}</div>
                                 <Line highlightSpecsBounds={newHighlightSpecs.bounds} theme={theme} startIndex={startIndex} text={line}></Line>
                     </div>
                 })
