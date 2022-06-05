@@ -12,6 +12,12 @@ export interface HighlightSpecsBounds {
     keywords: Bounds[]
 }
 
+export interface HighlightSpecsBoundsRaw {
+    strings: Bounds[][],
+    comments: Bounds[][],
+    keywords: Bounds[][]
+}
+
 export interface HighlightSpecs {
     code: string,
     bounds: HighlightSpecsBounds
@@ -23,16 +29,15 @@ export interface Theme {
     keywords: HexColor,
 }
 
-export const convert = ({ bounds, code } : {bounds: HighlightSpecsBounds, code: string}): HighlightSpecsBounds => {
-    const newBounds: HighlightSpecsBounds = {} as HighlightSpecsBounds;
+export const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: string}): HighlightSpecsBounds => {
+    const newBounds = {} as HighlightSpecsBounds;
 
     const lines = code.split('\n');
 
     for (const type of Object.keys(bounds)) {
-        for (const foo of bounds[type as keyof HighlightSpecsBounds]) {
-            const coord = foo as unknown as Bounds[]; // TS thinks coord is a bounds instead of a Bounds[]
-            const beginIndex = lines.slice(0, coord[0][0]).reduce((total, line) => total + line.length, 0) + (coord[0][0]) * '\n'.length + coord[0][1];
-            const endIndex = lines.slice(0, coord[1][0]).reduce((total, line) => total + line.length, 0) + (coord[1][0]) * '\n'.length + coord[1][1] + 1;
+        for (const coords of bounds[type as keyof HighlightSpecsBounds]) {
+            const beginIndex = lines.slice(0, coords[0][0]).reduce((total, line) => total + line.length, 0) + (coords[0][0]) * '\n'.length + coords[0][1];
+            const endIndex = lines.slice(0, coords[1][0]).reduce((total, line) => total + line.length, 0) + (coords[1][0]) * '\n'.length + coords[1][1] + 1;
 
             if (newBounds[type as keyof HighlightSpecsBounds] === undefined) {
                 newBounds[type as keyof HighlightSpecsBounds] = [];
