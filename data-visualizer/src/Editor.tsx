@@ -50,13 +50,13 @@ const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: stri
                     // Start
                     if (i === 0) boundsNew.push([[i, pair[0][1]], [i, lines[i].length-1, ]])
                     // End
-                    else if (i === pair[1][0]) boundsNew.push([[i, 0], [i, pair[1][0]]])
+                    else if (i === pair[1][0]) boundsNew.push([[i, 0], [i, pair[1][1]]])
                     // Other
                     else boundsNew.push([[i, 0], [i, lines[i].length-1]])
                 }
             }
         }
-        
+
         // Convert to indexes
         for (const coords of boundsNew) {
             const start = coords[0]
@@ -70,8 +70,6 @@ const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: stri
 
         }
     }
-
-    console.log(newBounds)
 
     return newBounds;
 }
