@@ -30,7 +30,7 @@ export const convert = ({ bounds, code } : {bounds: HighlightSpecsBounds, code: 
 
     for (const type of Object.keys(bounds)) {
         for (const foo of bounds[type as keyof HighlightSpecsBounds]) {
-            const coord = foo as unknown as Bounds[]; // ts thinks coord is a bounds instaid of a Bounds[]
+            const coord = foo as unknown as Bounds[]; // TS thinks coord is a bounds instead of a Bounds[]
             const beginIndex = lines.slice(0, coord[0][0]).reduce((total, line) => total + line.length, 0) + (coord[0][0]) * '\n'.length + coord[0][1];
             const endIndex = lines.slice(0, coord[1][0]).reduce((total, line) => total + line.length, 0) + (coord[1][0]) * '\n'.length + coord[1][1] + 1;
 
