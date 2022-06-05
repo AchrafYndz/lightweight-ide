@@ -1,3 +1,4 @@
+import { createLogicalOr } from "typescript";
 import { HighlightSpecs, HighlightSpecsBounds, Theme, HighlightSpecsRaw, HighlightSpecsBoundsRaw } from "./App"
 
 const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpecsBounds: HighlightSpecsBounds, theme: Theme, startIndex: number, text: string }) => {
@@ -47,15 +48,15 @@ const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: stri
             else {
                 for (let i = pair[0][0]; i <= pair[1][0]; i++) {
                     // Start
-                    if (i === 0) boundsNew.push([[i, pair[0][1]], [i, lines[i].length - 1, ]])
+                    if (i === 0) boundsNew.push([[i, pair[0][1]], [i, lines[i].length-1, ]])
                     // End
                     else if (i === pair[1][0]) boundsNew.push([[i, 0], [i, pair[1][0]]])
                     // Other
-                    else boundsNew.push([[i, 0], [i, lines[i].length - 1]])
+                    else boundsNew.push([[i, 0], [i, lines[i].length-1]])
                 }
             }
         }
-
+        
         // Convert to indexes
         for (const coords of boundsNew) {
             const start = coords[0]
@@ -64,14 +65,13 @@ const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: stri
             const beginIndex = lines.slice(0, start[0]).reduce((total, line) => total + line.length, 0) + (start[0]) * '\n'.length + start[1];
             const endIndex = lines.slice(0, end[0]).reduce((total, line) => total + line.length, 0) + (end[0]) * '\n'.length + end[1] + 1;
 
-            if (newBounds[type as keyof HighlightSpecsBounds] === undefined) {
-                newBounds[type as keyof HighlightSpecsBounds] = [];
-            }
-
+            newBounds[type as keyof HighlightSpecsBounds] ??= []
             newBounds[type as keyof HighlightSpecsBounds].push([beginIndex, endIndex]);
 
         }
     }
+
+    console.log(newBounds)
 
     return newBounds;
 }
