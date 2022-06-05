@@ -34,27 +34,6 @@ export interface Theme {
     keywords: HexColor,
 }
 
-export const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: string}): HighlightSpecsBounds => {
-    const newBounds = {} as HighlightSpecsBounds;
-
-    const lines = code.split('\n');
-
-    for (const type of Object.keys(bounds)) {
-        for (const coords of bounds[type as keyof HighlightSpecsBounds]) {
-            const beginIndex = lines.slice(0, coords[0][0]).reduce((total, line) => total + line.length, 0) + (coords[0][0]) * '\n'.length + coords[0][1];
-            const endIndex = lines.slice(0, coords[1][0]).reduce((total, line) => total + line.length, 0) + (coords[1][0]) * '\n'.length + coords[1][1] + 1;
-
-            if (newBounds[type as keyof HighlightSpecsBounds] === undefined) {
-                newBounds[type as keyof HighlightSpecsBounds] = [];
-            }
-
-            newBounds[type as keyof HighlightSpecsBounds].push([beginIndex, endIndex]);
-        }
-    }
-
-    return newBounds;
-}
-
 const Header = ({ fileName }: { fileName: string }) => {
     return <>
         <div className="bg-neutral-900 p-2 pb-0 flex flex-row justify-between items-center">

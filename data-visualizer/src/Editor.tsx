@@ -1,4 +1,4 @@
-import { HighlightSpecs, HighlightSpecsBounds, Theme, convert, HighlightSpecsRaw } from "./App"
+import { HighlightSpecs, HighlightSpecsBounds, Theme, HighlightSpecsRaw, HighlightSpecsBoundsRaw } from "./App"
 
 const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpecsBounds: HighlightSpecsBounds, theme: Theme, startIndex: number, text: string }) => {
     let n: JSX.Element[] = [];
@@ -30,6 +30,27 @@ const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpec
     pushContent()
 
     return <p className="whitespace-pre">{n}</p>
+}
+
+const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: string}): HighlightSpecsBounds => {
+    const newBounds = {} as HighlightSpecsBounds;
+
+    const lines = code.split('\n');
+
+    for (const type of Object.keys(bounds)) {
+        for (const coords of bounds[type as keyof HighlightSpecsBounds]) {
+            const beginIndex = lines.slice(0, coords[0][0]).reduce((total, line) => total + line.length, 0) + (coords[0][0]) * '\n'.length + coords[0][1];
+            const endIndex = lines.slice(0, coords[1][0]).reduce((total, line) => total + line.length, 0) + (coords[1][0]) * '\n'.length + coords[1][1] + 1;
+
+            if (newBounds[type as keyof HighlightSpecsBounds] === undefined) {
+                newBounds[type as keyof HighlightSpecsBounds] = [];
+            }
+
+            newBounds[type as keyof HighlightSpecsBounds].push([beginIndex, endIndex]);
+        }
+    }
+
+    return newBounds;
 }
 
 const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecsRaw, theme: Theme }) => {
