@@ -1,4 +1,4 @@
-import { HighlightSpecs, HighlightSpecsBounds, Theme, convert } from "./App"
+import { HighlightSpecs, HighlightSpecsBounds, Theme, convert, HighlightSpecsRaw } from "./App"
 
 const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpecsBounds: HighlightSpecsBounds, theme: Theme, startIndex: number, text: string }) => {
     let n: JSX.Element[] = [];
@@ -32,7 +32,7 @@ const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpec
     return <p className="whitespace-pre">{n}</p>
 }
 
-const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecs, theme: Theme }) => {
+const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecsRaw, theme: Theme }) => {
     if (!highlightSpecs) return <></>
     const lines = highlightSpecs.code.split("\n")
 

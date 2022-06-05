@@ -23,6 +23,11 @@ export interface HighlightSpecs {
     bounds: HighlightSpecsBounds
 }
 
+export interface HighlightSpecsRaw {
+    code: string,
+    bounds: HighlightSpecsBoundsRaw
+}
+
 export interface Theme {
     strings: HexColor,
     comments: HexColor,
@@ -91,7 +96,7 @@ function Dropzone({ setHighlightSpecs }: { setHighlightSpecs: (raw: string) => v
   }
 
 const App = () => {
-    const [highlightSpecs, setHighlightSpecs] = useState<HighlightSpecs | null>(null)
+    const [highlightSpecs, setHighlightSpecs] = useState<HighlightSpecsRaw | null>(null)
 
     const themes: Theme[] = [
         {
