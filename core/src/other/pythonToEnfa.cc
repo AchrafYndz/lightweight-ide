@@ -476,15 +476,14 @@ std::string pythonToEnfa::replaceRegexOp(const std::string &str) const {
 }
 
 std::vector<ENFA> pythonToEnfa::generateEnfaKeywords(const std::string &file) const {
+    std::vector<char> alphabet{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k', 'l', 'm', 'n',
+                               'o', 'p', 'r', 's', 't', 'u', 'w', 'x', 'y', 'F', 'N', 'T'};
     std::vector<ENFA> result;
     std::vector<std::string> keyw = getPythonKeyw(file);
     std::vector<std::string>::iterator it;
     for (it = keyw.begin(); it != keyw.end(); it++) {
         RE reg(*it, '%');
         ENFA enfa = reg.toENFA();
-        std::vector<char> alphabet;
-        for (char a = 'a'; a != ('z' + 1); a++) { alphabet.push_back(a); }
-
         enfa.setAlphabet(alphabet);
         result.push_back(enfa);
     }
@@ -567,12 +566,16 @@ std::vector<ENFA> pythonToEnfa::generateEnfaStrings() const {
     return result;
 }
 
-bool pythonToEnfa::isKeyword(const std::string &str, std::vector<ENFA> &enfaKeyw) const {
+bool pythonToEnfa::isKeyword(const std::string &str) const {
+    /*
     std::vector<ENFA>::iterator it;
     for (it = enfaKeyw.begin(); it != enfaKeyw.end(); it++) {
         if (it->accepts(str)) { return true; }
     }
 
+    return false;
+     */
+    if (dfaKeyw.accepts(str)) { return true; }
     return false;
 }
 
@@ -611,7 +614,7 @@ void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, 
 
         std::pair<pos, pos> positions;
 
-        isaKeyw = isKeyword(str, enfasKeyw);
+        isaKeyw = isKeyword(str);
         if (isaKeyw) {
             positions = it->first;
             keywords.push_back(positions);
