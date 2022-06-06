@@ -55,7 +55,8 @@ int main() {
         std::stringstream tmp("");
         tmp << sourceFile.rdbuf();
         j["code"] = tmp.str();
-        p.outputTokesAsJson(j);
+        j["bounds"] = nlohmann::json::object();
+        p.outputTokesAsJson(j["bounds"]);
         // p.printIdentifiedTokens(std::cout);
 
         std::cout << "Please enter the path you want to store the generated results.\nIt needs to be a relative path "

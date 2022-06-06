@@ -777,12 +777,9 @@ void pythonToEnfa::outputTokesAsJson(nlohmann::json &out) const {
     nlohmann::json stringBounds = nlohmann::json::array();
     nlohmann::json keywordBounds = nlohmann::json::array();
 
-    for (const auto &commentBound : comments)
-        commentBounds.push_back(nlohmann::json::object({{"begin", commentBound.first}, {"end", commentBound.second}}));
-    for (const auto &stringBound : strings)
-        stringBounds.push_back(nlohmann::json::object({{"begin", stringBound.first}, {"end", stringBound.second}}));
-    for (const auto &keywordBound : keywords)
-        keywordBounds.push_back(nlohmann::json::object({{"begin", keywordBound.first}, {"end", keywordBound.second}}));
+    for (const auto &commentBound : comments) commentBounds.push_back({commentBound.first, commentBound.second});
+    for (const auto &stringBound : strings) stringBounds.push_back({stringBound.first, stringBound.second});
+    for (const auto &keywordBound : keywords) keywordBounds.push_back({keywordBound.first, keywordBound.second});
 
     out["comments"] = commentBounds;
     out["strings"] = stringBounds;
