@@ -13,6 +13,8 @@ class DFA : public FA {
     std::set<State *> findEquivalentStates(TFA &t, State *s) const;
 
   public:  // table filling algorithm
+    DFA(const DFA &dfa);
+    DFA &operator=(const DFA &dfa);
     DFA minimize();
     void printTable();
     void printTable(TFA &t);
@@ -25,10 +27,10 @@ class DFA : public FA {
     DFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
         const std::vector<Transition *> &transitions);
     DFA(const DFA &dfa1, const DFA &dfa2, bool cross);
-    DFA(std::vector<DFA> dfas, bool cross);
+    DFA(std::vector<DFA> &dfas, bool cross);
+    bool accepts(const std::string &str) const;
 
     bool operator==(DFA &rhs);
-    DFA& operator=(DFA const &rhs);
 };
 
 #endif  // IDE_DFA_H

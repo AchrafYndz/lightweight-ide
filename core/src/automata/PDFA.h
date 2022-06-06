@@ -6,6 +6,7 @@
 #include "../../lib/nlohmann-json/json.hpp"
 
 #include <ctime>
+#include <random>
 
 class PDFA : public FA {
     // Pair of a Transiton and a chance
@@ -16,9 +17,11 @@ class PDFA : public FA {
 
   public:
     PDFA() = default;
-    PDFA(const std::string &file);
+    PDFA(const std::string &filename);
     PDFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
          const std::vector<Transition *> &transitions, const std::map<const Transition *, double> &weights);
+
+    PDFA minimize();
 
     void print(std::ostream &out) const;
 
@@ -26,7 +29,9 @@ class PDFA : public FA {
 
     const State *getCurrentState() const;
 
-    const std::string &predict();
+    const std::map<const Transition *, double> &getWeights() const;
+
+    std::string predict();
 };
 
 #endif  // IDE_PDFA_H

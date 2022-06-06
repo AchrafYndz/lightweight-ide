@@ -1,0 +1,77 @@
+{
+  "type": "PDFA",
+  "alphabet": ["x", "y"],
+  "states": [
+    {
+      "name": "a",
+      "starting": false,
+      "accepting": false
+    },
+    {
+      "name": "b",
+      "starting": false,
+      "accepting": false
+    },
+    {
+      "name": "c",
+      "starting": false,
+      "accepting": true
+    },
+    {
+      "name": "d",
+      "starting": true,
+      "accepting": true
+    },
+    {
+      "name": "e",
+      "starting": false,
+      "accepting": false
+    }
+  ],
+  "transitions": [
+    {
+      "from": "a",
+      "input": "x",
+      "to": [
+        {
+          "state": "b",
+          "chance": 0.8
+        },
+        {
+          "state": "d",
+          "chance": 0.15
+        },
+        {
+          "state": "e",
+          "chance": 0.05
+        }
+      ]
+    },
+    {
+      "from": "b",
+      "input": "y",
+      "to": [
+        {
+          "state": "e",
+          "chance": 0.6
+        },
+        {
+          "state": "b",
+          "chance": 0.06
+        },
+        {
+          "state":"d",
+          "chance": 0.10
+        },
+        {
+          "state": "f",
+          "chance": 0.18
+        },
+        {
+          "state": "h",
+          "chance": 0.06
+        }
+      ]
+    }
+  ]
+}

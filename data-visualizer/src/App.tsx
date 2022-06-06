@@ -1,6 +1,10 @@
 import Editor from "./Editor"
+import { useState, useCallback } from "react"
+import { useDropzone } from 'react-dropzone'
+
 
 export type Bounds = number[]
+export type Pair = Bounds[]
 type HexColor = string
 
 export interface HighlightSpecsBounds {
@@ -9,9 +13,20 @@ export interface HighlightSpecsBounds {
     keywords: Bounds[]
 }
 
+export interface HighlightSpecsBoundsRaw {
+    strings: Pair[],
+    comments: Pair[],
+    keywords: Pair[]
+}
+
 export interface HighlightSpecs {
     code: string,
     bounds: HighlightSpecsBounds
+}
+
+export interface HighlightSpecsRaw {
+    code: string,
+    bounds: HighlightSpecsBoundsRaw
 }
 
 export interface Theme {
@@ -36,23 +51,32 @@ const Header = ({ fileName }: { fileName: string }) => {
     </>
 }
 
+// Inspiration taken from examples, found at: https://www.npmjs.com/package/react-dropzone
+function Dropzone({ setHighlightSpecs }: { setHighlightSpecs: (raw: string) => void }) {
+    const onDrop = useCallback((acceptedFiles: any) => {
+      acceptedFiles.forEach((file: any) => {
+        const reader = new FileReader()
+  
+        reader.onabort = () => console.log('file reading was aborted')
+        reader.onerror = () => console.log('file reading has failed')
+        reader.onload = () => setHighlightSpecs(reader.result as string)
+
+        reader.readAsText(file)
+      })
+      
+    }, [setHighlightSpecs])
+    
+    const {getRootProps, getInputProps} = useDropzone({onDrop})
+    return (
+      <div {...getRootProps()} className="bg-neutral-800 w-full h-full flex items-center justify-center text-white">
+        <input {...getInputProps()} />
+        <p>Drag 'n drop your input file here</p>
+      </div>
+    )
+  }
+
 const App = () => {
-    const highlightSpecs: HighlightSpecs = {
-        "code": "from string import ascii_lowercase\n\ndef main():\n    # This is a comment!\n    message = \"Hello, alphabet!\"\n    print(message, ascii_lowercase)\n\nmain()",
-        "bounds": {
-            "strings": [
-                [87, 105]
-            ],
-            "comments": [
-                [52, 72]
-            ],
-            "keywords": [
-                [0, 4],
-                [12, 18],
-                [36, 39]
-            ]
-        }
-    }
+    const [highlightSpecs, setHighlightSpecs] = useState<HighlightSpecsRaw | null>(null)
 
     const themes: Theme[] = [
         {
@@ -65,7 +89,11 @@ const App = () => {
     return (
         <div className="flex flex-col w-screen h-screen text-white">
             <Header fileName="main.py" />
-            <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
+            {
+                !highlightSpecs 
+                ? <Dropzone setHighlightSpecs={(raw: string) => setHighlightSpecs(JSON.parse(raw))}></Dropzone> 
+                : <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
+            }
         </div>
   );
 }

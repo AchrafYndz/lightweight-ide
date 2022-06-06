@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 project(ide VERSION 0.1.0)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")     # -Werror
+set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra")     # -Werror
 
 # ================== Library files ==================
 # nlohmann-json library files

@@ -36,11 +36,6 @@ DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
 
                 const std::string newStateName = std::string("(") + dfa1State->name + ',' + dfa2State->name + ')';
 
-                // check if a transition from state 'state' to state 'newState' is already present on character 'ch'
-                if (findState(newStateName)) continue;
-
-                changed = true;
-
                 // update the state composition map
                 stateComp[newStateName] = {dfa1State->name, dfa2State->name};
 
@@ -53,27 +48,39 @@ DFA::DFA(const DFA &dfa1, const DFA &dfa2, bool cross) {
                 }
 
                 // create new state and transition
-                State *newState = new State{.name = newStateName, .starting = false, .accepting = newStateAccepting};
+                State *newState;
+                bool present = false;
+                if (findState(newStateName)) {
+                    newState = findState(newStateName);
+                    present = true;
+                } else {
+                    newState = new State{.name = newStateName, .starting = false, .accepting = newStateAccepting};
+                    states.push_back(newState);
+                    changed = true;
+                }
+
                 Transition *trans = new Transition{.from = state, .to = newState, .input = ch};
 
-                states.push_back(newState);
+                // check if a transition from state 'state' to state 'newState' is already present on character 'ch'
+
                 transitions.push_back(trans);
 
-                newStates.push_back(newState);
+                if (!present) newStates.push_back(newState);
             }
         }
-
         currentStates = newStates;
     }
 }
 
-DFA::DFA(std::vector<DFA> dfas, bool cross) {
-    DFA currentDFA = dfas.front();
-    for (const DFA& dfa : dfas) {
-        if (currentDFA == dfas.front()) continue;
-        currentDFA = DFA(currentDFA, dfa, cross);
+DFA::DFA(std::vector<DFA> &dfas, bool cross) {
+    DFA &currentDFA = dfas[0];
+    for (auto it = dfas.begin(); it != dfas.end(); it++) {
+        if (dfas.begin() == it) continue;
+        currentDFA = DFA(currentDFA, *it, cross);
     }
-    *this = currentDFA;
+    alphabet = currentDFA.alphabet;
+    states = currentDFA.states;
+    transitions = currentDFA.transitions;
 }
 
 bool DFA::pairCrossed(TFA &t, const std::string &s1, const std::string &s2) {
@@ -353,14 +360,6 @@ bool DFA::operator==(DFA &rhs) {
     return !pairCrossed(t, startingL->name, startingR->name);
 }
 
-DFA& DFA::operator=(DFA const &rhs) {
-    alphabet = rhs.alphabet;
-    states = rhs.states;
-    transitions = rhs.transitions;
-
-    return *this;
-}
-
 void DFA::printStats(std::ostream &out) const {
     out << "no_of_states=" << states.size() << '\n';
 
@@ -384,3 +383,20 @@ void DFA::printStats(std::ostream &out) const {
         out << "degree[" << degreeCount.first << "]=" << degreeCount.second << '\n';
 }
 void DFA::printStats() const { printStats(std::cout); }
+
+DFA::DFA(const DFA &dfa) : FA(dfa) {}
+
+DFA &DFA::operator=(const DFA &dfa) {
+    FA::operator=(dfa);
+    return *this;
+}
+bool DFA::accepts(const std::string &str) const {
+    State *curState = findStartingState();
+    for (const char ch : str) {
+        if (std::find(alphabet.begin(), alphabet.end(), ch) == alphabet.end()) { return false; }
+        const std::vector<Transition *> tmp = findTransition(curState, ch);
+        for (const auto &transition : tmp) { curState = findState(transition->to->name); }
+    }
+    if (curState->accepting) { return true; }
+    return false;
+}

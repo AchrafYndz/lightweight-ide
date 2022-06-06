@@ -1,4 +1,5 @@
 #include "pythonToEnfa.h"
+#include <stdexcept>
 
 std::vector<std::string> pythonToEnfa::getPythonKeyw(const std::string &file) const {
     std::vector<std::string> result;
@@ -17,6 +18,9 @@ std::vector<std::pair<char, std::pair<int, int>>> pythonToEnfa::scan(const std::
 
     // read the file char by char without skipping whitespace
     std::ifstream infile(file);
+
+    if (!infile.is_open()) throw std::runtime_error("Could not open file: '" + file + "'\n");
+
     while (infile >> std::noskipws >> ch) {
         result.emplace_back(ch, std::make_pair(i, j));
         if (ch == '\n') {
@@ -99,96 +103,124 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                     indexToSkip++;
                 }
                 int strLength = (int) comment.length();
-                result[std::make_pair(std::make_pair(it->second.first, it->second.second),
-                                      std::make_pair(it->second.first + strLength - 1, it->second.second))] = comment;
+                result[std::make_pair(std::make_pair(it->second.second, it->second.first),
+                                      std::make_pair(it->second.second, it->second.first + strLength - 1))] = comment;
             }
         }
 
         // MULTILINE COMMENTS with "
         if (index < charsSize - 5) {
-            if (chars[index].first == '"' and chars[index + 1].first == '"' and chars[index + 2].first == '"' and
-                chars[index].second.first == 0) {
-                std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
-                std::string multiLComment = "\n";
-                multiLComment += R"(""")";
-                toSkip.push_back(index);
-                toSkip.push_back(index + 1);
-                toSkip.push_back(index + 2);
-                int indexToSkip = index + 3;
-
-                while (indexToSkip < charsSize - 2) {
-                    if (chars[indexToSkip].first == '"' and chars[indexToSkip + 1].first == '"' and
-                        chars[indexToSkip + 2].first == '"') {
-                        break;
+            if (chars[index].first == '"' and chars[index + 1].first == '"' and chars[index + 2].first == '"') {
+                // check if only whitespace in front
+                bool whiteSpaceInFront = true;
+                if (chars[index].second.first == 0) {
+                    // char is at start of line
+                    whiteSpaceInFront = true;
+                } else {
+                    int indexIt = index;
+                    while (indexIt > 0 and chars[indexIt].second.first > 0 and whiteSpaceInFront) {
+                        indexIt--;
+                        // if char not = ' ', not only white space in front
+                        if (chars[indexIt].first != ' ') { whiteSpaceInFront = false; }
                     }
-                    if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
-                        toSkip.push_back(indexToSkip);
-                    }
-                    multiLComment += chars[indexToSkip].first;
-                    indexToSkip++;
                 }
-                multiLComment += R"(""")";
-                toSkip.push_back(indexToSkip);
-                toSkip.push_back(indexToSkip + 1);
-                toSkip.push_back(indexToSkip + 2);
+                if (whiteSpaceInFront) {
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.second, chars[index].second.first);
+                    std::string multiLComment = "\n";
+                    multiLComment += R"(""")";
+                    toSkip.push_back(index);
+                    toSkip.push_back(index + 1);
+                    toSkip.push_back(index + 2);
+                    int indexToSkip = index + 3;
 
-                indexToSkip = indexToSkip + 2;
-                while (indexToSkip < charsSize) {
-                    if (chars[indexToSkip + 1].first != '"') {
-                        break;
-                    } else {
-                        multiLComment += '"';
-                        toSkip.push_back(indexToSkip + 1);
+                    while (indexToSkip < charsSize - 2) {
+                        if (chars[indexToSkip].first == '"' and chars[indexToSkip + 1].first == '"' and
+                            chars[indexToSkip + 2].first == '"') {
+                            break;
+                        }
+                        if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
+                            toSkip.push_back(indexToSkip);
+                        }
+                        multiLComment += chars[indexToSkip].first;
+                        indexToSkip++;
                     }
-                    indexToSkip++;
+                    multiLComment += R"(""")";
+                    toSkip.push_back(indexToSkip);
+                    toSkip.push_back(indexToSkip + 1);
+                    toSkip.push_back(indexToSkip + 2);
+
+                    indexToSkip = indexToSkip + 2;
+                    while (indexToSkip < charsSize) {
+                        if (chars[indexToSkip + 1].first != '"') {
+                            break;
+                        } else {
+                            multiLComment += '"';
+                            toSkip.push_back(indexToSkip + 1);
+                        }
+                        indexToSkip++;
+                    }
+                    std::pair<int, int> endP =
+                      std::make_pair(chars[indexToSkip].second.second, chars[indexToSkip].second.first);
+                    result[std::make_pair(startP, endP)] = multiLComment;
                 }
-                std::pair<int, int> endP =
-                  std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
-                result[std::make_pair(startP, endP)] = multiLComment;
             }
         }
 
         // MULTILINE COMMENTS with '
         if (index < charsSize - 5) {
-            if (chars[index].first == '\'' and chars[index + 1].first == '\'' and chars[index + 2].first == '\'' and
-                chars[index].second.first == 0) {
-                std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
-                std::string multiLComment = "\n";
-                multiLComment += R"(''')";
-                toSkip.push_back(index);
-                toSkip.push_back(index + 1);
-                toSkip.push_back(index + 2);
-                int indexToSkip = index + 3;
-
-                while (indexToSkip < charsSize - 2) {
-                    if (chars[indexToSkip].first == '\'' and chars[indexToSkip + 1].first == '\'' and
-                        chars[indexToSkip + 2].first == '\'') {
-                        break;
+            if (chars[index].first == '\'' and chars[index + 1].first == '\'' and chars[index + 2].first == '\'') {
+                // check if only whitespace in front
+                bool whiteSpaceInFront = true;
+                if (chars[index].second.first == 0) {
+                    // char is at start of line
+                    whiteSpaceInFront = true;
+                } else {
+                    int indexIt = index;
+                    while (indexIt > 0 and chars[indexIt].second.first > 0 and whiteSpaceInFront) {
+                        indexIt--;
+                        // if char not = ' ', not only white space in front
+                        if (chars[indexIt].first != ' ') { whiteSpaceInFront = false; }
                     }
-                    if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
-                        toSkip.push_back(indexToSkip);
-                    }
-                    multiLComment += chars[indexToSkip].first;
-                    indexToSkip++;
                 }
-                multiLComment += R"(''')";
-                toSkip.push_back(indexToSkip);
-                toSkip.push_back(indexToSkip + 1);
-                toSkip.push_back(indexToSkip + 2);
+                if (whiteSpaceInFront) {
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.second, chars[index].second.first);
+                    std::string multiLComment = "\n";
+                    multiLComment += R"(''')";
+                    toSkip.push_back(index);
+                    toSkip.push_back(index + 1);
+                    toSkip.push_back(index + 2);
+                    int indexToSkip = index + 3;
 
-                indexToSkip = indexToSkip + 2;
-                while (indexToSkip < charsSize) {
-                    if (chars[indexToSkip + 1].first != '\'') {
-                        break;
-                    } else {
-                        multiLComment += '\'';
-                        toSkip.push_back(indexToSkip + 1);
+                    while (indexToSkip < charsSize - 2) {
+                        if (chars[indexToSkip].first == '\'' and chars[indexToSkip + 1].first == '\'' and
+                            chars[indexToSkip + 2].first == '\'') {
+                            break;
+                        }
+                        if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
+                            toSkip.push_back(indexToSkip);
+                        }
+                        multiLComment += chars[indexToSkip].first;
+                        indexToSkip++;
                     }
-                    indexToSkip++;
+                    multiLComment += R"(''')";
+                    toSkip.push_back(indexToSkip);
+                    toSkip.push_back(indexToSkip + 1);
+                    toSkip.push_back(indexToSkip + 2);
+
+                    indexToSkip = indexToSkip + 2;
+                    while (indexToSkip < charsSize) {
+                        if (chars[indexToSkip + 1].first != '\'') {
+                            break;
+                        } else {
+                            multiLComment += '\'';
+                            toSkip.push_back(indexToSkip + 1);
+                        }
+                        indexToSkip++;
+                    }
+                    std::pair<int, int> endP =
+                      std::make_pair(chars[indexToSkip].second.second, chars[indexToSkip].second.first);
+                    result[std::make_pair(startP, endP)] = multiLComment;
                 }
-                std::pair<int, int> endP =
-                  std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
-                result[std::make_pair(startP, endP)] = multiLComment;
             }
         }
 
@@ -196,97 +228,132 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
         if (index < charsSize - 5) {
             if (chars[index].first == '"' and chars[index + 1].first == '"' and chars[index + 2].first == '"' and
                 chars[index].second.first != 0) {
-                std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
-                std::string multiLComment = R"(""")";
-                toSkip.push_back(index);
-                toSkip.push_back(index + 1);
-                toSkip.push_back(index + 2);
-                int indexToSkip = index + 3;
-
-                while (indexToSkip < charsSize - 2) {
-                    if (chars[indexToSkip].first == '"' and chars[indexToSkip + 1].first == '"' and
-                        chars[indexToSkip + 2].first == '"') {
-                        break;
+                // check if only whitespace in front
+                bool whiteSpaceInFront = true;
+                if (chars[index].second.first == 0) {
+                    // char is at start of line
+                    whiteSpaceInFront = true;
+                } else {
+                    int indexIt = index;
+                    while (indexIt > 0 and chars[indexIt].second.first > 0 and whiteSpaceInFront) {
+                        indexIt--;
+                        // if char not = ' ', not only white space in front
+                        if (chars[indexIt].first != ' ') { whiteSpaceInFront = false; }
                     }
-                    if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
-                        toSkip.push_back(indexToSkip);
-                    }
-                    multiLComment += chars[indexToSkip].first;
-                    indexToSkip++;
                 }
-                multiLComment += R"(""")";
-                toSkip.push_back(indexToSkip);
-                toSkip.push_back(indexToSkip + 1);
-                toSkip.push_back(indexToSkip + 2);
+                if (!whiteSpaceInFront) {
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.second, chars[index].second.first);
+                    std::string multiLComment = R"(""")";
+                    toSkip.push_back(index);
+                    toSkip.push_back(index + 1);
+                    toSkip.push_back(index + 2);
+                    int indexToSkip = index + 3;
 
-                indexToSkip = indexToSkip + 2;
-                while (indexToSkip < charsSize) {
-                    if (chars[indexToSkip + 1].first != '"') {
-                        break;
-                    } else {
-                        multiLComment += '"';
-                        toSkip.push_back(indexToSkip + 1);
+                    while (indexToSkip < charsSize - 2) {
+                        if (chars[indexToSkip].first == '"' and chars[indexToSkip + 1].first == '"' and
+                            chars[indexToSkip + 2].first == '"') {
+                            break;
+                        }
+                        if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
+                            toSkip.push_back(indexToSkip);
+                        }
+                        multiLComment += chars[indexToSkip].first;
+                        indexToSkip++;
                     }
-                    indexToSkip++;
+                    multiLComment += R"(""")";
+                    toSkip.push_back(indexToSkip);
+                    toSkip.push_back(indexToSkip + 1);
+                    toSkip.push_back(indexToSkip + 2);
+
+                    indexToSkip = indexToSkip + 2;
+                    while (indexToSkip < charsSize) {
+                        if (chars[indexToSkip + 1].first != '"') {
+                            break;
+                        } else {
+                            multiLComment += '"';
+                            toSkip.push_back(indexToSkip + 1);
+                        }
+                        indexToSkip++;
+                    }
+                    std::pair<int, int> endP =
+                      std::make_pair(chars[indexToSkip].second.second, chars[indexToSkip].second.first);
+                    result[std::make_pair(startP, endP)] = multiLComment;
                 }
-                std::pair<int, int> endP =
-                  std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
-                result[std::make_pair(startP, endP)] = multiLComment;
             }
         }
 
         // MULTILINE STRINGS with '
         if (index < charsSize - 5) {
-            if (chars[index].first == '\'' and chars[index + 1].first == '\'' and chars[index + 2].first == '\''
-                and chars[index].second.first != 0) {
-                std::pair<int, int> startP = std::make_pair(chars[index].second.first, chars[index].second.second);
-                std::string multiLComment = R"(''')";
-                toSkip.push_back(index);
-                toSkip.push_back(index + 1);
-                toSkip.push_back(index + 2);
-                int indexToSkip = index + 3;
-
-                while (indexToSkip < charsSize - 2) {
-                    if (chars[indexToSkip].first == '\'' and chars[indexToSkip + 1].first == '\'' and
-                        chars[indexToSkip + 2].first == '\'') {
-                        break;
+            if (chars[index].first == '\'' and chars[index + 1].first == '\'' and chars[index + 2].first == '\'' and
+                chars[index].second.first != 0) {
+                // check if only whitespace in front
+                bool whiteSpaceInFront = true;
+                if (chars[index].second.first == 0) {
+                    // char is at start of line
+                    whiteSpaceInFront = true;
+                } else {
+                    int indexIt = index;
+                    while (indexIt > 0 and chars[indexIt].second.first > 0 and whiteSpaceInFront) {
+                        indexIt--;
+                        // if char not = ' ', not only white space in front
+                        if (chars[indexIt].first != ' ') { whiteSpaceInFront = false; }
                     }
-                    if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
-                        toSkip.push_back(indexToSkip);
-                    }
-                    multiLComment += chars[indexToSkip].first;
-                    indexToSkip++;
                 }
-                multiLComment += R"(''')";
-                toSkip.push_back(indexToSkip);
-                toSkip.push_back(indexToSkip + 1);
-                toSkip.push_back(indexToSkip + 2);
+                if (!whiteSpaceInFront) {
+                    std::pair<int, int> startP = std::make_pair(chars[index].second.second, chars[index].second.first);
+                    std::string multiLComment = R"(''')";
+                    toSkip.push_back(index);
+                    toSkip.push_back(index + 1);
+                    toSkip.push_back(index + 2);
+                    int indexToSkip = index + 3;
 
-                indexToSkip = indexToSkip + 2;
-                while (indexToSkip < charsSize) {
-                    if (chars[indexToSkip + 1].first != '\'') {
-                        break;
-                    } else {
-                        multiLComment += '\'';
-                        toSkip.push_back(indexToSkip + 1);
+                    while (indexToSkip < charsSize - 2) {
+                        if (chars[indexToSkip].first == '\'' and chars[indexToSkip + 1].first == '\'' and
+                            chars[indexToSkip + 2].first == '\'') {
+                            break;
+                        }
+                        if (std::find(toSkip.begin(), toSkip.end(), indexToSkip) == toSkip.end()) {
+                            toSkip.push_back(indexToSkip);
+                        }
+                        multiLComment += chars[indexToSkip].first;
+                        indexToSkip++;
                     }
-                    indexToSkip++;
+                    multiLComment += R"(''')";
+                    toSkip.push_back(indexToSkip);
+                    toSkip.push_back(indexToSkip + 1);
+                    toSkip.push_back(indexToSkip + 2);
+
+                    indexToSkip = indexToSkip + 2;
+                    while (indexToSkip < charsSize) {
+                        if (chars[indexToSkip + 1].first != '\'') {
+                            break;
+                        } else {
+                            multiLComment += '\'';
+                            toSkip.push_back(indexToSkip + 1);
+                        }
+                        indexToSkip++;
+                    }
+                    std::pair<int, int> endP =
+                      std::make_pair(chars[indexToSkip].second.second, chars[indexToSkip].second.first);
+                    result[std::make_pair(startP, endP)] = multiLComment;
                 }
-                std::pair<int, int> endP =
-                  std::make_pair(chars[indexToSkip].second.first, chars[indexToSkip].second.second);
-                result[std::make_pair(startP, endP)] = multiLComment;
             }
         }
 
         // SINGLE LINE STRINGS
         if (it->first == '"' or it->first == '\'') {
+            // check if particular " or ' is already in token
+            if (std::find(toSkip.begin(), toSkip.end(), index) != toSkip.end()) {
+                index++;
+                continue;
+            }
             char ch;
             if (it->first == '"') {
                 ch = '"';
             } else {
                 ch = '\'';
             }
-            std::pair<int, int> posFirst = std::make_pair(it->second.first, it->second.second);
+            std::pair<int, int> posFirst = std::make_pair(it->second.second, it->second.first);
             std::pair<int, int> posLast;
             int indexesToSkip = index;
 
@@ -303,7 +370,7 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
                 toSkip.push_back(indexesToSkip);
                 if (curChar == ch) {
                     matchingQuoteFound = true;
-                    posLast = std::make_pair(chars[indexesToSkip].second.first, chars[indexesToSkip].second.second);
+                    posLast = std::make_pair(chars[indexesToSkip].second.second, chars[indexesToSkip].second.first);
                 }
             }
             result[std::make_pair(posFirst, posLast)] = strContent;
@@ -312,39 +379,35 @@ std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> pytho
     }
 
     // SKIP SEPARATORS
-    std::vector<char> separators{'+', '-', '*', '/', '%', '<', '>', '&', '|', '^', '~', '=', '!', '(', ')', '[', ']',
-    '{', '}', ',', ':', '.', ';', ' ', '\n'};
+    std::vector<char> separators{'+', '-', '*', '/', '%', '<', '>', '&', '|', '^', '~', '=', '!',
+                                 '(', ')', '[', ']', '{', '}', ',', ':', '.', ';', ' ', '\n'};
     index = 0;
-    for (it= chars.begin(); it != chars.end(); it++){
+    for (it = chars.begin(); it != chars.end(); it++) {
         if (std::find(toSkip.begin(), toSkip.end(), index) != toSkip.end()) {
             index++;
             continue;
         }
         char currentChar = it->first;
-        if (std::find(separators.begin(), separators.end(), currentChar) != separators.end()){
-            std::cout << "this char got skipped " << currentChar << std::endl;
+        if (std::find(separators.begin(), separators.end(), currentChar) != separators.end()) {
             toSkip.push_back(index);
         }
         index++;
     }
 
     // WORDS
-    for (index = 0; (unsigned long) index < chars.size(); index++){
-        if (std::find(toSkip.begin(), toSkip.end(), index) != toSkip.end()) {
-            continue;
-        }
+    for (index = 0; (unsigned long) index < chars.size(); index++) {
+        if (std::find(toSkip.begin(), toSkip.end(), index) != toSkip.end()) { continue; }
         std::string word;
         bool endWordFound = false;
-        std::pair<int, int> posFirstLetter = std::make_pair(chars[index].second.first, chars[index].second.second);
+        std::pair<int, int> posFirstLetter = std::make_pair(chars[index].second.second, chars[index].second.first);
         std::pair<int, int> posLastLetter;
 
-        while (!endWordFound){
+        while (!endWordFound) {
             word += chars[index].first;
-            posLastLetter = std::make_pair(chars[index].second.first, chars[index].second.second);
-            if ((unsigned long) index == chars.size()-1){
+            posLastLetter = std::make_pair(chars[index].second.second, chars[index].second.first);
+            if ((unsigned long) index == chars.size() - 1) {
                 endWordFound = true;
-            }
-            else if(std::find(toSkip.begin(), toSkip.end(), index+1) != toSkip.end()){
+            } else if (std::find(toSkip.begin(), toSkip.end(), index + 1) != toSkip.end()) {
                 endWordFound = true;
             }
             index++;
@@ -374,11 +437,9 @@ void pythonToEnfa::printMap(std::map<std::pair<std::pair<int, int>, std::pair<in
 std::vector<char> pythonToEnfa::getSigma() const {
     std::vector<char> result;
     // note: i = 32 is space
-    for (int i = 33; i <= 127; i++){
+    for (int i = 33; i <= 127; i++) {
         // skip +, (, ), * and ?
-        if (i == 43 or i == 40 or i == 41 or i == 42 or i == 63){
-            continue;
-        }
+        if (i == 43 or i == 40 or i == 41 or i == 42 or i == 63) { continue; }
         result.push_back((char) i);
     }
     result.push_back('\n');
@@ -386,17 +447,15 @@ std::vector<char> pythonToEnfa::getSigma() const {
 }
 
 void pythonToEnfa::removeElementsFromSet(std::vector<char> &inputSet, char ch) const {
-    std::vector<char>::iterator position = std::find(inputSet.begin(),inputSet.end(), ch);
-    if (position != inputSet.end()){
-        inputSet.erase(position);
-    }
+    std::vector<char>::iterator position = std::find(inputSet.begin(), inputSet.end(), ch);
+    if (position != inputSet.end()) { inputSet.erase(position); }
 }
 
 std::string pythonToEnfa::expand(std::vector<char> &inputSet) const {
     std::string result;
 
     std::vector<char>::iterator it;
-    for(it = inputSet.begin(); it != inputSet.end()-1; it++){
+    for (it = inputSet.begin(); it != inputSet.end() - 1; it++) {
         result += *it;
         result += "+";
     }
@@ -416,16 +475,16 @@ std::string pythonToEnfa::replaceRegexOp(const std::string &str) const {
     return result;
 }
 
-
-
-/*
 std::vector<ENFA> pythonToEnfa::generateEnfaKeywords(const std::string &file) const {
+    std::vector<char> alphabet{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k', 'l', 'm', 'n',
+                               'o', 'p', 'r', 's', 't', 'u', 'w', 'x', 'y', 'F', 'N', 'T'};
     std::vector<ENFA> result;
     std::vector<std::string> keyw = getPythonKeyw(file);
     std::vector<std::string>::iterator it;
     for (it = keyw.begin(); it != keyw.end(); it++) {
         RE reg(*it, '%');
         ENFA enfa = reg.toENFA();
+        enfa.setAlphabet(alphabet);
         result.push_back(enfa);
     }
     return result;
@@ -507,93 +566,77 @@ std::vector<ENFA> pythonToEnfa::generateEnfaStrings() const {
     return result;
 }
 
-bool pythonToEnfa::isKeyword(const std::string &str, std::vector<ENFA> &enfaKeyw) const {
-    bool result = false;
-
+bool pythonToEnfa::isKeyword(const std::string &str) const {
+    /*
     std::vector<ENFA>::iterator it;
-    for (it = enfaKeyw.begin(); it != enfaKeyw.end(); it++){
-        if(it->accepts(str)){
-            result = true;
-        }
+    for (it = enfaKeyw.begin(); it != enfaKeyw.end(); it++) {
+        if (it->accepts(str)) { return true; }
     }
 
-    return result;
+    return false;
+     */
+    if (dfaKeyw.accepts(str)) { return true; }
+    return false;
 }
 
 bool pythonToEnfa::isComment(const std::string &str, std::vector<ENFA> &enfaComments) const {
-    bool result = false;
-
     std::string strNoOp = replaceRegexOp(str);
     std::vector<ENFA>::iterator it;
-    for (it = enfaComments.begin(); it != enfaComments.end(); it++){
-        if(it->accepts(strNoOp)){
-            result = true;
-        }
+    for (it = enfaComments.begin(); it != enfaComments.end(); it++) {
+        if (it->accepts(strNoOp)) { return true; }
     }
 
-    return result;
+    return false;
 }
 
 bool pythonToEnfa::isString(const std::string &str, std::vector<ENFA> &enfaStrings) const {
-    bool result = false;
-
     std::string strNoOp = replaceRegexOp(str);
     std::vector<ENFA>::iterator it;
-    for (it = enfaStrings.begin(); it != enfaStrings.end(); it++){
-        if(it->accepts(strNoOp)){
-            result = true;
-        }
+    for (it = enfaStrings.begin(); it != enfaStrings.end(); it++) {
+        if (it->accepts(strNoOp)) { return true; }
     }
 
-    return result;
+    return false;
 }
-*/
 
-void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m,
-                                  const std::string &fileKeyw){
-
+void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string> &m) {
     // OLD METHOD USES CONTAINERS
-    /*
-    std::vector<ENFA> enfaKeywords = generateEnfaKeywords(fileKeyw);
-    std::vector<ENFA> enfaComments = generateEnfaComments();
-    std::vector<ENFA> enfaStrings = generateEnfaStrings();
 
     std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string>::const_iterator it;
 
-    for (it = m.begin(); it!= m.end(); it++){
+    for (it = m.begin(); it != m.end(); it++) {
         std::string str = it->second;
 
         bool identified = false;
-        bool isaKeyw = false;
-        bool isaComment = false;
-        bool isaString = false;
+        bool isaKeyw;
+        bool isaComment;
+        bool isaString;
 
+        std::pair<pos, pos> positions;
 
-        std::pair<pos,pos> positions;
-
-        isaKeyw = isKeyword(str, enfaKeywords);
-        if (isaKeyw){
+        isaKeyw = isKeyword(str);
+        if (isaKeyw) {
             positions = it->first;
             keywords.push_back(positions);
             identified = true;
         }
-        if(!identified){
-            isaComment = isComment(str, enfaComments);
-            if (isaComment){
+        if (!identified) {
+            isaComment = isComment(str, enfasComments);
+            if (isaComment) {
                 positions = it->first;
                 comments.push_back(positions);
                 identified = true;
             }
         }
-        if(!identified){
-            isaString = isString(str, enfaStrings);
-            if (isaString){
+        if (!identified) {
+            isaString = isString(str, enfasStrings);
+            if (isaString) {
                 positions = it->first;
                 strings.push_back(positions);
             }
         }
     }
-     */
+    /*
 
     std::map<std::pair<std::pair<int, int>, std::pair<int, int>>, std::string>::const_iterator it;
 
@@ -654,74 +697,115 @@ void pythonToEnfa::identifyTokens(const std::map<std::pair<std::pair<int, int>, 
     RE reg7(regexStr7, ' ');
     ENFA enfaCom3 = reg7.toENFA();
 
-    for (it = m.begin(); it!= m.end(); it++) {
+    for (it = m.begin(); it != m.end(); it++) {
         std::string str = it->second;
 
         bool identified = false;
         bool isaKeyw = false;
 
-        std::pair<pos,pos> positions;
+        std::pair<pos, pos> positions;
         std::vector<std::string> keyw = getPythonKeyw(fileKeyw);
         std::vector<std::string>::iterator it2;
 
         for (it2 = keyw.begin(); it2 != keyw.end(); it2++) {
             RE rege(*it2, '%');
             ENFA enfa = rege.toENFA();
-            if (enfa.accepts(str)){
-                isaKeyw = true;
-            }
+            if (enfa.accepts(str)) { isaKeyw = true; }
         }
-        if(isaKeyw){
+        if (isaKeyw) {
             positions = it->first;
             keywords.push_back(positions);
             identified = true;
         }
-        if(!identified){
+        if (!identified) {
             std::string strNoOp = replaceRegexOp(str);
-            if (enfaCom1.accepts(strNoOp) or enfaCom2.accepts(strNoOp) or enfaCom3.accepts(strNoOp)){
+            if (enfaCom1.accepts(strNoOp) or enfaCom2.accepts(strNoOp) or enfaCom3.accepts(strNoOp)) {
                 positions = it->first;
                 comments.push_back(positions);
                 identified = true;
             }
         }
-        if(!identified) {
+        if (!identified) {
             std::string strNoOp = replaceRegexOp(str);
-            if (enfaStr1.accepts((strNoOp)) or enfaStr2.accepts((strNoOp)) or enfaStr3.accepts((strNoOp)) or enfaStr4.accepts((strNoOp))) {
+            if (enfaStr1.accepts((strNoOp)) or enfaStr2.accepts((strNoOp)) or enfaStr3.accepts((strNoOp)) or
+                enfaStr4.accepts((strNoOp))) {
                 positions = it->first;
                 strings.push_back(positions);
                 identified = true;
             }
         }
     }
+     */
 }
 
 void pythonToEnfa::printIdentifiedTokens(std::ostream &out) const {
-    std::vector<std::pair<pos,pos>>::const_iterator it;
+    std::vector<std::pair<pos, pos>>::const_iterator it;
 
-    if (keywords.empty()){
+    if (keywords.empty()) {
         out << "There are no keywords." << std::endl;
-    } else{
+    } else {
         out << "Keywords:" << std::endl;
-        for(it = keywords.begin(); it != keywords.end(); it++){
-            out << "(" << it->first.first << ", " << it->first.second << ") " << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
+        for (it = keywords.begin(); it != keywords.end(); it++) {
+            out << "(" << it->first.first << ", " << it->first.second << ") "
+                << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
         }
     }
 
-    if (comments.empty()){
+    if (comments.empty()) {
         out << "There are no comments." << std::endl;
-    } else{
+    } else {
         out << "Comments:" << std::endl;
-        for(it = comments.begin(); it != comments.end(); it++){
-            out << "(" << it->first.first << ", " << it->first.second << ") " << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
+        for (it = comments.begin(); it != comments.end(); it++) {
+            out << "(" << it->first.first << ", " << it->first.second << ") "
+                << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
         }
     }
 
-    if (strings.empty()){
+    if (strings.empty()) {
         out << "There are no strings." << std::endl;
-    } else{
+    } else {
         out << "Strings:" << std::endl;
-        for(it = strings.begin(); it != strings.end(); it++){
-            out << "(" << it->first.first << ", " << it->first.second << ") " << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
+        for (it = strings.begin(); it != strings.end(); it++) {
+            out << "(" << it->first.first << ", " << it->first.second << ") "
+                << "(" << it->second.first << ", " << it->second.second << ")" << std::endl;
         }
     }
 }
+
+void pythonToEnfa::outputTokesAsJson(nlohmann::json &out) const {
+    nlohmann::json commentBounds = nlohmann::json::array();
+    nlohmann::json stringBounds = nlohmann::json::array();
+    nlohmann::json keywordBounds = nlohmann::json::array();
+
+    for (const auto &commentBound : comments) commentBounds.push_back({commentBound.first, commentBound.second});
+    for (const auto &stringBound : strings) stringBounds.push_back({stringBound.first, stringBound.second});
+    for (const auto &keywordBound : keywords) keywordBounds.push_back({keywordBound.first, keywordBound.second});
+
+    out["comments"] = commentBounds;
+    out["strings"] = stringBounds;
+    out["keywords"] = keywordBounds;
+}
+
+void pythonToEnfa::generateDfaFromEnfas(const std::vector<ENFA> &enfas) {
+    // FUNCTION DOES NOT WORK CORRECTLY (error in product automaton?)
+    // convert ENFAS to DFAS
+    std::vector<DFA> dfas;
+    for (auto &enfa : enfas) { dfas.push_back(enfa.toDFA().minimize()); }
+    unsigned int size = dfas.size();
+    // if only one dfa present
+    if (size == 1) {
+        dfaKeyw = dfas[0];
+    } else {
+        // if more than one dfa present
+        DFA curDFA = dfas[0];
+        for (unsigned int i = 1; i < size; i++) { curDFA = DFA(curDFA, dfas[i], false); }
+        dfaKeyw = curDFA;
+    }
+}
+void pythonToEnfa::generateAutomata(const std::string &file) {
+    enfasKeyw = generateEnfaKeywords(file);
+    enfasComments = generateEnfaComments();
+    enfasStrings = generateEnfaStrings();
+}
+
+void pythonToEnfa::splitAndIdentify(const std::string &file) { identifyTokens(splitText(file)); }

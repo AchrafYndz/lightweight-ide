@@ -1,11 +1,7 @@
 #include "cli.h"
-#include <cstdio>
-#include <iostream>
 
 namespace cli {
-    void clearConsole() {
-        std::cout << "\033[2J\033[1;1H";
-    }
+    void clearConsole() { std::cout << "\033[2J\033[1;1H"; }
 
     Action waitForAction() {
         // Wait for input
@@ -16,20 +12,28 @@ namespace cli {
         std::cout << std::endl;
         std::cout << "\x1B[32m[0]\033[0m Autocomplete" << std::endl;
         std::cout << "\x1B[32m[1]\033[0m Syntax highlighting" << std::endl;
+        std::cout << "\x1B[32m[2]\033[0m Regenerate model" << std::endl;
         std::cout << std::endl;
 
         std::cout << "\x1B[32m>>\033[0m ";
 
         // Get user input
-        int x;
-        scanf("%d",&x);
+        std::string tmp;
+        std::getline(std::cin, tmp);
+
+        // check for valid input
+        const int x = utils::stoi(tmp);
 
         // Clear console
         clearConsole();
 
         // process input
-        if (x == 0) return Action::Autocomplete;
-        else if (x == 1) return Action::SyntaxHighlighting;
+        if (x == 0)
+            return Action::Autocomplete;
+        else if (x == 1)
+            return Action::SyntaxHighlighting;
+        else if (x == 2)
+            return Action::ModelGeneration;
 
         throw "Invalid input";
     }
@@ -44,16 +48,22 @@ namespace cli {
         std::cout << "\x1B[32m>>\033[0m ";
 
         // Get user input
-        std::string path;
-        getline(std::cin, path);
+        std::string inPath;
+        std::getline(std::cin, inPath);
 
         // Clear console
         clearConsole();
 
         // Process path
-        if ((path[0] == '\'' || path[0] == '"') && (path[path.length() - 1] == '\'' || path[path.length() - 1] == '"')) path = path.substr(1, path.length() - 2);
-        if (path.length() == 0) path = "./input.py";
-        return path;
+        if (inPath.length() == 0)
+            inPath = path::rootDirectory + '/' + "input.py";
+        else if ((inPath[0] == '\'' || inPath[0] == '"') &&
+                 (inPath[inPath.length() - 1] == '\'' || inPath[inPath.length() - 1] == '"'))
+            inPath = inPath.substr(1, inPath.length() - 2);
+
+        // add rootDirectory if path is relative
+        if (inPath[0] != '/') inPath = path::rootDirectory + '/' + inPath;
+        return inPath;
     }
 
     std::string waitForInput() {
@@ -66,11 +76,9 @@ namespace cli {
 
         // Get user input
         std::string input;
-        getline(std::cin, input);
-
-        // Clear console
-        clearConsole();
+        std::cin.clear(), std::cin.sync();
+        std::getline(std::cin, input);
 
         return input;
     }
-}
+}  // namespace cli

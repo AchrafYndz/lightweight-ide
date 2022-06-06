@@ -3,6 +3,9 @@
 PDFA::PDFA(const std::string &file) {
     // parse the file
     std::ifstream f(file);
+
+    if (!f.is_open()) throw std::runtime_error("[PDFA] Could not load file: '" + file + '\'');
+
     const nlohmann::json j = nlohmann::json::parse(f);
 
     // check the automata type
@@ -24,26 +27,25 @@ PDFA::PDFA(const std::string &file) {
         State *from = findState(transition["from"]);
         const char input = std::string(transition["input"]).front();
 
-        double totalChance = 0;
         for (const auto &chancePair : transition["to"]) {
             State *to = findState(chancePair["state"]);
             const double chance = chancePair["chance"];
-
-            totalChance += chance;
 
             Transition *transitionParsed = new Transition{.from = from, .to = to, .input = input};
             weights[transitionParsed] = chance;
 
             transitions.push_back(transitionParsed);
         }
-
-        assert(totalChance == 1);
     }
+
+    currentState = findStartingState();
 }
 
 PDFA::PDFA(const std::vector<char> &alphabet, const std::vector<State *> &states,
            const std::vector<Transition *> &transitions, const std::map<const Transition *, double> &weights) :
-    FA(alphabet, states, transitions), weights(weights) {}
+    FA(alphabet, states, transitions), weights(weights) {
+    currentState = findStartingState();
+}
 
 void PDFA::print(std::ostream &out) const {
     // Initialize json object
@@ -94,15 +96,19 @@ void PDFA::input(const std::string &in) {
         std::vector<Transition *> posTransitions = findTransition(currentState, ch);
 
         if (posTransitions.empty()) {
-            stuck = true;
-            currentState = nullptr;
-            return;
+            if (ch == '*') {
+                return;
+            } else {
+                stuck = true;
+                currentState = nullptr;
+                return;
+            }
         }
 
         // select a random weighted transition
         // seed the random number generator
         std::srand((unsigned int) time(nullptr));
-        double r = (double) std::rand() / RAND_MAX;
+        double r = (double) (std::rand() % 100000) / (double) 100000;
         Transition *chosen;
         for (Transition *transition : posTransitions) {
             double w = weights.at(transition);
@@ -120,17 +126,65 @@ void PDFA::input(const std::string &in) {
     }
 }
 
-const std::string &PDFA::predict() {
+std::string PDFA::predict() {
+    if (stuck || currentState->name == "START") return "";
+
     // because we do not want to update the PDFA, store the old state and reset it later
     State *curr = currentState;
 
     // input the 'epsilon' char
     input("*");
 
-    const std::string &result = currentState->name;
+    const std::string result = currentState->name;
     currentState = curr;
 
     return result;
 }
 
+const std::map<const Transition *, double> &PDFA::getWeights() const { return weights; }
+
 const State *PDFA::getCurrentState() const { return currentState; }
+
+PDFA PDFA::minimize() {
+    const double THRESHOLD = 0.10;
+
+    std::vector<char> minAlphabet = alphabet;
+    std::vector<State *> minStates = {};
+    std::vector<Transition *> minTransitions = {};
+    std::map<const Transition *, double> minWeights = {};
+
+    for (std::pair<const Transition *, double> p : weights) {
+        // Ignore transitions with low weights
+        if (p.second < THRESHOLD) continue;
+        // Determine minimized states
+        if (find(minStates.begin(), minStates.end(), p.first->from) == minStates.end())
+            minStates.push_back(p.first->from);
+        if (find(minStates.begin(), minStates.end(), p.first->to) == minStates.end()) minStates.push_back(p.first->to);
+        // Add all other transitions
+        minWeights.insert(p);
+    }
+
+    // Fix the weights
+    for (State *s : minStates) {
+        std::map<const Transition *, double> curWeights;
+        for (std::pair<const Transition *, double> p : minWeights) {
+            if (p.first->from == s) curWeights.insert(p);
+        }
+        // Calculate total weight
+        double total = 0.0;
+        for (std::pair<const Transition *, double> p : curWeights) { total += p.second; }
+        // Rebalance to 1
+        for (std::pair<const Transition *, double> p : curWeights) {
+            double newWeight = p.second / total;
+            minWeights[p.first] = newWeight;
+        }
+    }
+
+    // Push all the transitions from weights to the transitions vector
+    minTransitions.reserve(minWeights.size());
+    for (std::pair<const Transition *, double> p : minWeights) {
+        minTransitions.push_back(const_cast<Transition *>(p.first));
+    }
+
+    return PDFA(alphabet, minStates, minTransitions, minWeights);
+}
