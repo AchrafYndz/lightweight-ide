@@ -4,13 +4,6 @@
 
 ___
 
-## The project
-## Goals
-
-
-## The infrastructure
-
-
 ## Technologies used
 - C++
 - TypeScript
@@ -38,8 +31,3 @@ ___
 |
 |-- ...
 ```
-
-## Usage
-### How to deploy
-
-### Demo
