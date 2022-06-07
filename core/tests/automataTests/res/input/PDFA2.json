@@ -64,11 +64,11 @@
           "chance": 0.10
         },
         {
-          "state": "f",
+          "state": "c",
           "chance": 0.18
         },
         {
-          "state": "h",
+          "state": "a",
           "chance": 0.06
         }
       ]

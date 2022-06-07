@@ -52,12 +52,32 @@ TEST_SUITE("PDFATests") {
         CHECK(valid);
     }
 
-    TEST_CASE("[PDFATests] autocomlete0") {
+    TEST_CASE("[PDFATests] autocomplete0") {
         PDFA pdfa(path::rootDirectory + "/tests/automataTests/res/input/autocompletionPDFA0.json");
 
         pdfa.input("asse");
 
         const std::string &prediction = pdfa.predict();
         CHECK_EQ("assert", prediction);
+    }
+
+    TEST_CASE("[PDFATests] minimization0") {
+        PDFA pdfa(path::rootDirectory + "/tests/automataTests/res/input/PDFA2.json");
+
+        PDFA min = pdfa.minimize(0.10);
+
+        // load in expected file
+        const std::ifstream expectedFile(path::rootDirectory +
+                                         "/tests/automataTests/res/expected/PDFATests-PDFA2.json");
+        std::stringstream expected;
+        expected << expectedFile.rdbuf();
+
+        std::stringstream actual("");
+
+    //    std::ofstream tmp(path::rootDirectory + "/tests/automataTests/res/expected/PDFATests-PDFA2.json");
+
+        pdfa.print(actual);
+
+        CHECK_EQ(expected.str(), actual.str());
     }
 }
