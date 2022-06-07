@@ -91,7 +91,8 @@ void PDFA::input(const std::string &in) {
 
     for (const char ch : in) {
         // assert that the input char is part of the alphabet
-        assert(std::find(alphabet.begin(), alphabet.end(), ch) != alphabet.end());
+        // assert(std::find(alphabet.begin(), alphabet.end(), ch) != alphabet.end());
+        if (std::find(alphabet.begin(), alphabet.end(), ch) != alphabet.end()) return;
 
         std::vector<Transition *> posTransitions = findTransition(currentState, ch);
 
