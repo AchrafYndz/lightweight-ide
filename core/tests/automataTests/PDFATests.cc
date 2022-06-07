@@ -52,7 +52,7 @@ TEST_SUITE("PDFATests") {
         CHECK(valid);
     }
 
-    TEST_CASE("[PDFATests] autocomlete0") {
+    TEST_CASE("[PDFATests] autocomplete0") {
         PDFA pdfa(path::rootDirectory + "/tests/automataTests/res/input/autocompletionPDFA0.json");
 
         pdfa.input("asse");
