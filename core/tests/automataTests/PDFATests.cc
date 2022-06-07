@@ -74,7 +74,7 @@ TEST_SUITE("PDFATests") {
 
         std::stringstream actual("");
 
-//        std::ofstream tmp(path::rootDirectory + "/tests/automataTests/res/expected/PDFATests-PDFA2.json");
+    //    std::ofstream tmp(path::rootDirectory + "/tests/automataTests/res/expected/PDFATests-PDFA2.json");
 
         pdfa.print(actual);
 
