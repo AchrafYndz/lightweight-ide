@@ -145,21 +145,29 @@ const std::map<const Transition *, double> &PDFA::getWeights() const { return we
 
 const State *PDFA::getCurrentState() const { return currentState; }
 
-PDFA PDFA::minimize() {
-    const double THRESHOLD = 0.10;
-
+PDFA PDFA::minimize(const double threshold) {
     std::vector<char> minAlphabet = alphabet;
     std::vector<State *> minStates = {};
     std::vector<Transition *> minTransitions = {};
+
     std::map<const Transition *, double> minWeights = {};
+    std::map<const Transition *, double> minMinWeights = {};
+    std::unordered_map<std::string, State *> newStates;
 
     for (std::pair<const Transition *, double> p : weights) {
         // Ignore transitions with low weights
-        if (p.second < THRESHOLD) continue;
+        if (p.second < threshold) continue;
         // Determine minimized states
-        if (find(minStates.begin(), minStates.end(), p.first->from) == minStates.end())
-            minStates.push_back(p.first->from);
-        if (find(minStates.begin(), minStates.end(), p.first->to) == minStates.end()) minStates.push_back(p.first->to);
+        if (find(minStates.begin(), minStates.end(), p.first->from) == minStates.end()) {
+            State *newState = p.first->from->copy();
+            newStates[p.first->from->name] = newState;
+            minStates.push_back(newState);
+        } 
+        if (find(minStates.begin(), minStates.end(), p.first->to) == minStates.end()) {
+            State *newState = p.first->to->copy();
+            newStates[p.first->to->name] = newState;
+            minStates.push_back(newState);
+        }
         // Add all other transitions
         minWeights.insert(p);
     }
@@ -182,9 +190,14 @@ PDFA PDFA::minimize() {
 
     // Push all the transitions from weights to the transitions vector
     minTransitions.reserve(minWeights.size());
-    for (std::pair<const Transition *, double> p : minWeights) {
-        minTransitions.push_back(const_cast<Transition *>(p.first));
+    for (auto &p : minWeights) {
+        State *from = newStates.at(p.first->from->name);
+        State *to = newStates.at(p.first->to->name);
+        Transition *newTransition = new Transition{.from = from, .to = to, .input = p.first->input};
+
+        minTransitions.push_back(newTransition);
+        minMinWeights[newTransition] = p.second;
     }
 
-    return PDFA(alphabet, minStates, minTransitions, minWeights);
+    return PDFA(alphabet, minStates, minTransitions, minMinWeights);
 }

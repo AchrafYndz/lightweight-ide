@@ -107,7 +107,7 @@ PDFA models::genAutocompletionPDFA(const std::vector<std::string> &keywords,
     //     }
     // }
 
-    return {alphabet, states, transitions, weights};
+    return PDFA{alphabet, states, transitions, weights}.minimize(0.10);
 }
 
 void models::genAutocompletionPDFAToFile(const std::vector<std::string> &keywords,
