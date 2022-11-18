@@ -1,6 +1,6 @@
 <h1 align="center">Lightweight integrated development environment powered by finite automata</h1>
 
-<p style="text-align: center;"><em>A project by Achraf Yandouzi, Flor Ronsmans De Vry, Jonas Caluwé and Michel Dierckx for the Automata Theory class at the University of Antwerp</em></p>
+<p style="text-align: center;"><em>A project by Achraf Yandouzi, Flor Ronsmans De Vry, Jonas Caluwé and Maxime Ruys for the Automata Theory class at the University of Antwerp</em></p>
 
 ___
 
