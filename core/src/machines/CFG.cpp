@@ -1,11 +1,8 @@
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <regex>
-#include "../../../../../Downloads/CFG-main/json.hpp"
 #include "CFG.h"
-
-using json = nlohmann::json;
+#include "../../lib/nlohmann-json/json.hpp"
 
 CFG::CFG() {
     variables = {"BINDIGIT", "S"};
