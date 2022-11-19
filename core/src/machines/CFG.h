@@ -33,7 +33,7 @@ public:
 
 
     void toCNF();
-    void print();
+    void print(std::ostream &out);
 
     bool accepts(const std::string input);
 };

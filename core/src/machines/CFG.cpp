@@ -17,28 +17,28 @@ CFG::CFG() {
     startSymbol = "S";
 }
 
-void CFG::print() {
+void CFG::print(std::ostream &out) {
     // print variables
-    std::cout << "V = {";
+    out << "V = {";
     for (auto it = variables.begin(); it != variables.end(); ++it) {
         if (it != variables.begin())
-            std::cout << ", ";
-        std::cout << *it;
+            out << ", ";
+        out << *it;
     }
-    std::cout << "}" << std::endl;
+    out << "}" << std::endl;
 
     // print terminals
-    std::cout << "T = {";
+    out << "T = {";
     for (auto it = terminals.begin(); it != terminals.end(); ++it) {
         if (it != terminals.begin())
-            std::cout << ", ";
-        std::cout << *it;
+            out << ", ";
+        out << *it;
     }
-    std::cout << "}" << std::endl;
+    out << "}" << std::endl;
 
     // print productions
     std::vector<std::string> sortedRules;
-    std::cout << "P = {" << std::endl;
+    out << "P = {" << std::endl;
     for (auto &production: productions) {
         sortedRules.clear();
         for (const std::string &value: production.second) {
@@ -46,13 +46,13 @@ void CFG::print() {
         }
         sort(sortedRules.begin(), sortedRules.end());
         for (const std::string &value: sortedRules) {
-            std::cout << "  " << production.first << " -> " << value << std::endl;
+            out << "  " << production.first << " -> " << value << std::endl;
         }
     }
-    std::cout << "}" << std::endl;
+    out << "}" << std::endl;
 
     // print start symbol
-    std::cout << "S = " << startSymbol << std::endl;
+    out << "S = " << startSymbol << std::endl;
 }
 
 CFG::CFG(const std::string &filename) {
@@ -96,7 +96,7 @@ CFG::CFG(const std::string &filename) {
 
 void CFG::toCNF() {
     std::cout << "Original CFG:" << "\n" << std::endl;
-    print();
+    print(std::cout);
     std::cout << "\n-------------------------------------\n" << std::endl;
     int originalCount = countProductions();
     // 1. Eliminate all epsilon productions
@@ -150,7 +150,7 @@ void CFG::toCNF() {
 
     int epsCount = countProductions();
     std::cout << "  Created " << epsCount << " productions, original had " << originalCount << "\n" << std::endl;
-    print();
+    print(std::cout);
     std::cout << std::endl;
 
     //2. Eliminate all unit pairs
@@ -221,7 +221,7 @@ void CFG::toCNF() {
 
     int unitCount = countProductions();
     std::cout << "  Created " << unitCount << " new productions, original had " << epsCount << "\n" << std::endl;
-    print();
+    print(std::cout);
     std::cout << std::endl;
 
     // Eliminate all useless symbols
@@ -353,7 +353,7 @@ void CFG::toCNF() {
     variables = usefulVars;
     terminals = usefulTerms;
 
-    print();
+    print(std::cout);
     std::cout << std::endl;
 
     // Arrange bodies of length >= 2 to consist of only variables
@@ -401,7 +401,7 @@ void CFG::toCNF() {
     std::cout << "  Created " << countProductions() << " new productions, original had "
               << prodsCountBeforeBodyVars << "\n" << std::endl;
 
-    print();
+    print(std::cout);
 
     // Break bodies of length >= 3
     int bodiesBroken = 0;
@@ -429,7 +429,7 @@ void CFG::toCNF() {
     std::cout << "\n >> Broke " << bodiesBroken << " bodies, added " << varsAdded << " new variables" << std::endl;
     std::cout << ">>> Result CFG:\n" << std::endl;
 
-    print();
+    print(std::cout);
 
 }
 
