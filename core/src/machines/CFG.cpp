@@ -481,7 +481,7 @@ std::string CFG::getNextFreeVar(const std::string varName) {
 
 std::vector<std::string> CFG::getSymbols(std::string str) {
     std::vector<std::string> symbols = {};
-    for (int i = 0; i < str.length(); i++) {
+    for (std::string::size_type i = 0; i < str.length(); i++) {
         if (str.at(i) == ' ') continue;
         std::string curSymbol = "";
         while (i < str.length() && str.at(i) != ' ') {
@@ -495,7 +495,7 @@ std::vector<std::string> CFG::getSymbols(std::string str) {
 
 bool CFG::accepts(const std::string input) {
     std::map<int, std::vector<std::set<std::string>>> table;
-    for (int row = 0; row <= input.length() - 1; ++row) {
+    for (std::string::size_type row = 0; row <= input.length() - 1; ++row) {
         table.insert({0, {}});
         if (row == 0) {
             for (char c: input) {
@@ -503,9 +503,9 @@ bool CFG::accepts(const std::string input) {
                 table[0].push_back(symbols);
             }
         } else {
-            for (int col = 0; col < input.length() - row; ++col) {
+            for (std::string::size_type col = 0; col < input.length() - row; ++col) {
                 std::set<std::string> symbols;
-                for (int i = 0; i < row; ++i) {
+                for (std::string::size_type i = 0; i < row; ++i) {
                     std::set<std::string> matches = match(table, col, row, i);
                     for (const std::string &match: matches) {
                         std::set<std::string> newSymbols = getLeft(match);
