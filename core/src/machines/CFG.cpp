@@ -516,12 +516,10 @@ bool CFG::accepts(const std::string input) {
             }
         }
     }
-    printTable(table);
     if (table[input.length()-1][0].find(startSymbol) != table[input.length()-1][0].end()) {
-        std::cout << "true" << std::endl;
-    } else {
-        std::cout << "false" << std::endl;
+        return true;
     }
+    return false;
 }
 
 std::set<std::string> CFG::match(std::map<int, std::vector<std::set<std::string>>> &table, int col, int row, int i) {
