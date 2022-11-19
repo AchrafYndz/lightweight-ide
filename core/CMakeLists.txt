@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 project(ide VERSION 0.1.0)
 
-set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra")     # -Werror
+set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra")
 
 # ================== Library files ==================
 # nlohmann-json library files
@@ -22,6 +22,9 @@ AUX_SOURCE_DIRECTORY(lib/doctest DOCTEST_LIB_FILES)
 # object source files
 AUX_SOURCE_DIRECTORY(src/automata OBJECT_SOURCE_FILES)
 
+# machine source files
+AUX_SOURCE_DIRECTORY(src/machines MACHINE_SOURCE_FILES)
+
 # parser/scanner source files
 AUX_SOURCE_DIRECTORY(src/other SCANNER_SOURCE_FIlES)
 
@@ -38,8 +41,7 @@ set(RELEASE_SOURCE_FILES
     ${ID_LIB_FILES}
     ${OBJECT_SOURCE_FILES}
     ${SCANNER_SOURCE_FIlES}
-    ${MODELS_SOURCE_FILES}
-)
+    ${MODELS_SOURCE_FILES})
 
 set(TEST_SOURCE_FILES
     src/ideTest.cc
@@ -47,6 +49,7 @@ set(TEST_SOURCE_FILES
     ${JSON_LIB_FILES}
     ${PATH_LIB_FILES}
     ${OBJECT_SOURCE_FILES}
+    ${MACHINE_SOURCE_FILES}
     ${SCANNER_SOURCE_FIlES}
     ${MODELS_SOURCE_FILES}
     ${TEST_SOURCE_FILES}
