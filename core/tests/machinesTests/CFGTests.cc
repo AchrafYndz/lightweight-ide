@@ -3,7 +3,7 @@
 #include "../../lib/doctest/doctest.h"
 
 #include "../../lib/path/path.h"
-#include "../../src/machines/CFG.H"
+#include "../../src/machines/CFG.h"
 
 TEST_SUITE("CFGTests") {
     TEST_CASE("[CFGTests] parseFile0") {
