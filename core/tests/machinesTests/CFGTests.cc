@@ -7,16 +7,16 @@
 
 TEST_SUITE("CFGTests") {
     TEST_CASE("[CFGTests] parseFile0") {
-        const CFG cfg(path::rootDirectory + "/tests/machinesTests/res/input/CFG0.json");
+        CFG cfg(path::rootDirectory + "/tests/machinesTests/res/input/CFG0.json");
 
         const std::ifstream expectedFile(path::rootDirectory +
-                                         "/tests/automataTests/res/expected/DFATests-parseFile0.json");
+                                         "/tests/machinesTests/res/expected/CFGTests-parseFile0.json");
         std::stringstream expected;
         expected << expectedFile.rdbuf();
 
         std::stringstream actual("");
 
-        // std::ofstream tmp(path::rootDirectory + "/tests/automataTests/res/expected/DFATests-parseFile0.json");
+//         std::ofstream tmp(path::rootDirectory + "/tests/automataTests/res/expected/DFATests-parseFile0.json");
 
         cfg.print(actual);
 
