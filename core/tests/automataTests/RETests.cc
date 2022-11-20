@@ -1,3 +1,4 @@
+#include <sstream>
 #include "../../lib/doctest/doctest.h"
 
 #include "../../lib/path/path.h"
