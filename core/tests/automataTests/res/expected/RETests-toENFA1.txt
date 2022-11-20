@@ -1,8 +1,0 @@
-no_of_states=26
-no_of_transitions[e]=29
-no_of_transitions[i]=2
-no_of_transitions[y]=1
-no_of_transitions[m]=1
-degree[0]=1
-degree[1]=17
-degree[2]=8

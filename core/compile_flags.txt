@@ -1,0 +1,9 @@
+-xc++
+-std=c++17
+
+-Wall
+-Wextra
+-Wpedantic
+
+-Ilib/nlohmann/include
+-Ilib/doctest/include

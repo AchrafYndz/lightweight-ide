@@ -1,6 +1,0 @@
-no_of_states=5
-no_of_transitions[e]=3
-no_of_transitions[b]=1
-no_of_transitions[c]=0
-degree[0]=1
-degree[1]=4
