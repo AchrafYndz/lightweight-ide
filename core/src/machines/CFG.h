@@ -23,7 +23,7 @@ class CFG {
     /// Needed because the professor sorted the bodies including the backticks as one string and not as
     /// vectors.
     class RuleSort {
-        // TODO: Add cashing for performance increase
+        // TODO: Add caching for performance increase
     public:
         bool operator()(const Body& b1, const Body& b2) const {
             const std::string bs1 =

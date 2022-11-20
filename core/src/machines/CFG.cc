@@ -75,7 +75,7 @@ void print_ll_table(std::ostream& out, const std::map<std::string, std::map<std:
     for (const auto& c : table.begin()->second) {
         const std::string& col_name = c.first;
 
-        // handle "<EOS>" seperately
+        // handle "<EOS>" separately
         if (col_name == "<EOS>") continue;
 
         out << std::setfill(' ') << std::left << std::setw(col_size[col_name]) << col_name << " | ";
@@ -91,7 +91,7 @@ void print_ll_table(std::ostream& out, const std::map<std::string, std::map<std:
     for (const auto& c : table.begin()->second) {
         const std::string& col_name = c.first;
 
-        // handle "<EOS>" seperately
+        // handle "<EOS>" separately
         if (col_name == "<EOS>") continue;
 
         out << std::setfill('-') << std::left << std::setw(col_size[col_name]) << '-' << "-|-";
@@ -121,7 +121,7 @@ void print_ll_table(std::ostream& out, const std::map<std::string, std::map<std:
     for (const auto& c : table.begin()->second) {
         const std::string& col_name = c.first;
 
-        // handle "<EOS>" seperately
+        // handle "<EOS>" separately
         if (col_name == "<EOS>") continue;
 
         out << std::setfill('-') << std::left << std::setw(col_size[col_name]) << '-' << "-|-";
