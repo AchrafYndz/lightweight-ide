@@ -58,6 +58,8 @@ CPPFLAGS += $(CPPFLAGS_DEBUG)
 
 build: $(BUILDDIR)/$(BIN)
 
+all: build build_test clean
+
 build_test: CPPFLAGS += $(TEST_INCFLAGS) -DTEST
 build_test: $(BUILDDIR)/$(TEST)
 
@@ -71,7 +73,7 @@ $(BUILDDIR)/$(BIN): $(OBJS)
 $(BUILDDIR)/$(TEST): $(TEST_OBJS)
 	$(CXX) $(TEST_OBJS) -o $@
 
-run: build
+all: build
 	$(BUILDDIR)/$(BIN)
 
 test: build_test

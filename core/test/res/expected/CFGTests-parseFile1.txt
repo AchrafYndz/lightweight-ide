@@ -1,0 +1,13 @@
+V = {A, B, C, S}
+T = {a, b}
+P = {
+  A -> `B A`
+  A -> `a`
+  B -> `C C`
+  B -> `b`
+  C -> `A B`
+  C -> `a`
+  S -> `A B`
+  S -> `B C`
+}
+S = S

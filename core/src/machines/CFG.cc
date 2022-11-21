@@ -44,7 +44,8 @@ std::string print_body(const Body& b) {
 std::string find_var_with_prod(const std::map<std::string, std::set<Body>>& rules, const Body& b) {
     for (const auto& rule_set : rules) {
         for (const auto& body : rule_set.second) {
-            if (body == b) return rule_set.first;
+            if (body == b)
+                return rule_set.first;
         }
     }
 
@@ -76,7 +77,8 @@ void print_ll_table(std::ostream& out, const std::map<std::string, std::map<std:
         const std::string& col_name = c.first;
 
         // handle "<EOS>" separately
-        if (col_name == "<EOS>") continue;
+        if (col_name == "<EOS>")
+            continue;
 
         out << std::setfill(' ') << std::left << std::setw(col_size[col_name]) << col_name << " | ";
     }
@@ -92,7 +94,8 @@ void print_ll_table(std::ostream& out, const std::map<std::string, std::map<std:
         const std::string& col_name = c.first;
 
         // handle "<EOS>" separately
-        if (col_name == "<EOS>") continue;
+        if (col_name == "<EOS>")
+            continue;
 
         out << std::setfill('-') << std::left << std::setw(col_size[col_name]) << '-' << "-|-";
     }
@@ -104,7 +107,8 @@ void print_ll_table(std::ostream& out, const std::map<std::string, std::map<std:
         // out the head
         out << "| " << std::setfill(' ') << std::left << std::setw(col_size[""]) << row.first;
         for (const auto& col : row.second) {
-            if (col.first == "<EOS>") continue;
+            if (col.first == "<EOS>")
+                continue;
 
             // out the body
             out << " | " << std::setfill(' ') << std::left << std::setw(col_size[col.first]) << col.second;
@@ -122,7 +126,8 @@ void print_ll_table(std::ostream& out, const std::map<std::string, std::map<std:
         const std::string& col_name = c.first;
 
         // handle "<EOS>" separately
-        if (col_name == "<EOS>") continue;
+        if (col_name == "<EOS>")
+            continue;
 
         out << std::setfill('-') << std::left << std::setw(col_size[col_name]) << '-' << "-|-";
     }
@@ -169,7 +174,8 @@ CFG::CFG(const std::string& filepath) {
 
     // read out terminals
     std::set<char> terms_;
-    for (std::string term : cfg["Terminals"]) terms_.insert(term[0]);
+    for (std::string term : cfg["Terminals"])
+        terms_.insert(term[0]);
     this->terms = terms_;
 
     // read out start variable
@@ -217,17 +223,21 @@ std::set<std::string> CFG::first(const std::vector<std::string>& b) const {
         const std::string& var = b[0];
 
         // 1. If X is a terminal then First(X) is just X!
-        if (var.length() == 1 && this->terms.find(var[0]) != this->terms.end()) return {var};
+        if (var.length() == 1 && this->terms.find(var[0]) != this->terms.end())
+            return {var};
 
         // if `var` has no productions
-        if (this->rules.find(var) == this->rules.end()) return {};
+        if (this->rules.find(var) == this->rules.end())
+            return {};
 
         // 2. If there is a Production X → ε then add ε to first(X)
-        if (this->has_eps_prod(var)) result.insert("");
+        if (this->has_eps_prod(var))
+            result.insert("");
 
         // 3. If there is a Production X → Y1Y2..Yk then add first(Y1Y2..Yk) to first(X)
         for (const auto& prod : this->rules.at(var)) {
-            if (prod.empty()) continue;
+            if (prod.empty())
+                continue;
 
             const auto prod_first = this->first(prod);
             result.insert(prod_first.begin(), prod_first.end());
@@ -238,7 +248,8 @@ std::set<std::string> CFG::first(const std::vector<std::string>& b) const {
         auto first_y1 = this->first({b[0]});
 
         //      1. First(Y1) (if First(Y1) doesn't contain ε)
-        if (first_y1.find("") == first_y1.end()) return first_y1;
+        if (first_y1.find("") == first_y1.end())
+            return first_y1;
 
         //      2. OR (if First(Y1) does contain ε) then First (Y1Y2..Yk) is everything in First(Y1) <except for ε > as
         //      well as everything in First(Y2..Yk)
@@ -254,7 +265,8 @@ std::set<std::string> CFG::first(const std::vector<std::string>& b) const {
 std::set<std::string> CFG::follow(const std::string& a) const {
     std::set<std::string> result;
 
-    if (a == this->start_var) result.insert("<EOS>");
+    if (a == this->start_var)
+        result.insert("<EOS>");
 
     for (const auto& rule_set : this->rules) {
         for (const auto& b : rule_set.second) {
@@ -350,7 +362,8 @@ void CFG::ll(std::ostream& out) const {
                 // find the rule that starts with that symbol
                 Body c_b;
                 for (const auto& b : this->rules.at(var))
-                    if (b.size() > 0 && b[0] == std::string(1, c)) c_b = b;
+                    if (b.size() > 0 && b[0] == std::string(1, c))
+                        c_b = b;
 
                 table[var][std::string(1, c)] = print_body(c_b);
             }
@@ -379,7 +392,7 @@ void CFG::elim_eps_prods(std::ostream& out) {
     out << " >> Eliminating epsilon productions\n";
 
     std::set<std::string> nullables;
-    std::map<std::string, bool> checked;  // {var, nullable}
+    std::map<std::string, bool> checked; // {var, nullable}
     bool changed = true;
     while (changed) {
         changed = false;
@@ -395,7 +408,9 @@ void CFG::elim_eps_prods(std::ostream& out) {
                 for (const auto& c : rule) {
                     if (std::find(this->vars.begin(), this->vars.end(), c) != this->vars.end()) {
                         // check if produced variable is nullable
-                        if (!checked[c]) { nullable = false; }
+                        if (!checked[c]) {
+                            nullable = false;
+                        }
                     } else {
                         // `c` is not a space nor a variable, thus a terminal
                         nullable = false;
@@ -423,12 +438,14 @@ void CFG::elim_eps_prods(std::ostream& out) {
     // add all `rules` to `pending` and `new_rules`, except epsilon productions
     for (const auto& rule_pair : this->rules) {
         for (const auto& body : rule_pair.second) {
-            if (body.empty()) continue;
+            if (body.empty())
+                continue;
 
             pending.push({rule_pair.first, body});
 
             const bool inserted = new_rules[rule_pair.first].insert(body).second;
-            if (inserted) ++new_rule_count;
+            if (inserted)
+                ++new_rule_count;
         }
     }
 
@@ -446,10 +463,12 @@ void CFG::elim_eps_prods(std::ostream& out) {
                     std::advance(it, i);
                     new_rule.erase(it);
 
-                    if (new_rule.empty()) continue;
+                    if (new_rule.empty())
+                        continue;
 
                     const bool inserted = new_rules[rule_pair.first].insert(new_rule).second;
-                    if (inserted) ++new_rule_count;
+                    if (inserted)
+                        ++new_rule_count;
 
                     pending.push({rule_pair.first, new_rule});
                 }
@@ -472,7 +491,8 @@ void CFG::elim_unit_pairs(std::ostream& out) {
 
     unsigned int unit_production_count = 0;
     std::map<std::string, std::set<Body>> units;
-    for (const auto& var : this->vars) units[var].insert({var});
+    for (const auto& var : this->vars)
+        units[var].insert({var});
 
     // add unit productions in grammar to set
     for (const auto& rule_set : this->rules) {
@@ -495,7 +515,8 @@ void CFG::elim_unit_pairs(std::ostream& out) {
             for (const auto& body : unit.second) {
                 const std::string& var = body[0];
                 for (const auto& new_var : units.at(var)) {
-                    if (unit.second.find(new_var) != unit.second.end()) continue;
+                    if (unit.second.find(new_var) != unit.second.end())
+                        continue;
                     units[unit.first].insert(new_var);
                     changed = true;
                 }
@@ -508,7 +529,8 @@ void CFG::elim_unit_pairs(std::ostream& out) {
     out << "  Unit pairs: {";
     for (auto unit_set_it = units.begin(); unit_set_it != units.end(); ++unit_set_it) {
         for (auto unit_it = unit_set_it->second.begin(); unit_it != unit_set_it->second.end(); ++unit_it) {
-            if (!(unit_set_it == units.begin() && unit_it == unit_set_it->second.begin())) out << ", ";
+            if (!(unit_set_it == units.begin() && unit_it == unit_set_it->second.begin()))
+                out << ", ";
             out << "(" << unit_set_it->first << ", " << (*unit_it)[0] << ")";
         }
     }
@@ -522,7 +544,8 @@ void CFG::elim_unit_pairs(std::ostream& out) {
     // remove unit productions
     for (const auto& rule_set : this->rules) {
         for (const auto& body : rule_set.second) {
-            if (body.size() == 1 && units.find(body[0]) != units.end()) continue;
+            if (body.size() == 1 && units.find(body[0]) != units.end())
+                continue;
             new_rules[rule_set.first].insert(body);
             ++new_rule_count;
         }
@@ -530,10 +553,12 @@ void CFG::elim_unit_pairs(std::ostream& out) {
 
     for (const auto& unit_set : units) {
         for (const auto& body : unit_set.second) {
-            if (new_rules.find(body[0]) == new_rules.end()) continue;
+            if (new_rules.find(body[0]) == new_rules.end())
+                continue;
             for (const auto& rule : new_rules.at(body[0])) {
                 const auto& result = new_rules[unit_set.first].insert(rule).second;
-                if (result) ++new_rule_count;
+                if (result)
+                    ++new_rule_count;
             }
         }
     }
@@ -554,14 +579,16 @@ void CFG::elim_useless_symbs(std::ostream& out) {
 
     // 3.1. determine generating symbols
     std::set<std::string> generating;
-    for (const auto& term : this->terms) generating.insert(std::string(1, term));
+    for (const auto& term : this->terms)
+        generating.insert(std::string(1, term));
 
     bool changed = true;
     while (changed) {
         changed = false;
 
         for (const auto& rule_set : this->rules) {
-            if (generating.find(rule_set.first) != generating.end()) continue;
+            if (generating.find(rule_set.first) != generating.end())
+                continue;
 
             for (const auto& body : rule_set.second) {
                 bool is_generating = true;
@@ -611,12 +638,14 @@ void CFG::elim_useless_symbs(std::ostream& out) {
         changed = false;
 
         for (const auto& rule_set : new_rules) {
-            if (reachable.find(rule_set.first) == reachable.end()) continue;
+            if (reachable.find(rule_set.first) == reachable.end())
+                continue;
 
             for (const auto& rule : rule_set.second) {
                 for (const auto& c : rule) {
                     bool result = reachable.insert(c).second;
-                    if (result) changed = true;
+                    if (result)
+                        changed = true;
                 }
             }
         }
@@ -642,7 +671,8 @@ void CFG::elim_useless_symbs(std::ostream& out) {
 
     std::set<std::string> useful;
     for (const auto& s : generating) {
-        if (reachable.find(s) != reachable.end()) useful.insert(s);
+        if (reachable.find(s) != reachable.end())
+            useful.insert(s);
     }
 
     std::set<std::string> new_vars;
@@ -840,7 +870,8 @@ void CFG::toCNF(std::ostream& out) {
 
 unsigned int CFG::rule_count() const {
     unsigned int count = 0;
-    for (const auto& rule_pair : this->rules) count += rule_pair.second.size();
+    for (const auto& rule_pair : this->rules)
+        count += rule_pair.second.size();
 
     return count;
 }
@@ -848,7 +879,8 @@ unsigned int CFG::rule_count() const {
 std::string CFG::find_var_with_prod(const Body& b) const {
     for (const auto& rule_set : this->rules) {
         for (const auto& body : rule_set.second) {
-            if (body == b) return rule_set.first;
+            if (body == b)
+                return rule_set.first;
         }
     }
 
@@ -856,7 +888,8 @@ std::string CFG::find_var_with_prod(const Body& b) const {
 }
 
 bool CFG::has_eps_prod(const std::string& var) const {
-    if (this->rules.find(var) == this->rules.end()) return false;
+    if (this->rules.find(var) == this->rules.end())
+        return false;
 
     return (this->rules.at(var).find({}) != this->rules.at(var).end());
 }
