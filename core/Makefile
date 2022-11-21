@@ -56,6 +56,8 @@ CPPFLAGS += $(CPPFLAGS_DEBUG)
 
 .PHONY: all run build_test test clean
 
+all: build build_test clean
+
 build: $(BUILDDIR)/$(BIN)
 
 all: build build_test clean
@@ -65,7 +67,7 @@ build_test: $(BUILDDIR)/$(TEST)
 
 $(BUILDDIR)/%.o: %.$(CPP_SRC_EXTENSION)
 	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) -c $< -o $@
+	$(CXX) -MMD $(CPPFLAGS) -c $< -o $@
 
 $(BUILDDIR)/$(BIN): $(OBJS)
 	$(CXX) $(OBJS) -o $@
@@ -81,6 +83,9 @@ test: build_test
 
 clean:
 	$(RM) $(BUILDDIR)
+
+# header file dependency checking
+-include $(shell find $(BUILDDIR) -name "*.d")
 
 # command for debugging variables
 print-%  : ; @echo $* = $($*)
