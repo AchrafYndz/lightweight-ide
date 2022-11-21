@@ -809,7 +809,6 @@ bool CFG::has_eps_prod(const std::string& var) const {
 bool CFG::accepts(const std::string input) {
     std::map<int, std::vector<std::set<std::string>>> table;
     for (unsigned long row = 0; row <= input.length() - 1; ++row) {
-//        table.insert({0, {}});
         if (row == 0) {
             for (char c: input) {
                 std::set<std::string> symbols = getLeft(std::string(1, c));
@@ -829,7 +828,6 @@ bool CFG::accepts(const std::string input) {
             }
         }
     }
-    printTable(table);
     if (table[input.length()-1][0].find(start_var) != table[input.length()-1][0].end()) {
         return true;
     }
