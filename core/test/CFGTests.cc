@@ -44,4 +44,17 @@ TEST_SUITE("CFGTests") {
 
         CHECK_EQ(expected.str(), actual.str());
     }
+    TEST_CASE("[CFGTests] CNF") {
+        CFG cfg("test/res/input/CNF0.json");
+
+        const std::ifstream expectedFile("test/res/expected/CFGTests-CNF0.txt");
+        std::stringstream expected;
+        expected << expectedFile.rdbuf();
+
+        std::stringstream actual("");
+
+        cfg.toCNF(actual);
+
+        CHECK_EQ(expected.str(), actual.str());
+    }
 }
