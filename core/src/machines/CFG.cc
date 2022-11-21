@@ -52,89 +52,6 @@ std::string find_var_with_prod(const std::map<std::string, std::set<Body>>& rule
     return "";
 }
 
-// TODO: Redo this function once grading has been done
-void print_ll_table(std::ostream& out, const std::map<std::string, std::map<std::string, std::string>>& table) {
-    // determine max size for all columns
-    std::map<std::string, unsigned int> col_size;
-    for (const auto& table_row : table) {
-        for (const auto& table_col : table_row.second) {
-            col_size[table_col.first] =
-                std::max(col_size[table_col.first], static_cast<unsigned int>(table_col.second.length()) + 1);
-        }
-    }
-
-    for (const auto& col : table.begin()->second)
-        col_size[col.first] = std::max(col_size[col.first], static_cast<unsigned int>(col.first.length() + 1));
-
-    // determine max size for first column
-    for (const auto& row : table)
-        col_size[""] = std::max(col_size[""], static_cast<unsigned int>(row.first.length()) + 1);
-
-    // output the header
-    out << std::setfill(' ') << std::setw(col_size[""] + 2) << ' ' << " | ";
-
-    for (const auto& c : table.begin()->second) {
-        const std::string& col_name = c.first;
-
-        // handle "<EOS>" separately
-        if (col_name == "<EOS>")
-            continue;
-
-        out << std::setfill(' ') << std::left << std::setw(col_size[col_name]) << col_name << " | ";
-    }
-
-    // output "<EOS>" for header
-    out << std::setfill(' ') << std::left << std::setw(col_size["<EOS>"]) << "<EOS>"
-        << " |\n";
-
-    // output divisor line
-    out << "|-" << std::setfill('-') << std::setw(col_size[""]) << '-' << "-|-";
-
-    for (const auto& c : table.begin()->second) {
-        const std::string& col_name = c.first;
-
-        // handle "<EOS>" separately
-        if (col_name == "<EOS>")
-            continue;
-
-        out << std::setfill('-') << std::left << std::setw(col_size[col_name]) << '-' << "-|-";
-    }
-
-    out << std::setfill('-') << std::left << std::setw(col_size["<EOS>"]) << '-' << "-|\n";
-
-    // output rest of table
-    for (const auto& row : table) {
-        // out the head
-        out << "| " << std::setfill(' ') << std::left << std::setw(col_size[""]) << row.first;
-        for (const auto& col : row.second) {
-            if (col.first == "<EOS>")
-                continue;
-
-            // out the body
-            out << " | " << std::setfill(' ') << std::left << std::setw(col_size[col.first]) << col.second;
-        }
-
-        // out the end of string
-        out << " | " << std::setfill(' ') << std::left << std::setw(col_size["<EOS>"]) << row.second.at("<EOS>")
-            << " |\n";
-    }
-
-    // output last divisor line
-    out << "|-" << std::setfill('-') << std::setw(col_size[""]) << '-' << "-|-";
-
-    for (const auto& c : table.begin()->second) {
-        const std::string& col_name = c.first;
-
-        // handle "<EOS>" separately
-        if (col_name == "<EOS>")
-            continue;
-
-        out << std::setfill('-') << std::left << std::setw(col_size[col_name]) << '-' << "-|-";
-    }
-
-    out << std::setfill('-') << std::left << std::setw(col_size["<EOS>"]) << '-' << "-|\n";
-}
-
 template <typename T>
 inline std::vector<T> subvec(const std::vector<T>& v, unsigned int b, unsigned int e) {
     auto first = v.begin() + b;
@@ -381,11 +298,6 @@ void CFG::ll(std::ostream& out) const {
                 table[var]["<EOS>"] = "";
         }
     }
-
-    // print the table
-    out << ">>> Table is built.\n\n-------------------------------------\n\n";
-
-    print_ll_table(out, table);
 }
 
 void CFG::elim_eps_prods(std::ostream& out) {
