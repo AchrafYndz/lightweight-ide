@@ -26,17 +26,19 @@ class CFG {
         // TODO: Add caching for performance increase
     public:
         bool operator()(const Body& b1, const Body& b2) const {
-            const std::string bs1 =
-                std::string(1, '`') +
-                std::accumulate(b1.begin(), b1.end(), std::string(),
-                                [](const std::string& s, const std::string& a) { return s.empty() ? a : s + " " + a; }) +
-                '`';
+            const std::string bs1 = std::string(1, '`') +
+                                    std::accumulate(b1.begin(), b1.end(), std::string(),
+                                                    [](const std::string& s, const std::string& a) {
+                                                        return s.empty() ? a : s + " " + a;
+                                                    }) +
+                                    '`';
 
-            const std::string bs2 =
-                std::string(1, '`') +
-                std::accumulate(b2.begin(), b2.end(), std::string(),
-                                [](const std::string& s, const std::string& a) { return s.empty() ? a : s + " " + a; }) +
-                '`';
+            const std::string bs2 = std::string(1, '`') +
+                                    std::accumulate(b2.begin(), b2.end(), std::string(),
+                                                    [](const std::string& s, const std::string& a) {
+                                                        return s.empty() ? a : s + " " + a;
+                                                    }) +
+                                    '`';
 
             return bs1 < bs2;
         }
@@ -58,6 +60,8 @@ public:
 
     void ll(std::ostream& out = std::cout) const;
 
+    bool accepts(const std::string input);
+
 private:
     void elim_eps_prods(std::ostream& out = std::cout);
     void elim_unit_pairs(std::ostream& out = std::cout);
@@ -72,10 +76,16 @@ private:
     unsigned int rule_count() const;
     std::string find_var_with_prod(const Body& b) const;
 
+    std::set<std::string> getLeft(const std::string& r);
+    std::set<std::string> match(std::map<int, std::vector<std::set<std::string>>>& table, int col, int row, int i);
+    void printTable(std::map<int, std::vector<std::set<std::string>>>& table);
+
+    Body stringToBody(std::string str);
+
 #ifdef TEST
 private:
     friend class CFGTest;
 #endif
 };
 
-#endif  // TOI_SRC_CFG_H
+#endif // TOI_SRC_CFG_H

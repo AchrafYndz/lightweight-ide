@@ -805,3 +805,80 @@ bool CFG::has_eps_prod(const std::string& var) const {
 
     return (this->rules.at(var).find({}) != this->rules.at(var).end());
 }
+
+bool CFG::accepts(const std::string input) {
+    std::map<int, std::vector<std::set<std::string>>> table;
+    for (unsigned long row = 0; row <= input.length() - 1; ++row) {
+//        table.insert({0, {}});
+        if (row == 0) {
+            for (char c: input) {
+                std::set<std::string> symbols = getLeft(std::string(1, c));
+                table[0].push_back(symbols);
+            }
+        } else {
+            for (unsigned long col = 0; col < input.length() - row; ++col) {
+                std::set<std::string> symbols;
+                for (unsigned long i = 0; i < row; ++i) {
+                    std::set<std::string> matches = match(table, col, row, i);
+                    for (const std::string &match: matches) {
+                        std::set<std::string> newSymbols = getLeft(match);
+                        symbols.insert(newSymbols.begin(), newSymbols.end());
+                    }
+                }
+                table[row].push_back(symbols);
+            }
+        }
+    }
+    printTable(table);
+    if (table[input.length()-1][0].find(start_var) != table[input.length()-1][0].end()) {
+        return true;
+    }
+    return false;
+}
+
+std::set<std::string> CFG::getLeft(const std::string &r) {
+    std::set<std::string> result;
+    for (const auto &prod: rules) {
+        for (const auto &right: prod.second) {
+            if (right == stringToBody(r)) {
+                result.insert(prod.first);
+            }
+        }
+    }
+    return result;
+};
+
+void CFG::printTable(std::map<int, std::vector<std::set<std::string>>> &table) {
+    for (auto it = table.rbegin(); it != table.rend(); ++it) {
+        std::cout << "| ";
+        for (std::set<std::string> symbolsSet: it->second) {
+            std::cout << "{";
+            for (auto sIt=symbolsSet.begin(); sIt != symbolsSet.end(); sIt++) {
+                if (sIt != symbolsSet.begin()) std::cout << ", ";
+                std::cout << *sIt;
+            }
+            std::cout << "} | ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+std::set<std::string> CFG::match(std::map<int, std::vector<std::set<std::string>>> &table, int col, int row, int i) {
+    std::set<std::string> result;
+    std::set<std::string> left = table[i][col];
+    std::set<std::string> right = table[row - 1 - i][col + i + 1];
+    for (std::string l: left) {
+        for (std::string r: right) {
+            result.insert(l + " " + r);
+        }
+    }
+    return result;
+}
+Body CFG::stringToBody(std::string str) {
+    Body body;
+    for (char c: str) {
+        if (c == ' ') continue;
+        body.push_back(std::string(1, c));
+    }
+    return body;
+}
