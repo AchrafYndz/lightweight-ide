@@ -1,0 +1,7 @@
+>>> Building LL(1) Table
+ >> First:
+A: {c, }
+S: {a, b}
+ >> Follow:
+A: {a, b}
+S: {<EOS>, a, b}
