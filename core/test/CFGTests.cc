@@ -57,4 +57,10 @@ TEST_SUITE("CFGTests") {
 
         CHECK_EQ(expected.str(), actual.str());
     }
+    TEST_CASE("[CFGTests] CYK") {
+        CFG cfg("test/res/input/CYK0.json");
+
+        CHECK_FALSE(!cfg.accepts("baaba"));
+        CHECK_FALSE(cfg.accepts("abba"));
+    }
 }
