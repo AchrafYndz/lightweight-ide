@@ -1,0 +1,21 @@
+States:
+	p
+	q
+Alphabet:
+	0
+	1
+Stack Alphabet:
+	X
+	Z0
+Transitions:
+	from 'p' with input '1' and stacktop 'X', to 'p' replacing X X 
+	from 'q' with input '0' and stacktop 'X', to 'q' replacing X X 
+	from 'q' with input '' and stacktop 'X', to 'p' replacing 
+	from 'q' with input '1' and stacktop 'X', to 'q' replacing X 
+	from 'p' with input '1' and stacktop 'Z0', to 'p' replacing 
+	from 'q' with input '0' and stacktop 'Z0', to 'q' replacing X Z0 
+	from 'p' with input '' and stacktop 'X', to 'p' replacing 
+Start state: 
+q
+Start stacksymbol: 
+Z0
