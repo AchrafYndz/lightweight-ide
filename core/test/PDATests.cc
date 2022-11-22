@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "../../src/automata/PDA.h"
+#include "automata/PDA.h"
 
 TEST_SUITE("PDATests") {
     TEST_CASE("[PDATests] PDA2CFG") {
