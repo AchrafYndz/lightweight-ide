@@ -21,6 +21,8 @@ public:
 
     CFG toCFG();
 
+    void print(std::ostream& out = std::cout) const;
+
     const std::vector<std::string> &getStates() const;
 
     const std::vector<std::string> &getAlphabet() const;
