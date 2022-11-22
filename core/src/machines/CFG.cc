@@ -1,5 +1,6 @@
 #include "CFG.h"
 #include <iomanip>
+#include <string>
 
 using Body = std::vector<std::string>;
 
@@ -874,4 +875,35 @@ Body CFG::stringToBody(std::string str) {
         body.push_back(std::string(1, c));
     }
     return body;
+}
+void CFG::setVariables(Values V) {
+    for (auto pair : V) {
+        assert(!pair.second->getIsTerminal());
+        vars.insert(pair.second->getName());
+    }
+}
+
+void CFG::setTerminals(Values T) {
+    for (auto pair : T) {
+        assert(pair.second->getIsTerminal());
+        if (pair.second->getName() == " ")
+            continue;
+        terms.insert(pair.second->getName()[0]);
+    }
+}
+
+void CFG::setProductions(std::map<std::string, std::vector<std::vector<Value*>>> P) {
+    std::map<std::string, std::set<Body, RuleSort>> newRules;
+    for (auto pair : P) {
+        std::set<Body, RuleSort> newBodySet;
+        for (std::vector<Value*> values : pair.second) {
+            Body newBody;
+            for (Value* val : values) {
+                newBody.push_back(val->getName());
+            }
+            newBodySet.insert(newBody);
+        }
+        newRules.insert({pair.first, newBodySet});
+    }
+    rules = newRules;
 }

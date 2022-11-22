@@ -1,6 +1,7 @@
 #ifndef TOI_SRC_CFG_H
 #define TOI_SRC_CFG_H
 
+#include "Value.h"
 #include "nlohmann/json.hpp"
 
 #include <algorithm>
@@ -51,7 +52,7 @@ private:
     std::string start_var;
 
 public:
-    CFG();
+    CFG() = default;
     CFG(const std::string& filepath);
 
     void print(std::ostream& out = std::cout) const;
@@ -61,6 +62,14 @@ public:
     void ll(std::ostream& out = std::cout) const;
 
     bool accepts(const std::string input);
+
+    void setStart(Value* s) { start_var = s->getName(); };
+
+    void setVariables(Values V);
+
+    void setTerminals(Values T);
+
+    void setProductions(std::map<std::string, std::vector<std::vector<Value*> > > P);
 
 private:
     void elim_eps_prods(std::ostream& out = std::cout);
@@ -77,6 +86,8 @@ private:
     std::string find_var_with_prod(const Body& b) const;
 
     std::set<std::string> getLeft(const std::string& r);
+
+
     std::set<std::string> match(std::map<int, std::vector<std::set<std::string>>>& table, int col, int row, int i);
     void printTable(std::map<int, std::vector<std::set<std::string>>>& table);
 
