@@ -70,13 +70,6 @@ std::vector<unsigned int> find_occurrences(const Body& b, const std::string& a) 
     return indices;
 }
 
-CFG::CFG() {
-    this->vars = {"BINDIGIT", "S"};
-    this->terms = {'0', '1', 'a', 'b'};
-    this->rules = {{"BINDIGIT", {{"0"}, {"1"}}}, {"S", {{}, {"a", "S", "b", "BINDIGIT"}}}};
-    this->start_var = "S";
-}
-
 CFG::CFG(const std::string& filepath) {
     using json = nlohmann::json;
 
@@ -810,7 +803,7 @@ bool CFG::accepts(const std::string input) {
     std::map<int, std::vector<std::set<std::string>>> table;
     for (unsigned long row = 0; row <= input.length() - 1; ++row) {
         if (row == 0) {
-            for (char c: input) {
+            for (char c : input) {
                 std::set<std::string> symbols = getLeft(std::string(1, c));
                 table[0].push_back(symbols);
             }
@@ -819,7 +812,7 @@ bool CFG::accepts(const std::string input) {
                 std::set<std::string> symbols;
                 for (unsigned long i = 0; i < row; ++i) {
                     std::set<std::string> matches = match(table, col, row, i);
-                    for (const std::string &match: matches) {
+                    for (const std::string& match : matches) {
                         std::set<std::string> newSymbols = getLeft(match);
                         symbols.insert(newSymbols.begin(), newSymbols.end());
                     }
@@ -828,16 +821,16 @@ bool CFG::accepts(const std::string input) {
             }
         }
     }
-    if (table[input.length()-1][0].find(start_var) != table[input.length()-1][0].end()) {
+    if (table[input.length() - 1][0].find(start_var) != table[input.length() - 1][0].end()) {
         return true;
     }
     return false;
 }
 
-std::set<std::string> CFG::getLeft(const std::string &r) {
+std::set<std::string> CFG::getLeft(const std::string& r) {
     std::set<std::string> result;
-    for (const auto &prod: rules) {
-        for (const auto &right: prod.second) {
+    for (const auto& prod : rules) {
+        for (const auto& right : prod.second) {
             if (right == stringToBody(r)) {
                 result.insert(prod.first);
             }
@@ -846,13 +839,14 @@ std::set<std::string> CFG::getLeft(const std::string &r) {
     return result;
 };
 
-void CFG::printTable(std::map<int, std::vector<std::set<std::string>>> &table) {
+void CFG::printTable(std::map<int, std::vector<std::set<std::string>>>& table) {
     for (auto it = table.rbegin(); it != table.rend(); ++it) {
         std::cout << "| ";
-        for (std::set<std::string> symbolsSet: it->second) {
+        for (std::set<std::string> symbolsSet : it->second) {
             std::cout << "{";
-            for (auto sIt=symbolsSet.begin(); sIt != symbolsSet.end(); sIt++) {
-                if (sIt != symbolsSet.begin()) std::cout << ", ";
+            for (auto sIt = symbolsSet.begin(); sIt != symbolsSet.end(); sIt++) {
+                if (sIt != symbolsSet.begin())
+                    std::cout << ", ";
                 std::cout << *sIt;
             }
             std::cout << "} | ";
@@ -861,12 +855,12 @@ void CFG::printTable(std::map<int, std::vector<std::set<std::string>>> &table) {
     }
 }
 
-std::set<std::string> CFG::match(std::map<int, std::vector<std::set<std::string>>> &table, int col, int row, int i) {
+std::set<std::string> CFG::match(std::map<int, std::vector<std::set<std::string>>>& table, int col, int row, int i) {
     std::set<std::string> result;
     std::set<std::string> left = table[i][col];
     std::set<std::string> right = table[row - 1 - i][col + i + 1];
-    for (std::string l: left) {
-        for (std::string r: right) {
+    for (std::string l : left) {
+        for (std::string r : right) {
             result.insert(l + " " + r);
         }
     }
@@ -874,8 +868,9 @@ std::set<std::string> CFG::match(std::map<int, std::vector<std::set<std::string>
 }
 Body CFG::stringToBody(std::string str) {
     Body body;
-    for (char c: str) {
-        if (c == ' ') continue;
+    for (char c : str) {
+        if (c == ' ')
+            continue;
         body.push_back(std::string(1, c));
     }
     return body;
