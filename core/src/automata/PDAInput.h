@@ -9,7 +9,7 @@ class PDAInput {
     std::string stackTop;
 
 public:
-    PDAInput(std::string state, std::string input, std::string stackTop);
+    PDAInput(const std::string& state, const std::string& input, const std::string& stackTop);
 
     const std::string& getState() const;
 
