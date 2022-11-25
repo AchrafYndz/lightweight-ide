@@ -1,6 +1,10 @@
 #include "CFG.h"
+
 #include <iomanip>
 #include <string>
+
+// Note: Ignore the printing code, this was solely used for the evaluation platform and (because it was already
+//       implemented) for tests.
 
 using Body = std::vector<std::string>;
 
