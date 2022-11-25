@@ -1,10 +1,11 @@
 #include "PDA.h"
+
+#include "Value.h"
+
 #include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <vector>
-
-#include "Value.h"
 
 static void all_combinations(std::vector<std::string> input, std::vector<std::vector<std::string>>& result) {
     std::vector<std::vector<std::string>> res;
@@ -37,7 +38,7 @@ PDA::PDA(std::string fileName) {
     }
     PDA::stackAlphabet = stackAlphabet;
 
-    std::map<PDAInput*, std::pair<std::string, std::vector<std::string>>> transitions = {};
+    std::map<PDAInput*, std::pair<std::string, std::vector<std::string>>, PDATransitionCompare> transitions = {};
     for (nlohmann::json tValue : j["Transitions"]) {
         std::string fromState = tValue["from"];
         std::string input = tValue["input"];
@@ -53,13 +54,20 @@ PDA::PDA(std::string fileName) {
     PDA::startStack = j["StartStack"];
 }
 
+PDA::~PDA() {
+    for (auto& transition : this->transitions) {
+        delete transition.first;
+    }
+}
+
 const std::vector<std::string>& PDA::getStates() const { return states; }
 
 const std::vector<std::string>& PDA::getAlphabet() const { return alphabet; }
 
 const std::vector<std::string>& PDA::getStackAlphabet() const { return stackAlphabet; }
 
-const std::map<PDAInput*, std::pair<std::string, std::vector<std::string>>>& PDA::getTransitions() const {
+const std::map<PDAInput*, std::pair<std::string, std::vector<std::string>>, PDA::PDATransitionCompare>&
+PDA::getTransitions() const {
     return transitions;
 }
 
@@ -225,10 +233,11 @@ void PDA::print(std::ostream& out) const {
         out << "\t" << stackLetter << "\n";
     }
     out << "Transitions:" << std::endl;
-    for (auto transition : transitions) {
+    for (const auto& transition : transitions) {
         out << "\tfrom \'" << transition.first->getState() << "\' with input \'" << transition.first->getInput()
-            << "\' and stacktop \'" << transition.first->getStackTop() << "\', to \'" << transition.second.first << "\' replacing ";
-        for (std::string right: transition.second.second) {
+            << "\' and stacktop \'" << transition.first->getStackTop() << "\', to \'" << transition.second.first
+            << "\' replacing ";
+        for (const auto& right : transition.second.second) {
             out << right << " ";
         }
         out << "\n";

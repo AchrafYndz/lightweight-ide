@@ -1,8 +1,9 @@
 #include "doctest/doctest.h"
+
+#include "../src/automata/PDA.h"
+
 #include <fstream>
 #include <sstream>
-
-#include "automata/PDA.h"
 
 TEST_SUITE("PDATests") {
     TEST_CASE("[PDATests] parseFile0") {
