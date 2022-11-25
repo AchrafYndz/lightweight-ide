@@ -19,38 +19,8 @@
 #include <vector>
 
 class CFG {
-    using Body = std::vector<std::string>;
-
-    /// Rule sorting functor for `std::set`
-    /// Needed because the professor sorted the bodies including the backticks as one string and not as
-    /// vectors.
-    class RuleSort {
-        // TODO: Add caching for performance increase
-    public:
-        bool operator()(const Body& b1, const Body& b2) const {
-            const std::string bs1 = std::string(1, '`') +
-                                    std::accumulate(b1.begin(), b1.end(), std::string(),
-                                                    [](const std::string& s, const std::string& a) {
-                                                        return s.empty() ? a : s + " " + a;
-                                                    }) +
-                                    '`';
-
-            const std::string bs2 = std::string(1, '`') +
-                                    std::accumulate(b2.begin(), b2.end(), std::string(),
-                                                    [](const std::string& s, const std::string& a) {
-                                                        return s.empty() ? a : s + " " + a;
-                                                    }) +
-                                    '`';
-
-            return bs1 < bs2;
-        }
-    };
-
 private:
-    std::set<std::string> vars;
-    std::set<char> terms;
-    std::map<std::string, std::set<Body, RuleSort>> rules;
-    std::string start_var;
+    using Body = std::vector<std::string>;
 
 public:
     CFG() = default;
@@ -92,6 +62,12 @@ private:
     void printTable(std::map<int, std::vector<std::set<std::string>>>& table);
 
     Body stringToBody(std::string str);
+
+private:
+    std::set<std::string> vars;
+    std::set<char> terms;
+    std::map<std::string, std::set<Body>> rules;
+    std::string start_var;
 
 #ifdef TEST
 private:

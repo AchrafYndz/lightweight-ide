@@ -1,8 +1,9 @@
-#include <fstream>
-#include <sstream>
 #include "doctest/doctest.h"
 
-#include "../../src/machines/CFG.h"
+#include "../src/machines/CFG.h"
+
+#include <fstream>
+#include <sstream>
 
 TEST_SUITE("CFGTests") {
     TEST_CASE("[CFGTests] parseFile0") {

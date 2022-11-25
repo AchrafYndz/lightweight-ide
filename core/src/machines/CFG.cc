@@ -336,7 +336,7 @@ void CFG::elim_eps_prods(std::ostream& out) {
 
     out << "  Nullables are " << nullables << '\n';
 
-    std::map<std::string, std::set<Body, RuleSort>> new_rules;
+    std::map<std::string, std::set<Body>> new_rules;
     std::queue<std::pair<std::string, Body>> pending;
     unsigned int old_rule_count = this->rule_count();
     unsigned int new_rule_count = 0;
@@ -445,7 +445,7 @@ void CFG::elim_unit_pairs(std::ostream& out) {
     unsigned int new_rule_count = 0;
     unsigned int old_rule_count = this->rule_count();
 
-    std::map<std::string, std::set<Body, RuleSort>> new_rules;
+    std::map<std::string, std::set<Body>> new_rules;
 
     // remove unit productions
     for (const auto& rule_set : this->rules) {
@@ -516,7 +516,7 @@ void CFG::elim_useless_symbs(std::ostream& out) {
 
     out << "  Generating symbols: " << generating << '\n';
 
-    std::map<std::string, std::set<Body, RuleSort>> new_rules;
+    std::map<std::string, std::set<Body>> new_rules;
 
     // 3.2. delete non generating symbols
     for (const auto& rule_set : this->rules) {
@@ -615,7 +615,7 @@ void CFG::replace_bad_bodies(std::ostream& out) {
     unsigned int original_rule_count = this->rule_count();
     unsigned int added_var_count = 0;
 
-    std::map<std::string, std::set<Body, RuleSort>> new_rules;
+    std::map<std::string, std::set<Body>> new_rules;
     std::set<std::string> new_vars;
     for (const auto& rule_set : this->rules) {
         for (const auto& body : rule_set.second) {
@@ -676,7 +676,7 @@ void CFG::replace_bad_bodies(std::ostream& out) {
 }
 
 void CFG::split_bodies(std::ostream& out) {
-    std::map<std::string, std::set<Body, RuleSort>> new_rules;
+    std::map<std::string, std::set<Body>> new_rules;
     std::queue<std::pair<std::string, Body>> pending;
     std::map<std::string, unsigned int> replace_var_counter;
 
@@ -893,9 +893,9 @@ void CFG::setTerminals(Values T) {
 }
 
 void CFG::setProductions(std::map<std::string, std::vector<std::vector<Value*>>> P) {
-    std::map<std::string, std::set<Body, RuleSort>> newRules;
+    std::map<std::string, std::set<Body>> newRules;
     for (auto pair : P) {
-        std::set<Body, RuleSort> newBodySet;
+        std::set<Body> newBodySet;
         for (std::vector<Value*> values : pair.second) {
             Body newBody;
             for (Value* val : values) {

@@ -7,8 +7,8 @@ P = {
   A -> `a`
   B -> `C`
   B -> `b`
-  C -> `C D E`
   C -> ``
+  C -> `C D E`
   D -> `A`
   D -> `B`
   D -> `a b`
@@ -67,8 +67,8 @@ P = {
   D -> `C D E`
   D -> `C E`
   D -> `D E`
-  D -> `a b`
   D -> `a`
+  D -> `a b`
   D -> `b`
   S -> `a A a`
   S -> `a a`
@@ -104,10 +104,10 @@ T = {a, b}
 P = {
   A -> `a`
   B -> `b`
-  S -> `A A A`
   S -> `A A`
-  S -> `B B B`
+  S -> `A A A`
   S -> `B B`
+  S -> `B B B`
 }
 S = S
 

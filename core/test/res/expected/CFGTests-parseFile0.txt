@@ -5,8 +5,8 @@ P = {
   A -> `a`
   B -> `C`
   B -> `b`
-  C -> `C D E`
   C -> ``
+  C -> `C D E`
   D -> `A`
   D -> `B`
   D -> `a b`
