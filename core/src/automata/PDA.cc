@@ -54,6 +54,12 @@ PDA::PDA(std::string fileName) {
     PDA::startStack = j["StartStack"];
 }
 
+PDA::~PDA() {
+    for (auto& transition : this->transitions) {
+        delete transition.first;
+    }
+}
+
 const std::vector<std::string>& PDA::getStates() const { return states; }
 
 const std::vector<std::string>& PDA::getAlphabet() const { return alphabet; }

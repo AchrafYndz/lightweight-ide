@@ -23,6 +23,7 @@ private:
 
 public:
     PDA(std::string fileName);
+    ~PDA();
 
     CFG toCFG();
 
