@@ -1,8 +1,9 @@
-#ifndef TOI_SRC_CFG_H
-#define TOI_SRC_CFG_H
+#ifndef IDE_SRC_MACHINES_CFG_H
+#define IDE_SRC_MACHINES_CFG_H
 
-#include "Value.h"
 #include "nlohmann/json.hpp"
+
+#include "../automata/Value.h"
 
 #include <algorithm>
 #include <cassert>
@@ -69,7 +70,7 @@ public:
 
     void setTerminals(Values T);
 
-    void setProductions(std::map<std::string, std::vector<std::vector<Value*> > > P);
+    void setProductions(std::map<std::string, std::vector<std::vector<Value*>>> P);
 
 private:
     void elim_eps_prods(std::ostream& out = std::cout);
@@ -87,7 +88,6 @@ private:
 
     std::set<std::string> getLeft(const std::string& r);
 
-
     std::set<std::string> match(std::map<int, std::vector<std::set<std::string>>>& table, int col, int row, int i);
     void printTable(std::map<int, std::vector<std::set<std::string>>>& table);
 
@@ -99,4 +99,4 @@ private:
 #endif
 };
 
-#endif // TOI_SRC_CFG_H
+#endif // IDE_SRC_MACHINES_CFG_H
