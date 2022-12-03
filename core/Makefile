@@ -24,7 +24,8 @@ RM := rm -r
 # 	   Compile Flags
 # =========================
 
-CPPFLAGS ?= -std=c++17 -Wall -Wextra -Wpedantic -Werror -Wno-deprecated
+# CPPFLAGS ?= -std=c++17 -Wall -Wextra -Wpedantic -Werror -Wno-deprecated
+CPPFLAGS ?= -std=c++17
 CPPFLAGS_DEBUG := -g -Og
 
 SRCS := $(shell find $(SRCDIR) -name "*.$(CPP_SRC_EXTENSION)")

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "crow.h"
+#include "parser/stream_reader.h"
 
 std::string generateJSON() {
   // TODO: @Flor remove placeholder for prod
@@ -12,14 +13,17 @@ std::string generateJSON() {
 }
 
 int main() {
-  crow::SimpleApp app;
+  StreamReader t("t.txt");
+  std::cout << t.peek(2) << std::endl;
 
-  CROW_ROUTE(app, "/json")([](){
-    crow::response response(generateJSON());
-    response.set_header("content-type", "application/json");
+  // crow::SimpleApp app;
 
-    return response;
-  });
+  // CROW_ROUTE(app, "/json")([](){
+  //   crow::response response(generateJSON());
+  //   response.set_header("content-type", "application/json");
 
-  app.port(18080).multithreaded().run();
+  //   return response;
+  // });
+
+  // app.port(18080).multithreaded().run();
 }
