@@ -3,7 +3,7 @@
 
 std::string generateJSON() {
   // TODO: @Flor remove placeholder for prod
-  std::string result = "{ foo: \"bar\" }";
+  std::string result = "{\"foo\":\"bar\"}";
 
   // TODO: @Achraf syntax designation & error conversion to frontend compatible format
   // result = ...;
@@ -15,8 +15,10 @@ int main() {
   crow::SimpleApp app;
 
   CROW_ROUTE(app, "/json")([](){
+    crow::response response(generateJSON());
+    response.set_header("content-type", "application/json");
 
-    return generateJSON();
+    return response;
   });
 
   app.port(18080).multithreaded().run();
