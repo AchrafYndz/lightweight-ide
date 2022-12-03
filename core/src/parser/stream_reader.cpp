@@ -1,4 +1,5 @@
 #include "stream_reader.h"
+#include <fstream>
 
 StreamReader::StreamReader(std::string sourcePath): sourcePath(sourcePath) {}
 
@@ -10,10 +11,20 @@ char StreamReader::peek(int k) {
 
   if (relativeIndex < 0) {
     // Reset the buffer the buffer to character k
-    int previousStart = bufferStart;
+    // int previousStart = bufferStart;
     bufferStart = k;
-    // Read k
 
+    // Read from filew
+    // TODO: optimization opportunity -> read from current buffer if possible
+    char* buffer = new char[bufferSize];
+
+    std::ifstream is(sourcePath);
+    is.seekg(k, std::ios::cur);
+    is.read(buffer, bufferSize);
+
+    is.close();
+
+    for (int i = 0; i < bufferSize; i++) this->buffer[i] = *(buffer + i);
 
   } else if (relativeIndex >= bufferSize) {
     // Read to this character
