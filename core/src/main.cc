@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "crow.h"
 #include "parser/stream_reader.h"
 
@@ -14,8 +15,29 @@ std::string generateJSON() {
 
 int main() {
   StreamReader t("t.txt");
-  std::cout << t.peek(2) << std::endl;
-  std::cout << t.peek(3) << std::endl;
+
+  srand((unsigned)time(0)); 
+  std::ofstream myfile;
+  std::string alphabet = "abcdefghijklmnopqrstuvwxyz";
+  myfile.open("stream_reader.txt");
+  myfile.clear();
+
+  std::vector<char> written = {};
+
+  for (int _ = 0; _ < 100; _++) {
+    char choice = alphabet[(rand() % 26)];
+    written.push_back(choice);
+    myfile << choice;
+  }
+
+  myfile.close();
+
+  StreamReader reader("stream_reader.txt");
+  for (int _ = 0; _ < 100; _++) {
+    int choice = rand() % 100;
+    char returned = reader.peek(choice);
+    std::cout << (returned == written[choice]) << std::endl;
+  }
 
   // crow::SimpleApp app;
 

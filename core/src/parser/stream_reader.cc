@@ -9,39 +9,43 @@ char StreamReader::peek(int k) {
   // We have a buffer size of 5, with the current buffer start being 2
   // This means that the element at tail is at index 2 in the file, while the element
   // we're looking for is at index tail + 4 = tail + (k - bufferStart)
-  int lastInBuffer = bufferStart + std::abs(head - tail);
 
   // std::cout << lastInBuffer << std::endl;
   // std::cout << relativeIndex << std::endl;
+  int lastInBuffer = bufferStart + std::abs(head - tail);
 
   if (k < bufferStart) {
+    // Clear the buffer, we're backtracking
     empty = true;
     tail = head;
-    bufferStart = k - 1;
+    bufferStart = 0;
+    lastInBuffer = k - 1;
   }
 
-  if (k >= bufferStart && k <= lastInBuffer) return buffer[tail + k - bufferStart]; 
+
+  if (k >= bufferStart && k <= lastInBuffer && !empty) return buffer[tail + k - bufferStart]; 
   else {
-    char* read = new char[k - lastInBuffer + 1];
+    // We always want to read at least one character
+    int length = k == 0 ? 1 : k - lastInBuffer;
+    char* read = new char[length];
 
     std::ifstream is(sourcePath);
-    is.seekg(lastInBuffer, std::ios::cur);
-    is.read(read, k - lastInBuffer + 1);
+
+    // If empty, we want to read from the first character in the file
+    // otherwise we want to continue after the last read character
+    is.seekg(k == 0 ? 0 : lastInBuffer + 1, std::ios::cur);
+    is.read(read, length);
 
     is.close();
 
-    for (int i = 0; i < k - lastInBuffer + 1; i++) {
+    for (int i = 0; i < length; i++) {
       if (!empty) head = (head + 1) % bufferSize;
-      
       buffer[head] = read[i];
-
-      if (tail == head && !empty) {
-        tail = (tail + 1) % bufferSize;
-        bufferStart++;
-      }
-
+      if (tail == head && !empty) tail = (tail + 1) % bufferSize;
       empty = false;
     }
+
+    bufferStart = k - std::abs(head - tail);
 
     delete[] read;
     return buffer[head];
