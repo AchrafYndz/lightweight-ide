@@ -4,10 +4,9 @@
 StreamReader::StreamReader(std::string sourcePath): sourcePath(sourcePath) {}
 
 char StreamReader::peek(int k) {
-  // Let's say we're trying to read the 10th char (k = 10)
-  // and our buffer starts at index 2 (zero-based)
-  // then our relative index is 8
+  // Let's say we want to ac
   int relativeIndex = k - bufferStart;
+  
 
   if (relativeIndex < 0) {
     // Reset the buffer the buffer to character k
@@ -28,6 +27,18 @@ char StreamReader::peek(int k) {
 
   } else if (relativeIndex >= bufferSize) {
     // Read to this character
+    int length = relativeIndex - bufferSize;
+    char* buffer = new char[length];
+
+    std::ifstream is(sourcePath);
+    is.seekg(k - bufferStart + bufferSize, std::ios::cur);
+    is.read(buffer, length);
+
+    for (int i = 0; i < bufferSize; i++) {
+      if (i < length) continue;
+      if (i == )
+    }
+
   } else return buffer[relativeIndex];
 }
 

@@ -5,11 +5,14 @@
 
 class StreamReader {
 private:
-  int bufferStart = 0;
   std::string sourcePath;
 
   const int bufferSize = 10000;
   char buffer[10000];
+
+  int head = 0;
+  int tail = 0;
+  int bufferStart = 0;
 
 public:
   StreamReader(std::string sourcePath);
