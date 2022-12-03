@@ -7,3 +7,5 @@
 
 -Ilib/nlohmann/include
 -Ilib/doctest/include
+-Ilib/crow/include
+-Ilib/asio/include

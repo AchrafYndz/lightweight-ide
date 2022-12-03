@@ -24,7 +24,7 @@ RM := rm -r
 # 	   Compile Flags
 # =========================
 
-CPPFLAGS ?= -std=c++17 -Wall -Wextra -Wpedantic -Werror
+CPPFLAGS ?= -std=c++17 -Wall -Wextra -Wpedantic -Werror -Wno-deprecated
 CPPFLAGS_DEBUG := -g -Og
 
 SRCS := $(shell find $(SRCDIR) -name "*.$(CPP_SRC_EXTENSION)")
@@ -41,6 +41,8 @@ INCFLAGS += $(addprefix -I,$(shell find $(SRCDIR) -type d))
 # =========================
 
 INCFLAGS += -I$(LIBDIR)/nlohmann/include
+INCFLAGS += -I$(LIBDIR)/crow/include
+INCFLAGS += -I$(LIBDIR)/asio/include
 TEST_INCFLAGS += -I$(LIBDIR)/doctest/include
 
 # =========================
