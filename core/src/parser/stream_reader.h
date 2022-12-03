@@ -12,7 +12,7 @@ private:
 
   int head = 0;
   int tail = 0;
-  int bufferStart = -1;
+  int bufferStart = 0;
   int empty = true;
 
 public:
