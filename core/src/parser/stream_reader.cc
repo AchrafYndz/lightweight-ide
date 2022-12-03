@@ -4,6 +4,12 @@
 
 StreamReader::StreamReader(std::string sourcePath): sourcePath(sourcePath) {}
 
+int StreamReader::charCount() const {
+  if (head == tail) return 0;
+  else if (head > tail) return head - tail + 1;
+  else return bufferSize - tail + head + 1;
+}
+
 char StreamReader::peek(int k) {
   // Let's say we want to access element 6 in file
   // We have a buffer size of 5, with the current buffer start being 2
@@ -12,28 +18,30 @@ char StreamReader::peek(int k) {
 
   // std::cout << lastInBuffer << std::endl;
   // std::cout << relativeIndex << std::endl;
-  int lastInBuffer = bufferStart + std::abs(head - tail);
+  int lastInBuffer = bufferStart + charCount();
 
   if (k < bufferStart) {
     // Clear the buffer, we're backtracking
     empty = true;
-    tail = head;
+    tail = 0;
+    head = 0;
     bufferStart = 0;
-    lastInBuffer = k - 1;
+    lastInBuffer = 0;
   }
 
 
-  if (k >= bufferStart && k <= lastInBuffer && !empty) return buffer[tail + k - bufferStart]; 
+  if (k >= bufferStart && k <= lastInBuffer && !empty) return buffer[(tail + k - bufferStart) % bufferSize]; 
   else {
     // We always want to read at least one character
-    int length = k == 0 ? 1 : k - lastInBuffer;
+    int length = k - lastInBuffer;
+    if (empty) length += 1;
     char* read = new char[length];
 
     std::ifstream is(sourcePath);
 
     // If empty, we want to read from the first character in the file
     // otherwise we want to continue after the last read character
-    is.seekg(k == 0 ? 0 : lastInBuffer + 1, std::ios::cur);
+    is.seekg(empty ? 0 : lastInBuffer + 1, std::ios::cur);
     is.read(read, length);
 
     is.close();
@@ -41,11 +49,12 @@ char StreamReader::peek(int k) {
     for (int i = 0; i < length; i++) {
       if (!empty) head = (head + 1) % bufferSize;
       buffer[head] = read[i];
-      if (tail == head && !empty) tail = (tail + 1) % bufferSize;
+      if (tail == head && !empty) {
+        tail = (tail + 1) % bufferSize;
+        bufferStart += 1;
+        }
       empty = false;
     }
-
-    bufferStart = k - std::abs(head - tail);
 
     delete[] read;
     return buffer[head];

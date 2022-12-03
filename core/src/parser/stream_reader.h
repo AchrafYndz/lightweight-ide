@@ -19,6 +19,7 @@ public:
   StreamReader(std::string sourcePath);
   char peek(int k);
   char consume(int k);
+  int charCount() const;
 };
 
 #endif // __PROJECTS_LIGHTWEIGHT_IDE_V2_CORE_SRC_PARSER_STREAM_READER_H_
