@@ -56,11 +56,10 @@ CPPFLAGS += $(CPPFLAGS_DEBUG)
 
 .PHONY: all run build_test test clean
 
-all: build build_test clean
+all: build
+	$(BUILDDIR)/$(BIN)
 
 build: $(BUILDDIR)/$(BIN)
-
-all: build build_test clean
 
 build_test: CPPFLAGS += $(TEST_INCFLAGS) -DTEST
 build_test: $(BUILDDIR)/$(TEST)
@@ -74,9 +73,6 @@ $(BUILDDIR)/$(BIN): $(OBJS)
 
 $(BUILDDIR)/$(TEST): $(TEST_OBJS)
 	$(CXX) $(TEST_OBJS) -o $@
-
-all: build
-	$(BUILDDIR)/$(BIN)
 
 test: build_test
 	$(BUILDDIR)/$(TEST)
