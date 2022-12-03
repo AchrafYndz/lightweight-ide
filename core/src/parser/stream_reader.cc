@@ -9,12 +9,19 @@ char StreamReader::peek(int k) {
   // We have a buffer size of 5, with the current buffer start being 2
   // This means that the element at tail is at index 2 in the file, while the element
   // we're looking for is at index tail + 4 = tail + (k - bufferStart)
-  int lastInBuffer = bufferStart = std::abs(head - tail);
+  int lastInBuffer = bufferStart + std::abs(head - tail);
 
   // std::cout << lastInBuffer << std::endl;
   // std::cout << relativeIndex << std::endl;
 
-  if (k > lastInBuffer || k == 0) {
+  if (k < bufferStart) {
+    empty = true;
+    tail = head;
+    bufferStart = k - 1;
+  }
+
+  if (k >= bufferStart && k <= lastInBuffer) return buffer[tail + k - bufferStart]; 
+  else {
     char* read = new char[k - lastInBuffer + 1];
 
     std::ifstream is(sourcePath);
@@ -35,11 +42,10 @@ char StreamReader::peek(int k) {
 
       empty = false;
     }
-    
-    return buffer[head];
-  } else if (k < bufferStart) {
 
-  } else return buffer[tail + k - bufferStart];
+    delete[] read;
+    return buffer[head];
+  }
   
 
   // if (relativeIndex < 0) {

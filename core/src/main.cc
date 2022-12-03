@@ -14,7 +14,8 @@ std::string generateJSON() {
 
 int main() {
   StreamReader t("t.txt");
-  std::cout << t.peek(9) << std::endl;
+  std::cout << t.peek(2) << std::endl;
+  std::cout << t.peek(3) << std::endl;
 
   // crow::SimpleApp app;
 
