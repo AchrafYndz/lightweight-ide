@@ -57,7 +57,7 @@ CPPFLAGS += $(CPPFLAGS_DEBUG)
 # 	    Make Targets
 # =========================
 
-.PHONY: all run build_test test clean
+.PHONY: all run build_test test clean flor
 
 all: build
 	$(BUILDDIR)/$(BIN)

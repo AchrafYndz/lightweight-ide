@@ -10,29 +10,32 @@ char StreamReader::peek(int k) {
   // This means that the element at tail is at index 2 in the file, while the element
   // we're looking for is at index tail + 4 = tail + (k - bufferStart)
   int lastInBuffer = bufferStart = std::abs(head - tail);
-  int relativeIndex = tail + k - bufferStart;
 
-  std::cout << lastInBuffer << std::endl;
-  std::cout << relativeIndex << std::endl;
+  // std::cout << lastInBuffer << std::endl;
+  // std::cout << relativeIndex << std::endl;
 
-  if (k > lastInBuffer) {
-    char* read = new char[k - lastInBuffer];
+  if (k > lastInBuffer || k == 0) {
+    char* read = new char[k - lastInBuffer + 1];
 
     std::ifstream is(sourcePath);
     is.seekg(lastInBuffer, std::ios::cur);
-    is.read(read, k - lastInBuffer);
+    is.read(read, k - lastInBuffer + 1);
 
     is.close();
 
-    for (int i = 0; i < k - lastInBuffer; i++) {
-      head = (head + 1) % bufferSize;
+    for (int i = 0; i < k - lastInBuffer + 1; i++) {
+      if (!empty) head = (head + 1) % bufferSize;
+      
       buffer[head] = read[i];
-      std::cout << read[i] << std::endl;
+
+      if (tail == head && !empty) {
+        tail = (tail + 1) % bufferSize;
+        bufferStart++;
+      }
+      
+      empty = false;
     }
     
-    std::cout << "HEY" << std::endl;
-    std::cout << buffer[head] << std::endl;
-
     return buffer[head];
   }
 

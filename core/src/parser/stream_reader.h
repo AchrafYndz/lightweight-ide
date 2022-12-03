@@ -7,12 +7,13 @@ class StreamReader {
 private:
   std::string sourcePath;
 
-  const int bufferSize = 10000;
-  char buffer[10000];
+  const int bufferSize = 5;
+  char buffer[5];
 
   int head = 0;
   int tail = 0;
   int bufferStart = 0;
+  int empty = true;
 
 public:
   StreamReader(std::string sourcePath);
