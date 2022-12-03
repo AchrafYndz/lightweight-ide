@@ -18,48 +18,51 @@ char StreamReader::peek(int k) {
 
   // std::cout << lastInBuffer << std::endl;
   // std::cout << relativeIndex << std::endl;
+
   int lastInBuffer = bufferStart + charCount();
 
-  if (k < bufferStart) {
-    // Clear the buffer, we're backtracking
-    empty = true;
-    tail = 0;
-    head = 0;
-    bufferStart = 0;
-    lastInBuffer = 0;
-  }
-
-
-  if (k >= bufferStart && k <= lastInBuffer && !empty) return buffer[(tail + k - bufferStart) % bufferSize]; 
-  else {
-    // We always want to read at least one character
+  if (k > lastInBuffer) {
+    // Read until we reach k
     int length = k - lastInBuffer;
-    if (empty) length += 1;
     char* read = new char[length];
 
     std::ifstream is(sourcePath);
-
-    // If empty, we want to read from the first character in the file
-    // otherwise we want to continue after the last read character
-    is.seekg(empty ? 0 : lastInBuffer + 1, std::ios::cur);
+    is.seekg(lastInBuffer + 1, std::ios::cur);
     is.read(read, length);
-
     is.close();
 
+    if (empty) bufferStart++;
     for (int i = 0; i < length; i++) {
       if (!empty) head = (head + 1) % bufferSize;
-      buffer[head] = read[i];
-      if (tail == head && !empty) {
+      if (head == tail && !empty) {
+        bufferStart++;
         tail = (tail + 1) % bufferSize;
-        bufferStart += 1;
-        }
+      }
+
+      buffer[head] = read[i];
       empty = false;
     }
 
-    delete[] read;
+
+    std::cout << "Peeked " << k << std::endl;
+    std::cout << "Current char count: " << charCount() << std::endl;
+
     return buffer[head];
-  }
-  
+  } else if (k < lastInBuffer) {
+    head = tail;
+    bufferStart = k;
+
+    char* read = new char[1];
+
+    std::ifstream is(sourcePath);
+    is.seekg(k, std::ios::cur);
+    is.read(read, 1);
+    is.close();
+    
+    buffer[head] = read[0];
+
+    return buffer[head];
+  } else return buffer[(tail + k - bufferStart) % bufferSize];
 
   // if (relativeIndex < 0) {
   //   // Reset the buffer the buffer to character k
