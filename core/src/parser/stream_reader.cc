@@ -32,16 +32,14 @@ char StreamReader::peek(int k) {
         tail = (tail + 1) % bufferSize;
         bufferStart++;
       }
-      
+
       empty = false;
     }
     
     return buffer[head];
-  }
+  } else if (k < bufferStart) {
 
-  if (k < bufferStart) {
-
-  }
+  } else return buffer[tail + k - bufferStart];
   
 
   // if (relativeIndex < 0) {
