@@ -75,6 +75,11 @@ char StreamReader::peek(int k) {
 }
 
 char StreamReader::consume(int k) {
-  char v = peek(k);
+  int i = 0;
+  char v = peek(k, i);
+
+  tail = i;
+  bufferStart = k;
   
+  return v;
 }
