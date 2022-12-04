@@ -16,7 +16,6 @@ char StreamReader::peek(int k, int& i) {
   // We have a buffer size of 5, with the current buffer start being 2
   // This means that the element at tail is at index 2 in the file, while the element
   // we're looking for is at index tail + 4 = tail + (k - bufferStart)
-
   int cc = charCount();
 
   int lastInBuffer = bufferStart + cc;

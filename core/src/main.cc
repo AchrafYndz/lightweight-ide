@@ -16,10 +16,11 @@ std::string generateJSON() {
 int main() {
   // std::cout << "START" << std::endl;
   // StreamReader t("t.txt");
-  // std::cout << t.peek(5) << std::endl;
-  // std::cout << t.peek(1) << std::endl;
+  // std::cout << t.consume(1) << std::endl;
+  // std::cout << t.consume(1) << std::endl;
   // std::cout << t.peek(0) << std::endl;
-  // std::cout << t.peek(7) << std::endl;
+  // std::cout << t.consume(7) << std::endl;
+  // std::cout << t.consume(7) << std::endl;
   // std::cout << t.peek(2) << std::endl;
   // std::cout << t.peek(2) << std::endl;
   // std::cout << t.peek(5) << std::endl;
@@ -45,7 +46,7 @@ int main() {
   bool t = false;
   for (int _ = 0; _ < 10000; _++) {
     int choice = rand() % 10;
-    char returned = reader.peek(choice);
+    char returned = reader.consume(choice);
     if (returned != written[choice]) t = true;
     std::cout << (returned == written[choice]) << ": " << choice << written[choice] << std::endl;
   }
