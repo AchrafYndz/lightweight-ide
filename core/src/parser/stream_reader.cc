@@ -11,7 +11,7 @@ int StreamReader::charCount() const {
   else return bufferSize - tail + head + 1;
 }
 
-char StreamReader::peek(int k) {
+char StreamReader::peek(int k, int& i) {
   // Let's say we want to access element 6 in file
   // We have a buffer size of 5, with the current buffer start being 2
   // This means that the element at tail is at index 2 in the file, while the element
@@ -69,6 +69,12 @@ char StreamReader::peek(int k) {
   return buffer[head];
 }
 
+char StreamReader::peek(int k) {
+  int i;
+  return peek(k, i);
+}
+
 char StreamReader::consume(int k) {
-  return 'a';
+  char v = peek(k);
+  
 }

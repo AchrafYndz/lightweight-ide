@@ -17,6 +17,7 @@ private:
 
 public:
   StreamReader(std::string sourcePath);
+  char peek(int k, int& i);
   char peek(int k);
   char consume(int k);
   int charCount() const;
