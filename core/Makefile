@@ -26,7 +26,7 @@ RM := rm -r
 
 # CPPFLAGS ?= -std=c++17 -Wall -Wextra -Wpedantic -Werror -Wno-deprecated
 CPPFLAGS ?= -std=c++17
-CPPFLAGS_DEBUG := -g -Og
+CPPFLAGS_DEBUG := -g -O0 -fdebug-default-version=4 -fno-limit-debug-info
 
 SRCS := $(shell find $(SRCDIR) -name "*.$(CPP_SRC_EXTENSION)")
 OBJS := $(patsubst %.$(CPP_SRC_EXTENSION),$(BUILDDIR)/%.o,$(SRCS))
@@ -51,8 +51,8 @@ TEST_INCFLAGS += -I$(LIBDIR)/doctest/include
 #		Miscellaneous
 # =========================
 
-CPPFLAGS += $(INCFLAGS)
 CPPFLAGS += $(CPPFLAGS_DEBUG)
+CPPFLAGS += $(INCFLAGS)
 
 # =========================
 # 	    Make Targets
