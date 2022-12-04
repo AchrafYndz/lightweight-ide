@@ -44,6 +44,7 @@ INCFLAGS += $(addprefix -I,$(shell find $(SRCDIR) -type d))
 INCFLAGS += -I$(LIBDIR)/nlohmann/include
 INCFLAGS += -I$(LIBDIR)/crow/include
 INCFLAGS += -I$(LIBDIR)/asio/include
+
 TEST_INCFLAGS += -I$(LIBDIR)/doctest/include
 
 # =========================
@@ -57,15 +58,14 @@ CPPFLAGS += $(CPPFLAGS_DEBUG)
 # 	    Make Targets
 # =========================
 
-.PHONY: all run build_test test clean flor
+.PHONY: all run build-test test clean flor
 
-all: build
-	$(BUILDDIR)/$(BIN)
+all: build build-test
 
 build: $(BUILDDIR)/$(BIN)
 
-build_test: CPPFLAGS += $(TEST_INCFLAGS) -DTEST
-build_test: $(BUILDDIR)/$(TEST)
+build-test: CPPFLAGS += $(TEST_INCFLAGS) -DTEST
+build-test: $(BUILDDIR)/$(TEST)
 
 $(BUILDDIR)/%.o: %.$(CPP_SRC_EXTENSION)
 	mkdir -p $(dir $@)
@@ -77,7 +77,10 @@ $(BUILDDIR)/$(BIN): $(OBJS)
 $(BUILDDIR)/$(TEST): $(TEST_OBJS)
 	$(CXX) $(TEST_OBJS) -o $@
 
-test: build_test
+run: build
+	$(BUILDDIR)/$(BIN)
+
+test: build-test
 	$(BUILDDIR)/$(TEST)
 
 clean:
