@@ -7,7 +7,7 @@
 
 class LR {
 public:
-    using Item = std::pair<std::string, CFG::Body>;
+    using Item = std::pair<CFG::Var, CFG::Body>;
     using ItemSet = std::set<Item>;
 
 public:
