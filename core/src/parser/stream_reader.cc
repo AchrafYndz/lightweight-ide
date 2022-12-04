@@ -5,8 +5,9 @@
 StreamReader::StreamReader(std::string sourcePath): sourcePath(sourcePath) {}
 
 int StreamReader::charCount() const {
-  if (head == tail) return 0;
-  else if (head > tail) return head - tail + 1;
+  if (empty) return 0;
+  else if (head == tail) return 1;
+  else if (head >= tail) return head - tail + 1;
   else return bufferSize - tail + head + 1;
 }
 
@@ -19,7 +20,10 @@ char StreamReader::peek(int k) {
   // std::cout << lastInBuffer << std::endl;
   // std::cout << relativeIndex << std::endl;
 
-  int lastInBuffer = bufferStart + charCount();
+  int cc = charCount();
+
+  int lastInBuffer = bufferStart + cc;
+  if (cc > 0) lastInBuffer -= 1;
 
   if (empty) {
     int length = k + 1;
@@ -38,7 +42,7 @@ char StreamReader::peek(int k) {
       empty = false;
     }
 
-    bufferStart = length % bufferSize;
+    bufferStart = std::max(0, length - bufferSize);
 
     return buffer[head];
   }
@@ -47,6 +51,10 @@ char StreamReader::peek(int k) {
     // Read until we reach k
     int length = k - lastInBuffer;
     char* read = new char[length];
+
+    // std::cout << "STATS" << std::endl;
+    // std::cout << bufferSize - cc << std::endl;
+    // std::cout << length << std::endl;
 
     std::ifstream is(sourcePath);
     is.seekg(lastInBuffer + 1, std::ios::cur);
@@ -60,9 +68,10 @@ char StreamReader::peek(int k) {
       buffer[head] = read[i];
       empty = false;
     }
-
-    bufferStart = bufferStart + length - (bufferSize - charCount());
-
+    // std::cout << "STATS" << std::endl;
+    // std::cout << bufferSize - charCount() << std::endl;
+    // std::cout << length << std::endl;
+    if (bufferSize - cc < length) bufferStart = bufferStart + length - (bufferSize - cc);
 
     // std::cout << "Peeked " << k << std::endl;
     // std::cout << "Current char count: " << charCount() << std::endl;
