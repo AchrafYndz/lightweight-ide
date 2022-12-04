@@ -17,14 +17,16 @@ char StreamReader::peek(int k) {
   // This means that the element at tail is at index 2 in the file, while the element
   // we're looking for is at index tail + 4 = tail + (k - bufferStart)
 
-  // std::cout << lastInBuffer << std::endl;
-  // std::cout << relativeIndex << std::endl;
-
   int cc = charCount();
 
   int lastInBuffer = bufferStart + cc;
+
+  // Let's say the buffer is [0, 1, 2] with bufferStart 0 and character count 3
+  // lastInBuffer would then be 0 + 3 = 3, lastInBuffer should be 2
   if (cc > 0) lastInBuffer -= 1;
 
+  // TODO: @Flor refactor to merge edge case handling
+  int length;
   if (empty) {
     int length = k + 1;
     char* read = new char[length];
@@ -52,10 +54,6 @@ char StreamReader::peek(int k) {
     int length = k - lastInBuffer;
     char* read = new char[length];
 
-    // std::cout << "STATS" << std::endl;
-    // std::cout << bufferSize - cc << std::endl;
-    // std::cout << length << std::endl;
-
     std::ifstream is(sourcePath);
     is.seekg(lastInBuffer + 1, std::ios::cur);
     is.read(read, length);
@@ -68,14 +66,8 @@ char StreamReader::peek(int k) {
       buffer[head] = read[i];
       empty = false;
     }
-    // std::cout << "STATS" << std::endl;
-    // std::cout << bufferSize - charCount() << std::endl;
-    // std::cout << length << std::endl;
+    
     if (bufferSize - cc < length) bufferStart = bufferStart + length - (bufferSize - cc);
-
-    // std::cout << "Peeked " << k << std::endl;
-    // std::cout << "Current char count: " << charCount() << std::endl;
-    // std::cout << "Current buffer start: " << bufferStart << std::endl;
 
     return buffer[head];
   } else if (k < lastInBuffer) {
