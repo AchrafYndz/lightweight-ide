@@ -17,8 +17,8 @@ int main() {
   // std::cout << "START" << std::endl;
   // StreamReader t("t.txt");
   // std::cout << t.peek(5) << std::endl;
-  // std::cout << t.peek(3) << std::endl;
-  // std::cout << t.peek(7) << std::endl;
+  // std::cout << t.peek(1) << std::endl;
+  // std::cout << t.peek(0) << std::endl;
   // std::cout << t.peek(7) << std::endl;
   // std::cout << t.peek(2) << std::endl;
   // std::cout << t.peek(2) << std::endl;
@@ -33,7 +33,7 @@ int main() {
 
   std::vector<char> written = {};
 
-  for (int _ = 0; _ < 100000; _++) {
+  for (int _ = 0; _ < 1000; _++) {
     char choice = alphabet[(rand() % 26)];
     written.push_back(choice);
     myfile << choice;
@@ -43,7 +43,7 @@ int main() {
 
   StreamReader reader("stream_reader.txt");
   bool t = false;
-  for (int _ = 0; _ < 100000; _++) {
+  for (int _ = 0; _ < 1000; _++) {
     int choice = rand() % 10;
     char returned = reader.peek(choice);
     if (returned != written[choice]) t = true;

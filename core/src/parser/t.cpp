@@ -25,40 +25,66 @@ char StreamReader::peek(int k) {
   // lastInBuffer would then be 0 + 3 = 3, lastInBuffer should be 2
   if (cc > 0) lastInBuffer -= 1;
 
+  // TODO: @Flor refactor to merge edge case handling
   int length;
-  int readStart;
+  if (empty) {
+    int length = k + 1;
+    char* read = new char[length];
+
+    std::ifstream is(sourcePath);
+    is.seekg(0, std::ios::cur);
+    is.read(read, length);
+    is.close();
+
+    for (int i = 0; i < length; i++) {
+      if (!empty) head = (head + 1) % bufferSize;
+      if (head == tail && !empty) tail = (tail + 1) % bufferSize;
+
+      buffer[head] = read[i];
+      empty = false;
+    }
+
+    bufferStart = std::max(0, length - bufferSize);
+
+    return buffer[head];
+  }
+
   if (k > lastInBuffer) {
     // Read until we reach k
-    length = k - lastInBuffer;
-    readStart = lastInBuffer + 1;
+    int length = k - lastInBuffer;
+    char* read = new char[length];
+
+    std::ifstream is(sourcePath);
+    is.seekg(lastInBuffer + 1, std::ios::cur);
+    is.read(read, length);
+    is.close();
+
+    for (int i = 0; i < length; i++) {
+      head = (head + 1) % bufferSize;
+      if (head == tail) tail = (tail + 1) % bufferSize;
+
+      buffer[head] = read[i];
+      empty = false;
+    }
+    
     if (bufferSize - cc < length) bufferStart = bufferStart + length - (bufferSize - cc);
+
+    return buffer[head];
   } else if (k < lastInBuffer) {
-    // Read 
-    length = 1;
-    readStart = k;
     head = tail;
     bufferStart = k;
 
-    // Mark as empty so the head does not get advanced
-    empty = true;
+    char* read = new char[1];
+
+    std::ifstream is(sourcePath);
+    is.seekg(k, std::ios::cur);
+    is.read(read, 1);
+    is.close();
+    
+    buffer[head] = read[0];
+
+    return buffer[head];
   } else return buffer[(tail + k - bufferStart) % bufferSize];
-
-  char* read = new char[length];
-
-  std::ifstream is(sourcePath);
-  is.seekg(readStart, std::ios::cur);
-  is.read(read, length);
-  is.close();
-
-  for (int i = 0; i < length; i++) {
-    if (!empty) head = (head + 1) % bufferSize;
-    if (head == tail && !empty) tail = (tail + 1) % bufferSize;
-
-    buffer[head] = read[i];
-    empty = false;
-  }
-
-  return buffer[head];
 
   // if (relativeIndex < 0) {
   //   // Reset the buffer the buffer to character k
