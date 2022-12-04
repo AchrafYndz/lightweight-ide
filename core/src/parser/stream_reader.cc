@@ -49,7 +49,10 @@ char StreamReader::peek(int k, int& i) {
 
     // Mark as empty so the head does not get advanced
     empty = true;
-  } else return buffer[(tail + k - bufferStart) % bufferSize];
+  } else {
+    i = (tail + k - bufferStart) % bufferSize;
+    return buffer[(tail + k - bufferStart) % bufferSize];
+  }
 
   char* read = new char[length];
 
@@ -66,6 +69,7 @@ char StreamReader::peek(int k, int& i) {
     empty = false;
   }
 
+  i = head;
   return buffer[head];
 }
 
