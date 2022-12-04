@@ -27,7 +27,15 @@ char StreamReader::peek(int k) {
 
   int length;
   int readStart;
-  if (k > lastInBuffer) {
+  if (empty) {
+    // We want to load k+1 items from the file
+    length = k + 1;
+    // We want to start reading at zero index
+    // This can be changed to k - 1 in the future for better performance
+    readStart = 0;
+    // Update buffer start
+    bufferStart = std::max(0, length - bufferSize);
+  } else if (k > lastInBuffer) {
     // Read until we reach k
     length = k - lastInBuffer;
     readStart = lastInBuffer + 1;

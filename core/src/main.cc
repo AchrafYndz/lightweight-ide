@@ -33,7 +33,7 @@ int main() {
 
   std::vector<char> written = {};
 
-  for (int _ = 0; _ < 1000; _++) {
+  for (int _ = 0; _ < 10000; _++) {
     char choice = alphabet[(rand() % 26)];
     written.push_back(choice);
     myfile << choice;
@@ -43,7 +43,7 @@ int main() {
 
   StreamReader reader("stream_reader.txt");
   bool t = false;
-  for (int _ = 0; _ < 1000; _++) {
+  for (int _ = 0; _ < 10000; _++) {
     int choice = rand() % 10;
     char returned = reader.peek(choice);
     if (returned != written[choice]) t = true;
