@@ -19,8 +19,14 @@
 #include <vector>
 
 class CFG {
-private:
+public:
     using Body = std::vector<std::string>;
+    using Rule = std::pair<std::string, std::set<Body>>;
+    using Rules = std::map<std::string, std::set<Body>>;
+    using Var = std::string;
+    using Term = char;
+    using Vars = std::set<Var>;
+    using Terms = std::set<Term>;
 
 public:
     CFG() = default;
@@ -32,15 +38,20 @@ public:
 
     void ll(std::ostream& out = std::cout) const;
 
-    bool accepts(const std::string input);
+    bool accepts(const std::string& input);
 
-    void setStart(Value* s) { start_var = s->getName(); };
+    inline void setStart(Value* s) { start_var = s->getName(); };
 
     void setVariables(Values V);
 
     void setTerminals(Values T);
 
     void setProductions(std::map<std::string, std::vector<std::vector<Value*>>> P);
+
+    inline const Rules& get_rules() const { return this->rules; }
+    inline const Vars& get_vars() const { return this->vars; }
+    inline const Terms& get_terms() const { return this->terms; }
+    inline const std::string& get_start_var() const { return this->start_var; }
 
 private:
     void elim_eps_prods(std::ostream& out = std::cout);
@@ -64,10 +75,10 @@ private:
     Body stringToBody(std::string str);
 
 private:
-    std::set<std::string> vars;
-    std::set<char> terms;
-    std::map<std::string, std::set<Body>> rules;
-    std::string start_var;
+    Vars vars;
+    Terms terms;
+    Rules rules;
+    Var start_var;
 
 #ifdef TEST
 private:
