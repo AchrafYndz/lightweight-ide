@@ -41,7 +41,7 @@ public:
     LR(const CFG& cfg);
 
 private:
-    ItemSet closure(const ItemSet& item, const std::string& separator, const CFG& cfg) const;
+    static ItemSet closure(const ItemSet& item, const std::string& separator, const CFG& cfg);
 
 private:
     // ParsingTable table{};
