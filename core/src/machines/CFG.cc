@@ -804,7 +804,7 @@ bool CFG::has_eps_prod(const std::string& var) const {
     return (this->rules.at(var).find({}) != this->rules.at(var).end());
 }
 
-bool CFG::accepts(const std::string input) {
+bool CFG::accepts(const std::string& input) {
     std::map<int, std::vector<std::set<std::string>>> table;
     for (unsigned long row = 0; row <= input.length() - 1; ++row) {
         if (row == 0) {

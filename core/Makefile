@@ -24,8 +24,9 @@ RM := rm -r
 # 	   Compile Flags
 # =========================
 
-CPPFLAGS ?= -std=c++17 -Wall -Wextra -Wpedantic -Werror
-CPPFLAGS_DEBUG := -g -Og
+# CPPFLAGS ?= -std=c++17 -Wall -Wextra -Wpedantic -Werror -Wno-deprecated
+CPPFLAGS ?= -std=c++17
+CPPFLAGS_DEBUG := -g -O0 -fdebug-default-version=4 -fno-limit-debug-info
 
 SRCS := $(shell find $(SRCDIR) -name "*.$(CPP_SRC_EXTENSION)")
 OBJS := $(patsubst %.$(CPP_SRC_EXTENSION),$(BUILDDIR)/%.o,$(SRCS))
@@ -41,29 +42,30 @@ INCFLAGS += $(addprefix -I,$(shell find $(SRCDIR) -type d))
 # =========================
 
 INCFLAGS += -I$(LIBDIR)/nlohmann/include
+INCFLAGS += -I$(LIBDIR)/crow/include
+INCFLAGS += -I$(LIBDIR)/asio/include
+
 TEST_INCFLAGS += -I$(LIBDIR)/doctest/include
 
 # =========================
 #		Miscellaneous
 # =========================
 
-CPPFLAGS += $(INCFLAGS)
 CPPFLAGS += $(CPPFLAGS_DEBUG)
+CPPFLAGS += $(INCFLAGS)
 
 # =========================
 # 	    Make Targets
 # =========================
 
-.PHONY: all run build_test test clean
+.PHONY: all run build-test test clean flor
 
-all: build build_test clean
+all: build build-test
 
 build: $(BUILDDIR)/$(BIN)
 
-all: build build_test clean
-
-build_test: CPPFLAGS += $(TEST_INCFLAGS) -DTEST
-build_test: $(BUILDDIR)/$(TEST)
+build-test: CPPFLAGS += $(TEST_INCFLAGS) -DTEST
+build-test: $(BUILDDIR)/$(TEST)
 
 $(BUILDDIR)/%.o: %.$(CPP_SRC_EXTENSION)
 	mkdir -p $(dir $@)
@@ -75,10 +77,10 @@ $(BUILDDIR)/$(BIN): $(OBJS)
 $(BUILDDIR)/$(TEST): $(TEST_OBJS)
 	$(CXX) $(TEST_OBJS) -o $@
 
-all: build
+run: build
 	$(BUILDDIR)/$(BIN)
 
-test: build_test
+test: build-test
 	$(BUILDDIR)/$(TEST)
 
 clean:
