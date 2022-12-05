@@ -5,6 +5,8 @@
 
 #include <map>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 class LR {
 public:
@@ -12,13 +14,22 @@ public:
     using ItemSet = std::set<Item>;
 
 public:
+    enum class ActionType { Shift, Reduce, Accept };
+
+public:
+    using ParsingTable =
+        std::map<unsigned int,
+                 std::pair<std::map<char, std::pair<ActionType, unsigned int>>, std::map<CFG::Var, unsigned int>>>;
+
+public:
     class LRException : public std::exception {};
 
     class LRCFGParsingException : public LRException {
     public:
         enum Type {
-            AugStartVarNotValid,
-            SeparatorSymbNotValid,
+            AugStartVarInvalid,
+            SeparatorSymbInvalid,
+            EndOfInputMarkertotInvalid,
         };
 
     public:
@@ -26,10 +37,12 @@ public:
 
         inline const char* what() const noexcept override {
             switch (this->type) {
-            case AugStartVarNotValid:
-                return "augmented start variable connot be an existing variable";
-            case SeparatorSymbNotValid:
-                return "separator is not an existing terminal or variable";
+            case AugStartVarInvalid:
+                return "augmented start variable cannot be an existing variable";
+            case SeparatorSymbInvalid:
+                return "separator cannot be an existing terminal or variable";
+            case EndOfInputMarkertotInvalid:
+                return "end of input marker cannot be an existing terminal";
             }
         }
 
@@ -44,7 +57,9 @@ private:
     static ItemSet closure(const ItemSet& item, const std::string& separator, const CFG& cfg);
 
 private:
-    // ParsingTable table{};
+    ParsingTable table{};
+    std::vector<std::pair<CFG::Var, CFG::Body>> rules{};
+    const char end_of_input{'$'};
 
 #ifdef TEST
 private:

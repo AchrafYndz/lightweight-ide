@@ -20,13 +20,14 @@
 
 class CFG {
 public:
-    using Body = std::vector<std::string>;
-    using Rule = std::pair<std::string, std::set<Body>>;
-    using Rules = std::map<std::string, std::set<Body>>;
     using Var = std::string;
     using Term = char;
     using Vars = std::set<Var>;
     using Terms = std::set<Term>;
+    // can contain both `Var` or `Term`
+    using Body = std::vector<std::string>;
+    using Rule = std::pair<Var, std::set<Body>>;
+    using Rules = std::map<Var, std::set<Body>>;
 
 public:
     CFG() = default;
