@@ -16,6 +16,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 class CFG {
@@ -37,16 +38,15 @@ public:
 
     void toCNF(std::ostream& out = std::cout);
 
+    void toBNF();
+
     void ll(std::ostream& out = std::cout) const;
 
     bool accepts(const std::string& input);
 
     inline void setStart(Value* s) { start_var = s->getName(); };
-
     void setVariables(Values V);
-
     void setTerminals(Values T);
-
     void setProductions(std::map<std::string, std::vector<std::vector<Value*>>> P);
 
     inline const Rules& get_rules() const { return this->rules; }
@@ -55,6 +55,8 @@ public:
     inline const std::string& get_start_var() const { return this->start_var; }
 
 private:
+    bool isBNF = false;
+
     void elim_eps_prods(std::ostream& out = std::cout);
     void elim_unit_pairs(std::ostream& out = std::cout);
     void elim_useless_symbs(std::ostream& out = std::cout);
@@ -72,6 +74,7 @@ private:
 
     std::set<std::string> match(std::map<int, std::vector<std::set<std::string>>>& table, int col, int row, int i);
     void printTable(std::map<int, std::vector<std::set<std::string>>>& table);
+    std::string print_body(const Body& b) const;
 
     Body stringToBody(std::string str);
 

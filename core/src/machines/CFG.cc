@@ -36,16 +36,6 @@ std::ostream& operator<<(std::ostream& out, const std::set<char>& b) {
     return out;
 }
 
-std::string print_body(const Body& b) {
-    std::string out;
-    out += '`';
-    out += std::accumulate(b.begin(), b.end(), std::string(),
-                           [](const std::string& s, const std::string& a) { return s.empty() ? a : s + " " + a; });
-    out += '`';
-
-    return out;
-}
-
 std::string find_var_with_prod(const std::map<std::string, std::set<Body>>& rules, const Body& b) {
     for (const auto& rule_set : rules) {
         for (const auto& body : rule_set.second) {
@@ -114,15 +104,29 @@ void CFG::print(std::ostream& out) const {
     // print terminals
     out << "T = " << this->terms << '\n';
 
-    // print rules
-    out << "P = {\n";
-    for (const auto& rule_set : this->rules) {
-        for (const auto& body : rule_set.second) {
-            out << "  " << rule_set.first << " -> " << print_body(body) << '\n';
+    if (isBNF) {
+        // print rules
+        out << "P = {\n";
+        for (const auto& rule_set : this->rules) {
+            out << "  " << rule_set.first << " ::= ";
+            for (auto it = rule_set.second.begin(); it != rule_set.second.end(); ++it) {
+                if (it != rule_set.second.begin())
+                    out << '|';
+                out << print_body(*it);
+            }
+            out << '\n';
         }
+        out << "}\n";
+    } else {
+        // print rules
+        out << "P = {\n";
+        for (const auto& rule_set : this->rules) {
+            for (const auto& body : rule_set.second) {
+                out << "  " << rule_set.first << " -> " << print_body(body) << '\n';
+            }
+        }
+        out << "}\n";
     }
-    out << "}\n";
-
     // print start variable
     out << "S = " << this->start_var << '\n';
 }
@@ -778,6 +782,35 @@ void CFG::toCNF(std::ostream& out) {
     this->print(out);
 }
 
+void CFG::toBNF() {
+    CFG BNF;
+
+    std::map<std::string, std::set<Body>> newRules;
+    for (Rule rule : rules) {
+        std::set<Body> newBodies;
+        for (const Body& body : rule.second) {
+            Body newBody;
+            for (const std::string& str : body) {
+                if (vars.find(str) != vars.end())
+                    newBody.push_back("<" + str + ">");
+                else
+                    newBody.push_back(str);
+            }
+            newBodies.insert(newBody);
+        }
+        newRules.insert({"<" + rule.first + ">", newBodies});
+    }
+    rules = newRules;
+
+    Vars newVars;
+    for (const Var& var : vars) {
+        newVars.insert("<" + var + ">");
+    }
+    vars = newVars;
+
+    isBNF = true;
+}
+
 unsigned int CFG::rule_count() const {
     unsigned int count = 0;
     for (const auto& rule_pair : this->rules)
@@ -910,4 +943,15 @@ void CFG::setProductions(std::map<std::string, std::vector<std::vector<Value*>>>
         newRules.insert({pair.first, newBodySet});
     }
     rules = newRules;
+}
+std::string CFG::print_body(const Body& b) const {
+    std::string out;
+    if (!isBNF)
+        out += '`';
+    out += std::accumulate(b.begin(), b.end(), std::string(),
+                           [](const std::string& s, const std::string& a) { return s.empty() ? a : s + " " + a; });
+    if (!isBNF)
+        out += '`';
+
+    return out;
 }
