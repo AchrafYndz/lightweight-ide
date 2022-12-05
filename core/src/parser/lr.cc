@@ -7,38 +7,40 @@ LR::LR(const CFG& cfg) {
     // check that the augmented start variable is not an existing variable
     const std::string aug_start_var("S'");
     if (cfg.get_vars().find(aug_start_var) != cfg.get_vars().end())
-        throw "augmented start variable connot be an existing variable";
+        throw LRCFGParsingException(LRCFGParsingException::AugStartVarNotValid);
 
     // check that the separator symbol is not a used variable/terminal
     const std::string separator("·");
     if (cfg.get_vars().find(separator) != cfg.get_vars().end() &&
         cfg.get_terms().find(separator.at(0)) != cfg.get_terms().end())
-        throw "separator is not an existing terminal or variable";
+        throw LRCFGParsingException(LRCFGParsingException::SeparatorSymbNotValid);
 
     // keep track of all produced items
-    // Note: this cannot be a set, because an ordering using indices needs to be kept.
+    // Note: This cannot be a set, because an ordering using indices needs to be kept.
     //       However, any `Item` in the vector should be unique.
-    std::vector<ItemSet> itemsets{};
+    // TODO: Refactor this to use pointers, then it _can_ be a set.
+    std::vector<ItemSet> item_sets{};
     std::map<unsigned int, std::map<std::string, unsigned int>> transitions{};
 
     // keep track of items that need to be processed
+    // TODO: using pointers, `ItemSet` does not need to be copied
     std::queue<ItemSet> pending_items{};
 
     // add starting item to queue
     const ItemSet start_item =
         this->closure(ItemSet{{aug_start_var, {separator, cfg.get_start_var()}}}, separator, cfg);
-    itemsets.push_back(start_item);
+    item_sets.push_back(start_item);
     pending_items.push(start_item);
 
     while (!pending_items.empty()) {
         const ItemSet& item_set = pending_items.front();
 
-        const auto pending_item_set_it = std::find(itemsets.begin(), itemsets.end(), item_set);
+        const auto pending_item_set_it = std::find(item_sets.begin(), item_sets.end(), item_set);
 
-        // DEBUG: `pending_item_set` should always be found
-        assert((pending_item_set_it != itemsets.end() && "pending_item_set is found in itemsets"));
+        // DEBUG: `pending_item_set_it` should always be found
+        assert((pending_item_set_it != item_sets.end() && "pending_item_set_it is found in item_sets"));
 
-        const unsigned int pending_item_set_index = pending_item_set_it - itemsets.begin();
+        const unsigned int pending_item_set_index = pending_item_set_it - item_sets.begin();
 
         // generate new items and transitions
         for (const Item& item : item_set) {
@@ -69,17 +71,17 @@ LR::LR(const CFG& cfg) {
 
             const ItemSet new_item_set = this->closure(ItemSet{{new_item}}, separator, cfg);
 
-            // keep track of whether the item is found to not add it to the queue again
+            // keep track of whether the item is found, so it does not get added to the queue again
             bool found{true};
             // set index of new_item_set. If it is already present, find it. Else use new index
-            auto new_item_set_it = std::find(itemsets.begin(), itemsets.end(), new_item_set);
-            if (new_item_set_it == itemsets.end()) {
+            auto new_item_set_it = std::find(item_sets.begin(), item_sets.end(), new_item_set);
+            if (new_item_set_it == item_sets.end()) {
                 // insert new_item_set and remember iterator
-                new_item_set_it = itemsets.insert(itemsets.end(), new_item_set);
+                new_item_set_it = item_sets.insert(item_sets.end(), new_item_set);
                 found = false;
             }
 
-            const unsigned int new_item_set_index = new_item_set_it - itemsets.begin();
+            const unsigned int new_item_set_index = new_item_set_it - item_sets.begin();
 
             transitions[pending_item_set_index][transition_var] = new_item_set_index;
 
