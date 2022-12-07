@@ -3,11 +3,13 @@
 //
 
 #include <string>
+#include <vector>
+#include "../automata/Value.h"
 
 #ifndef LIGHTWEIGHT_IDE_V2_ASTREE_H
 #define LIGHTWEIGHT_IDE_V2_ASTREE_H
 
-enum ASTType {
+/*enum ASTType {
     import_declaration,
     import_identifier,
 
@@ -41,29 +43,21 @@ enum ASTType {
     division,
     function_call,
     arguments,
-};
+};*/
 
 class ASTNode {
-    ASTType type;
-    ASTNode* leftNode;
-    std::string content;
-    ASTNode* rightNode;
+    //ASTType type;
+    std::vector<ASTNode*> nodes;
+    Value* value;
 public:
     ASTNode() = default;
-    ASTNode(ASTType type, ASTNode* leftNode, std::string content, ASTNode* rightNode);
-    ASTNode(ASTType type, ASTNode* leftNode, ASTNode* rightNode);
+    ASTNode(Value* value, std::vector<ASTNode*> nodes);
 
-    ASTType getType();
-    void setType(ASTType type);
+    Value* getValue();
+    void setValue(Value* value);
 
-    ASTNode* getLeftNode();
-    void setLeftNode(ASTNode* leftNode);
-
-    std::string getContent();
-    void setContent(std::string content);
-
-    ASTNode* getRightNode();
-    void setRightNode(ASTNode* rightNode);
+    std::vector<ASTNode*> getNodes();
+    void setNodes(std::vector<ASTNode*> nodes);
 };
 
 class ASTree {
@@ -73,10 +67,10 @@ public:
     ASTree(ASTNode* root);
 
     void printTree();
-    void print(ASTNode* node);
+    void print(std::vector<ASTNode*> nodes);
 
     std::string getContentTree();
-    void getContent(ASTNode* node, std::string content_);
+    void getContent(std::vector<ASTNode*> nodes, std::string content_);
 
     ASTNode* getRoot();
     void setRoot(ASTNode* root);

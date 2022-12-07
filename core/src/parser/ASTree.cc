@@ -10,17 +10,18 @@ ASTree::ASTree(ASTNode* root) {
 }
 
 void ASTree::printTree() {
-    ASTree::print(root);
+    ASTree::print(root->getNodes());
     std::cout << std::endl;
 }
 
-void ASTree::print(ASTNode* node) {
-    if(node == nullptr)
+void ASTree::print(std::vector<ASTNode*> nodes) {
+    if(nodes.empty())
         return;
-    ASTree::print(node->getLeftNode());
-    if(node->getContent() != "")
-        std::cout << node->getContent() << " ";
-    ASTree::print(node->getRightNode());
+    for(auto node: nodes){
+        if(node->getNodes().empty())
+            std::cout << node->getValue()->getName() + " ";
+        ASTree::print(node->getNodes());
+    }
 }
 
 ASTNode* ASTree::getRoot() {
@@ -33,61 +34,37 @@ void ASTree::setRoot(ASTNode* root) {
 
 std::string ASTree::getContentTree() {
     std::string content_;
-    ASTree::getContent(root, content_);
+    ASTree::getContent(root->getNodes(), content_);
     return content_;
 }
 
-void ASTree::getContent(ASTNode* node, std::string content_) {
-    if(node == nullptr)
+void ASTree::getContent(std::vector<ASTNode*> nodes, std::string content_) {
+    if(nodes.empty())
         return;
-    ASTree::getContent(node->getLeftNode(), content_);
-    if(node->getContent() != "")
-        content_ += node->getContent() + " ";
-    ASTree::getContent(node->getRightNode(), content_);
+    for(auto node: nodes){
+        if(node->getNodes().empty())
+            content_ += node->getValue()->getName();
+        ASTree::getContent(node->getNodes(), content_);
+    }
 }
 
-ASTNode::ASTNode(ASTType type, ASTNode* leftNode, ASTNode* rightNode) {
-    ASTNode::type = type;
-    ASTNode::leftNode = leftNode;
-    ASTNode::rightNode = rightNode;
+ASTNode::ASTNode(Value* value, std::vector<ASTNode*> nodes) {
+    ASTNode::value = value;
+    ASTNode::nodes = nodes;
 }
 
-ASTNode::ASTNode(ASTType type, ASTNode* leftNode, std::string content, ASTNode* rightNode) {
-    ASTNode::type = type;
-    ASTNode::leftNode = leftNode;
-    ASTNode::content = content;
-    ASTNode::rightNode = rightNode;
+Value* ASTNode::getValue() {
+    return value;
 }
 
-ASTType ASTNode::getType(){
-    return ASTNode::type;
+void ASTNode::setValue(Value* value) {
+    ASTNode::value = value;
 }
 
-void ASTNode::setType(ASTType type) {
-    ASTNode::type = type;
+std::vector<ASTNode*> ASTNode::getNodes() {
+    return nodes;
 }
 
-ASTNode* ASTNode::getLeftNode() {
-    return leftNode;
+void ASTNode::setNodes(std::vector<ASTNode*> nodes) {
+    ASTNode::nodes = nodes;
 }
-
-void ASTNode::setLeftNode(ASTNode* leftNode) {
-    ASTNode::leftNode = leftNode;
-}
-
-std::string ASTNode::getContent() {
-    return content;
-}
-
-void ASTNode::setContent(std::string content) {
-    ASTNode::content = content;
-}
-
-ASTNode* ASTNode::getRightNode() {
-    return rightNode;
-}
-
-void ASTNode::setRightNode(ASTNode* rightNode) {
-    ASTNode::rightNode = rightNode;
-}
-

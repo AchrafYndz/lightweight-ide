@@ -58,7 +58,7 @@ CPPFLAGS += $(INCFLAGS)
 # 	    Make Targets
 # =========================
 
-.PHONY: all run build-test test clean flor
+.PHONY: all run build-test test clean
 
 all: build build-test
 
