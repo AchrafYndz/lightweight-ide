@@ -1,0 +1,24 @@
+{
+  "isBNF": true,
+  "Variables": ["A", "B", "S"],
+  "Terminals": ["a", "b"],
+  "Productions": [
+    {
+      "head": "S",
+      "body": ["A", "B"]
+    },
+    {
+      "head": "A",
+      "body": ["a", "A"]
+    },
+    {
+      "head": "A",
+      "body": ["b"]
+    },
+    {
+      "head": "B",
+      "body": ["b"]
+    }
+  ],
+  "Start": "S"
+}
