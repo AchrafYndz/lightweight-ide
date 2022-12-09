@@ -95,6 +95,10 @@ CFG::CFG(const std::string& filepath) {
         // add rule to map
         this->rules[head].insert(body);
     }
+
+    // determine if BNF
+    if (cfg.find("isBNF") != cfg.end())
+        isBNF = true;
 }
 
 void CFG::print(std::ostream& out) const {
