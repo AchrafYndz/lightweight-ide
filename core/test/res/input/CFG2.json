@@ -1,18 +1,32 @@
 {
-  "Variables": ["A", "S"],
-  "Terminals": ["a", "b"],
+  "Variables": [
+    "A",
+    "S"
+  ],
+  "Terminals": [
+    "a",
+    "b"
+  ],
   "Productions": [
     {
       "head": "S",
-      "body": ["A", "A"]
+      "body": [
+        "A",
+        "A"
+      ]
     },
     {
       "head": "A",
-      "body": ["a", "A"]
+      "body": [
+        "a",
+        "A"
+      ]
     },
     {
       "head": "A",
-      "body": ["b"]
+      "body": [
+        "b"
+      ]
     }
   ],
   "Start": "S"

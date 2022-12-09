@@ -1,23 +1,40 @@
 {
   "isBNF": true,
-  "Variables": ["A", "B", "S"],
-  "Terminals": ["a", "b"],
+  "Variables": [
+    "A",
+    "B",
+    "S"
+  ],
+  "Terminals": [
+    "a",
+    "b"
+  ],
   "Productions": [
     {
       "head": "S",
-      "body": ["A", "B"]
+      "body": [
+        "A",
+        "B"
+      ]
     },
     {
       "head": "A",
-      "body": ["a", "A"]
+      "body": [
+        "a",
+        "A"
+      ]
     },
     {
       "head": "A",
-      "body": ["b"]
+      "body": [
+        "b"
+      ]
     },
     {
       "head": "B",
-      "body": ["b"]
+      "body": [
+        "b"
+      ]
     }
   ],
   "Start": "S"
