@@ -5,9 +5,7 @@
 #include "ASTree.h"
 #include <iostream>
 
-ASTree::ASTree(ASTNode* root) {
-    ASTree::root = root;
-}
+ASTree::ASTree(ASTNode* root) { ASTree::root = root; }
 
 void ASTree::printTree() {
     ASTree::print(root->getNodes());
@@ -15,22 +13,18 @@ void ASTree::printTree() {
 }
 
 void ASTree::print(std::vector<ASTNode*> nodes) {
-    if(nodes.empty())
+    if (nodes.empty())
         return;
-    for(auto node: nodes){
-        if(node->getNodes().empty())
+    for (auto node : nodes) {
+        if (node->getNodes().empty())
             std::cout << node->getValue()->getName() + " ";
         ASTree::print(node->getNodes());
     }
 }
 
-ASTNode* ASTree::getRoot() {
-    return root;
-}
+ASTNode* ASTree::getRoot() { return root; }
 
-void ASTree::setRoot(ASTNode* root) {
-    ASTree::root = root;
-}
+void ASTree::setRoot(ASTNode* root) { ASTree::root = root; }
 
 std::string ASTree::getContentTree() {
     std::string content_;
@@ -39,10 +33,10 @@ std::string ASTree::getContentTree() {
 }
 
 void ASTree::getContent(std::vector<ASTNode*> nodes, std::string content_) {
-    if(nodes.empty())
+    if (nodes.empty())
         return;
-    for(auto node: nodes){
-        if(node->getNodes().empty())
+    for (auto node : nodes) {
+        if (node->getNodes().empty())
             content_ += node->getValue()->getName();
         ASTree::getContent(node->getNodes(), content_);
     }
@@ -53,18 +47,10 @@ ASTNode::ASTNode(Value* value, std::vector<ASTNode*> nodes) {
     ASTNode::nodes = nodes;
 }
 
-Value* ASTNode::getValue() {
-    return value;
-}
+Value* ASTNode::getValue() { return value; }
 
-void ASTNode::setValue(Value* value) {
-    ASTNode::value = value;
-}
+void ASTNode::setValue(Value* value) { ASTNode::value = value; }
 
-std::vector<ASTNode*> ASTNode::getNodes() {
-    return nodes;
-}
+std::vector<ASTNode*> ASTNode::getNodes() { return nodes; }
 
-void ASTNode::setNodes(std::vector<ASTNode*> nodes) {
-    ASTNode::nodes = nodes;
-}
+void ASTNode::setNodes(std::vector<ASTNode*> nodes) { ASTNode::nodes = nodes; }

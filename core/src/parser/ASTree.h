@@ -2,9 +2,9 @@
 // Created by maxime on 6/12/22.
 //
 
+#include "../automata/Value.h"
 #include <string>
 #include <vector>
-#include "../automata/Value.h"
 
 #ifndef LIGHTWEIGHT_IDE_V2_ASTREE_H
 #define LIGHTWEIGHT_IDE_V2_ASTREE_H
@@ -46,9 +46,10 @@
 };*/
 
 class ASTNode {
-    //ASTType type;
+    // ASTType type;
     std::vector<ASTNode*> nodes;
     Value* value;
+
 public:
     ASTNode() = default;
     ASTNode(Value* value, std::vector<ASTNode*> nodes);
@@ -62,6 +63,7 @@ public:
 
 class ASTree {
     ASTNode* root;
+
 public:
     ASTree() = default;
     ASTree(ASTNode* root);
@@ -76,5 +78,4 @@ public:
     void setRoot(ASTNode* root);
 };
 
-
-#endif //LIGHTWEIGHT_IDE_V2_ASTREE_H
+#endif // LIGHTWEIGHT_IDE_V2_ASTREE_H
