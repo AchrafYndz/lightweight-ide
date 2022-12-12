@@ -55,8 +55,6 @@ public:
     inline const std::string& get_start_var() const { return this->start_var; }
 
 private:
-    bool isBNF = false;
-
     void elim_eps_prods(std::ostream& out = std::cout);
     void elim_unit_pairs(std::ostream& out = std::cout);
     void elim_useless_symbs(std::ostream& out = std::cout);
@@ -83,6 +81,9 @@ private:
     Terms terms;
     Rules rules;
     Var start_var;
+
+    /// used for conversion from BNF to CFG
+    bool isBNF{false};
 
 #ifdef TEST
 private:
