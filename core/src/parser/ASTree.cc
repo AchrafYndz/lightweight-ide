@@ -5,14 +5,16 @@
 #include "ASTree.h"
 #include <iostream>
 
-ASTree::ASTree(ASTNode* root) { ASTree::root = root; }
+ASTree::ASTree(ASTNode* root) {
+    ASTree::root = std::shared_ptr<ASTNode>(root);
+}
 
 void ASTree::printTree() {
     ASTree::print(root->getNodes());
     std::cout << std::endl;
 }
 
-void ASTree::print(std::vector<ASTNode*> nodes) {
+void ASTree::print(std::vector<std::shared_ptr<ASTNode>> nodes) {
     if (nodes.empty())
         return;
     for (auto node : nodes) {
@@ -22,9 +24,11 @@ void ASTree::print(std::vector<ASTNode*> nodes) {
     }
 }
 
-ASTNode* ASTree::getRoot() { return root; }
+std::shared_ptr<ASTNode> ASTree::getRoot() { return root; }
 
-void ASTree::setRoot(ASTNode* root) { ASTree::root = root; }
+void ASTree::setRoot(ASTNode* root) {
+    ASTree::root = std::shared_ptr<ASTNode>(root);
+}
 
 std::string ASTree::getContentTree() {
     std::string content_;
@@ -32,7 +36,7 @@ std::string ASTree::getContentTree() {
     return content_;
 }
 
-void ASTree::getContent(std::vector<ASTNode*> nodes, std::string content_) {
+void ASTree::getContent(std::vector<std::shared_ptr<ASTNode>> nodes, std::string &content_) {
     if (nodes.empty())
         return;
     for (auto node : nodes) {
@@ -42,15 +46,18 @@ void ASTree::getContent(std::vector<ASTNode*> nodes, std::string content_) {
     }
 }
 
-ASTNode::ASTNode(Value* value, std::vector<ASTNode*> nodes) {
-    ASTNode::value = value;
+ASTNode::ASTNode(Value* value, std::vector<std::shared_ptr<ASTNode>> nodes) {
+    ASTNode::value = std::shared_ptr<Value>(value);
     ASTNode::nodes = nodes;
 }
 
-Value* ASTNode::getValue() { return value; }
+const std::shared_ptr<Value> ASTNode::getValue() const { return value; }
 
-void ASTNode::setValue(Value* value) { ASTNode::value = value; }
+void ASTNode::setValue(Value* value) {
+    ASTNode::value = std::shared_ptr<Value>(value);
+}
 
-std::vector<ASTNode*> ASTNode::getNodes() { return nodes; }
 
-void ASTNode::setNodes(std::vector<ASTNode*> nodes) { ASTNode::nodes = nodes; }
+std::vector<std::shared_ptr<ASTNode>> ASTNode::getNodes() { return nodes; }
+
+void ASTNode::setNodes(std::vector<std::shared_ptr<ASTNode>> nodes) { ASTNode::nodes = nodes; }
