@@ -5,6 +5,7 @@
 #include "../automata/Value.h"
 #include <string>
 #include <vector>
+#include <memory>
 
 #ifndef LIGHTWEIGHT_IDE_V2_ASTREE_H
 #define LIGHTWEIGHT_IDE_V2_ASTREE_H
@@ -47,34 +48,34 @@
 
 class ASTNode {
     // ASTType type;
-    std::vector<ASTNode*> nodes;
-    Value* value;
+    std::vector<std::shared_ptr<ASTNode>> nodes;
+    std::shared_ptr<Value> value;
 
 public:
     ASTNode() = default;
-    ASTNode(Value* value, std::vector<ASTNode*> nodes);
+    ASTNode(Value* value, std::vector<std::shared_ptr<ASTNode>> nodes);
 
-    Value* getValue();
+    const std::shared_ptr<Value> getValue() const;
     void setValue(Value* value);
 
-    std::vector<ASTNode*> getNodes();
-    void setNodes(std::vector<ASTNode*> nodes);
+    std::vector<std::shared_ptr<ASTNode>> getNodes();
+    void setNodes(std::vector<std::shared_ptr<ASTNode>> nodes);
 };
 
 class ASTree {
-    ASTNode* root;
+    std::shared_ptr<ASTNode> root;
 
 public:
     ASTree() = default;
     ASTree(ASTNode* root);
 
     void printTree();
-    void print(std::vector<ASTNode*> nodes);
+    void print(std::vector<std::shared_ptr<ASTNode>> nodes);
 
     std::string getContentTree();
-    void getContent(std::vector<ASTNode*> nodes, std::string content_);
+    void getContent(std::vector<std::shared_ptr<ASTNode>> nodes, std::string &content_);
 
-    ASTNode* getRoot();
+    std::shared_ptr<ASTNode> getRoot();
     void setRoot(ASTNode* root);
 };
 

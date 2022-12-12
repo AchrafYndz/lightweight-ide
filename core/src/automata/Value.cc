@@ -5,6 +5,4 @@ Value::Value(std::string name, bool isTerminal) {
     Value::isTerminal = isTerminal;
 }
 
-const std::string &Value::getName() const {
-    return name;
-}
+const std::string& Value::getName() const { return name; }

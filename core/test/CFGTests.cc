@@ -58,16 +58,29 @@ TEST_SUITE("CFGTests") {
 
         CHECK_EQ(expected.str(), actual.str());
     }
-    TEST_CASE("[CFGTests] BNF") {
-        CFG cfg("test/res/input/BNF0.json");
+    TEST_CASE("[CFGTests] CFG2BNF") {
+        CFG cfg("test/res/input/CFG2BNF.json");
 
-        const std::ifstream expectedFile("test/res/expected/CFGTests-BNF0.txt");
+        const std::ifstream expectedFile("test/res/expected/CFGTests-CFG2BNF.txt");
         std::stringstream expected;
         expected << expectedFile.rdbuf();
 
         std::stringstream actual("");
 
         cfg.toBNF();
+
+        cfg.print(actual);
+
+        CHECK_EQ(expected.str(), actual.str());
+    }
+    TEST_CASE("[CFGTests] BNF2CFG") {
+        CFG cfg("test/res/input/BNF2CFG.json");
+
+        const std::ifstream expectedFile("test/res/expected/CFGTests-BNF2CFG.txt");
+        std::stringstream expected;
+        expected << expectedFile.rdbuf();
+
+        std::stringstream actual("");
 
         cfg.print(actual);
 

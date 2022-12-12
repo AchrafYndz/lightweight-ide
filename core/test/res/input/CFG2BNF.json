@@ -1,6 +1,7 @@
 {
   "Variables": [
     "A",
+    "B",
     "S"
   ],
   "Terminals": [
@@ -12,7 +13,7 @@
       "head": "S",
       "body": [
         "A",
-        "A"
+        "B"
       ]
     },
     {
@@ -24,6 +25,12 @@
     },
     {
       "head": "A",
+      "body": [
+        "b"
+      ]
+    },
+    {
+      "head": "B",
       "body": [
         "b"
       ]
