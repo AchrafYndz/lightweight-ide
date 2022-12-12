@@ -51,6 +51,7 @@ public:
     };
 
 public:
+    LR() = default;
     LR(const CFG& cfg);
 
 private:
@@ -59,7 +60,7 @@ private:
 private:
     ParsingTable table{};
     std::vector<std::pair<CFG::Var, CFG::Body>> rules{};
-    const char end_of_input{'$'};
+    char end_of_input{'$'};
 
 #ifdef TEST
 private:
