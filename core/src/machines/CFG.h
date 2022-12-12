@@ -81,10 +81,8 @@ private:
     Terms terms;
     Rules rules;
     Var start_var;
-    bool isBNF = false;
 
-    /// used for conversion from BNF to CFG
-    bool isBNF{false};
+    bool isBNF = false;
 
 #ifdef TEST
 private:
