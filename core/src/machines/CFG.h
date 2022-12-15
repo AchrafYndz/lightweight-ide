@@ -22,7 +22,7 @@
 class CFG {
 public:
     using Var = std::string;
-    using Term = char;
+    using Term = std::string;
     using Vars = std::set<Var>;
     using Terms = std::set<Term>;
     // can contain both `Var` or `Term`

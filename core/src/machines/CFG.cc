@@ -78,9 +78,9 @@ CFG::CFG(const std::string& filepath) {
     this->vars = vars_;
 
     // read out terminals
-    std::set<char> terms_;
+    std::set<std::string> terms_;
     for (std::string term : cfg["Terminals"])
-        terms_.insert(term[0]);
+        terms_.insert(term);
     this->terms = terms_;
 
     // read out start variable
@@ -146,7 +146,7 @@ std::set<std::string> CFG::first(const std::vector<std::string>& b) const {
         const std::string& var = b[0];
 
         // 1. If X is a terminal then First(X) is just X!
-        if (var.length() == 1 && this->terms.find(var[0]) != this->terms.end())
+        if (var.length() == 1 && this->terms.find(var) != this->terms.end())
             return {var};
 
         // if `var` has no productions
@@ -274,21 +274,21 @@ void CFG::ll(std::ostream& out) const {
     std::map<std::string, std::map<std::string, std::string>> table;
 
     for (const auto& var : this->vars) {
-        for (char c : this->terms) {
-            if (first.at(var).find(std::string(1, c)) == first.at(var).end()) {
-                if (follow.at(var).find(std::string(1, c)) == follow.at(var).end())
+        for (std::string t : this->terms) {
+            if (first.at(var).find(t) == first.at(var).end()) {
+                if (follow.at(var).find(t) == follow.at(var).end())
                     // the transition results in an error
-                    table[var][std::string(1, c)] = "<ERR>";
+                    table[var][t] = "<ERR>";
                 else
-                    table[var][std::string(1, c)] = "";
+                    table[var][t] = "";
             } else {
                 // find the rule that starts with that symbol
                 Body c_b;
                 for (const auto& b : this->rules.at(var))
-                    if (b.size() > 0 && b[0] == std::string(1, c))
+                    if (b.size() > 0 && b[0] == t)
                         c_b = b;
 
-                table[var][std::string(1, c)] = print_body(c_b);
+                table[var][t] = print_body(c_b);
             }
         }
 
@@ -498,7 +498,7 @@ void CFG::elim_useless_symbs(std::ostream& out) {
     // 3.1. determine generating symbols
     std::set<std::string> generating;
     for (const auto& term : this->terms)
-        generating.insert(std::string(1, term));
+        generating.insert(term);
 
     bool changed = true;
     while (changed) {
@@ -601,9 +601,9 @@ void CFG::elim_useless_symbs(std::ostream& out) {
             ++useless_variable_count;
     }
 
-    std::set<char> new_terms;
+    std::set<std::string> new_terms;
     for (const auto& term : this->terms) {
-        if (useful.find(std::string(1, term)) != useful.end())
+        if (useful.find(term) != useful.end())
             new_terms.insert(term);
         else
             ++useless_terminal_count;
@@ -638,7 +638,7 @@ void CFG::replace_bad_bodies(std::ostream& out) {
 
             bool bad_body = false;
             for (const auto& c : body) {
-                if (c.length() == 1 && std::find(this->terms.begin(), this->terms.end(), c[0]) != this->terms.end()) {
+                if (c.length() == 1 && std::find(this->terms.begin(), this->terms.end(), c) != this->terms.end()) {
                     bad_body = true;
                     break;
                 }
@@ -929,7 +929,7 @@ void CFG::setTerminals(Values T) {
         assert(pair.second->getIsTerminal());
         if (pair.second->getName() == " ")
             continue;
-        terms.insert(pair.second->getName()[0]);
+        terms.insert(pair.second->getName());
     }
 }
 

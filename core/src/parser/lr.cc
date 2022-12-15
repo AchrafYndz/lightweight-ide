@@ -12,7 +12,7 @@ LR::LR(const CFG& cfg) {
     // check that the separator symbol is not a used variable/terminal
     const std::string separator("·");
     if (cfg.get_vars().find(separator) != cfg.get_vars().end() &&
-        cfg.get_terms().find(separator.at(0)) != cfg.get_terms().end())
+        cfg.get_terms().find(separator) != cfg.get_terms().end())
         throw LRCFGParsingException(LRCFGParsingException::SeparatorSymbInvalid);
 
     // check that the end of input marker is not a used terminal
@@ -121,7 +121,7 @@ LR::LR(const CFG& cfg) {
                     assert(
                         (item_set_transitions_entry.first.length() == 1 && "item_set_transitions_entry length is 1"));
 
-                    this->table[i].first[item_set_transitions_entry.first.at(0)] = {ActionType::Shift,
+                    this->table[i].first[item_set_transitions_entry.first] = {ActionType::Shift,
                                                                                     item_set_transitions_entry.second};
                 }
             }
@@ -152,7 +152,7 @@ LR::LR(const CFG& cfg) {
                 const unsigned int lookup_rule_index = lookup_rule_it - this->rules.begin();
 
                 // add a reduce entry for every terminal and end_of_string marker
-                for (char term : cfg.get_terms()) {
+                for (std::string term : cfg.get_terms()) {
                     this->table[i].first[term] = {ActionType::Reduce, lookup_rule_index};
                 }
                 this->table[i].first[end_of_input] = {ActionType::Reduce, lookup_rule_index};
@@ -187,7 +187,7 @@ LR::ItemSet LR::closure(const ItemSet& item, const std::string& separator, const
             // check that iterator is in the body and that the found value is not a terminal
             std::advance(it, 1);
             if (it == item.second.end() ||
-                (it->length() == 1 && cfg.get_terms().find(it->at(0)) != cfg.get_terms().end()))
+                (it->length() == 1 && cfg.get_terms().find(*it) != cfg.get_terms().end()))
                 continue;
 
             const std::set<CFG::Body>& rule = cfg.get_rules().at(*it);

@@ -19,7 +19,7 @@ public:
 public:
     using ParsingTable =
         std::map<unsigned int,
-                 std::pair<std::map<char, std::pair<ActionType, unsigned int>>, std::map<CFG::Var, unsigned int>>>;
+                 std::pair<std::map<std::string, std::pair<ActionType, unsigned int>>, std::map<CFG::Var, unsigned int>>>;
 
 public:
     class LRException : public std::exception {};
@@ -60,7 +60,7 @@ private:
 private:
     ParsingTable table{};
     std::vector<std::pair<CFG::Var, CFG::Body>> rules{};
-    char end_of_input{'$'};
+    std::string end_of_input{'$'};
 
 #ifdef TEST
 private:

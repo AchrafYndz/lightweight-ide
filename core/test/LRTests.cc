@@ -33,24 +33,24 @@ TEST_SUITE("LRTests") {
         setup(cfg);
 
         LR::ParsingTable table{
-            {0, {{{'a', {LR::ActionType::Shift, 1}}, {'b', {LR::ActionType::Shift, 2}}}, {{"A", 3}, {"S", 4}}}},
-            {1, {{{'a', {LR::ActionType::Shift, 1}}, {'b', {LR::ActionType::Shift, 2}}}, {{"A", 5}}}},
+            {0, {{{"a", {LR::ActionType::Shift, 1}}, {"b", {LR::ActionType::Shift, 2}}}, {{"A", 3}, {"S", 4}}}},
+            {1, {{{"a", {LR::ActionType::Shift, 1}}, {"b", {LR::ActionType::Shift, 2}}}, {{"A", 5}}}},
             {2,
-             {{{'$', {LR::ActionType::Reduce, 1}},
-               {'a', {LR::ActionType::Reduce, 1}},
-               {'b', {LR::ActionType::Reduce, 1}}},
+             {{{"$", {LR::ActionType::Reduce, 1}},
+               {"a", {LR::ActionType::Reduce, 1}},
+               {"b", {LR::ActionType::Reduce, 1}}},
               {}}},
-            {3, {{{'a', {LR::ActionType::Shift, 1}}, {'b', {LR::ActionType::Shift, 2}}}, {{"A", 6}}}},
-            {4, {{{'$', {LR::ActionType::Accept, 0}}}, {}}},
+            {3, {{{"a", {LR::ActionType::Shift, 1}}, {"b", {LR::ActionType::Shift, 2}}}, {{"A", 6}}}},
+            {4, {{{"$", {LR::ActionType::Accept, 0}}}, {}}},
             {5,
-             {{{'$', {LR::ActionType::Reduce, 0}},
-               {'a', {LR::ActionType::Reduce, 0}},
-               {'b', {LR::ActionType::Reduce, 0}}},
+             {{{"$", {LR::ActionType::Reduce, 0}},
+               {"a", {LR::ActionType::Reduce, 0}},
+               {"b", {LR::ActionType::Reduce, 0}}},
               {}}},
             {6,
-             {{{'$', {LR::ActionType::Reduce, 2}},
-               {'a', {LR::ActionType::Reduce, 2}},
-               {'b', {LR::ActionType::Reduce, 2}}},
+             {{{"$", {LR::ActionType::Reduce, 2}},
+               {"a", {LR::ActionType::Reduce, 2}},
+               {"b", {LR::ActionType::Reduce, 2}}},
               {}}}};
 
         CHECK_EQ(table, get_table());
