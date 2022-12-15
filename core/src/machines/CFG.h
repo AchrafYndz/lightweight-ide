@@ -34,6 +34,8 @@ public:
     CFG() = default;
     CFG(const std::string& filepath);
 
+    void parse_ebnf(const std::string& filepath);
+
     void print(std::ostream& out = std::cout) const;
 
     void toCNF(std::ostream& out = std::cout);

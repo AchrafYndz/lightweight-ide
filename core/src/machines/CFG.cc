@@ -1,6 +1,9 @@
 #include "CFG.h"
 
+#include <fstream>
 #include <iomanip>
+#include <iostream>
+#include <regex>
 #include <string>
 
 // Note: Ignore the printing code, this was solely used for the evaluation platform and (because it was already
@@ -958,4 +961,64 @@ std::string CFG::print_body(const Body& b) const {
         out += '`';
 
     return out;
+}
+void CFG::parse_ebnf(const std::string& filepath) {
+    // Open the input file
+    std::ifstream infile(filepath);
+    std::string line;
+
+    // Use regular expressions for matching eBNF rules and rule bodies
+    // https://regex101.com/r/MWVvpF/2
+    std::regex rule_regex( R"(^\s*<([^>]+)>\s*::=\s*(.+)\s*$)" );
+    // https://regex101.com/ link to be updated
+    std::regex body_regex( R"([^\s]+)" );
+
+    // Read each line from the input file
+    while (std::getline(infile, line)) {
+        // Check if the line matches an eBNF rule
+        std::smatch match;
+        // Skip lines that do not match the rule format
+        if (!std::regex_match(line, match, rule_regex))
+            continue;
+
+        // Extract the variable and the rule body from the matched line
+        std::string var = match[1].str();
+        std::string body_str = match[2].str();
+
+        // Parse the rule body into a set of bodies
+        std::set<Body> bodies;
+        std::sregex_iterator end;
+        Body body;
+        for (std::sregex_iterator it(body_str.begin(), body_str.end(), body_regex); it != end; it++) {
+            match = *it;
+            // Parse each term in the body
+            for (const std::string& str : std::vector<std::string>(it->begin(), it->end())) {
+                if (str == "|") {
+                    if (!body.empty())
+                        // Add the parsed body to the set of bodies
+                        bodies.insert(body);
+                    // Clear the body
+                    body.clear();
+                }
+                // If the term is enclosed in angle brackets, it is a variable
+                else if (str.front() == '<' && str.back() == '>') {
+                    vars.insert(str);
+                    body.push_back(str);
+                } else {
+                    // Otherwise, the term is a terminal
+                    // Extract the terminal name from the quotation marks
+                    // TODO: figure out what to do with letter and digit
+                    std::string term = str;
+//                                           .substr(1, str.length() - 2);
+                    terms.insert(term);
+                    body.push_back(term);
+                }
+            }
+        }
+        // Add the parsed body to the set of bodies
+        bodies.insert(body);
+        // Add the parsed rule to the CFG
+        rules[var] = bodies;
+    }
+    isBNF = true;
 }
