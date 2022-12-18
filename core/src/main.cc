@@ -1,12 +1,13 @@
 #include "crow.h"
 #include "parser/stream_reader.h"
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "machines/CFG.h"
 #include "parser/lr.h"
 
-std::string generateJSON() {
+std::string generateJSON(const std::string& code) {
     // TODO: @Flor remove placeholder for prod
     std::string result = "{\"foo\":\"bar\"}";
 
@@ -19,8 +20,12 @@ std::string generateJSON() {
 int main() {
     crow::SimpleApp app;
 
-    CROW_ROUTE(app, "/json")([](){
-      crow::response response(generateJSON());
+    CROW_ROUTE(app, "/")([](){
+      return "Hello, world!";
+    });
+
+    CROW_ROUTE(app, "/json").methods(crow::HTTPMethod::POST)([](const crow::request& req){
+      crow::response response(generateJSON(req.body));
       response.set_header("content-type", "application/json");
 
       return response;

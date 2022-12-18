@@ -159,6 +159,10 @@ const convert = ({
   return newBounds;
 };
 
+const highlight = async (code: string) => {
+  fetch("http://0.0.0.0:18080/json")
+}
+
 const Editor = () => {
   const theme: Theme[] = [
     {
