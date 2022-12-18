@@ -1,4 +1,30 @@
-import { HighlightSpecs, HighlightSpecsBounds, Theme, HighlightSpecsRaw, HighlightSpecsBoundsRaw } from "./App"
+import { useState } from "react";
+import { Theme } from "./App";
+
+export type Bounds = number[]
+export type Pair = Bounds[]
+
+export interface HighlightSpecsBounds {
+    strings: Bounds[],
+    comments: Bounds[],
+    keywords: Bounds[]
+}
+
+export interface HighlightSpecsBoundsRaw {
+    strings: Pair[],
+    comments: Pair[],
+    keywords: Pair[]
+}
+
+export interface HighlightSpecs {
+    code: string,
+    bounds: HighlightSpecsBounds
+}
+
+export interface HighlightSpecsRaw {
+    code: string,
+    bounds: HighlightSpecsBoundsRaw
+}
 
 const Line = ({ highlightSpecsBounds, theme, startIndex, text }: { highlightSpecsBounds: HighlightSpecsBounds, theme: Theme, startIndex: number, text: string }) => {
     let n: JSX.Element[] = [];
@@ -73,8 +99,9 @@ const convert = ({ bounds, code } : {bounds: HighlightSpecsBoundsRaw, code: stri
     return newBounds;
 }
 
-const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecsRaw, theme: Theme }) => {
-    if (!highlightSpecs) return <></>
+const Editor = ({ theme }: { theme: Theme }) => {
+  const [highlightSpecs, setHighlightSpecs] = useState<HighlightSpecsRaw>({code: "", bounds: { strings: [], comments: [], keywords: [] }})
+    // if (!highlightSpecs) return <></>
     const lines = highlightSpecs.code.split("\n")
 
     const newHighlightSpecs: HighlightSpecs = {
@@ -84,7 +111,7 @@ const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecsRaw, 
 
     return <>
         <div className="flex flex-col w-full h-full bg-neutral-800 p-5 overflow-scroll">
-            {
+            {/* {
                 lines.map((line, i) => {
                     const startIndex = lines.slice(0, i).reduce((total, line) => total + line.length, 0) + i * "\n".length;
                     return <div className="flex gap-10" key={i}>
@@ -92,7 +119,10 @@ const Editor = ({ highlightSpecs, theme }: { highlightSpecs: HighlightSpecsRaw, 
                                 <Line highlightSpecsBounds={newHighlightSpecs.bounds} theme={theme} startIndex={startIndex} text={line}></Line>
                     </div>
                 })
-            }
+            } */}
+            <textarea className="w-full h-full bg-neutral-800 focus:outline-none">
+
+            </textarea>
         </div>
     </>
 }

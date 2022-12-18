@@ -2,37 +2,11 @@ import Editor from "./Editor"
 import { useState, useCallback } from "react"
 import { useDropzone } from 'react-dropzone'
 
-
-export type Bounds = number[]
-export type Pair = Bounds[]
 type HexColor = string
-
-export interface HighlightSpecsBounds {
-    strings: Bounds[],
-    comments: Bounds[],
-    keywords: Bounds[]
-}
-
-export interface HighlightSpecsBoundsRaw {
-    strings: Pair[],
-    comments: Pair[],
-    keywords: Pair[]
-}
-
-export interface HighlightSpecs {
-    code: string,
-    bounds: HighlightSpecsBounds
-}
-
-export interface HighlightSpecsRaw {
-    code: string,
-    bounds: HighlightSpecsBoundsRaw
-}
-
 export interface Theme {
-    strings: HexColor,
-    comments: HexColor,
-    keywords: HexColor,
+  strings: HexColor,
+  comments: HexColor,
+  keywords: HexColor,
 }
 
 const Header = ({ fileName }: { fileName: string }) => {
@@ -76,8 +50,6 @@ const Header = ({ fileName }: { fileName: string }) => {
 //   }
 
 const App = () => {
-    const [highlightSpecs, setHighlightSpecs] = useState<HighlightSpecsRaw | null>(null)
-
     const themes: Theme[] = [
         {
             strings: "#97c279",
@@ -89,7 +61,7 @@ const App = () => {
     return (
         <div className="flex flex-col w-screen h-screen text-white">
             <Header fileName="main.py" />
-                <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
+            <Editor theme={themes[0]} />
         </div>
   );
 }
