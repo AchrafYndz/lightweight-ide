@@ -51,29 +51,29 @@ const Header = ({ fileName }: { fileName: string }) => {
     </>
 }
 
-// Inspiration taken from examples, found at: https://www.npmjs.com/package/react-dropzone
-function Dropzone({ setHighlightSpecs }: { setHighlightSpecs: (raw: string) => void }) {
-    const onDrop = useCallback((acceptedFiles: any) => {
-      acceptedFiles.forEach((file: any) => {
-        const reader = new FileReader()
+// // Inspiration taken from examples, found at: https://www.npmjs.com/package/react-dropzone
+// function Dropzone({ setHighlightSpecs }: { setHighlightSpecs: (raw: string) => void }) {
+//     const onDrop = useCallback((acceptedFiles: any) => {
+//       acceptedFiles.forEach((file: any) => {
+//         const reader = new FileReader()
   
-        reader.onabort = () => console.log('file reading was aborted')
-        reader.onerror = () => console.log('file reading has failed')
-        reader.onload = () => setHighlightSpecs(reader.result as string)
+//         reader.onabort = () => console.log('file reading was aborted')
+//         reader.onerror = () => console.log('file reading has failed')
+//         reader.onload = () => setHighlightSpecs(reader.result as string)
 
-        reader.readAsText(file)
-      })
+//         reader.readAsText(file)
+//       })
       
-    }, [setHighlightSpecs])
+//     }, [setHighlightSpecs])
     
-    const {getRootProps, getInputProps} = useDropzone({onDrop})
-    return (
-      <div {...getRootProps()} className="bg-neutral-800 w-full h-full flex items-center justify-center text-white">
-        <input {...getInputProps()} />
-        <p>Drag 'n drop your input file here</p>
-      </div>
-    )
-  }
+//     const {getRootProps, getInputProps} = useDropzone({onDrop})
+//     return (
+//       <div {...getRootProps()} className="bg-neutral-800 w-full h-full flex items-center justify-center text-white">
+//         <input {...getInputProps()} />
+//         <p>Drag 'n drop your input file here</p>
+//       </div>
+//     )
+//   }
 
 const App = () => {
     const [highlightSpecs, setHighlightSpecs] = useState<HighlightSpecsRaw | null>(null)
@@ -89,11 +89,7 @@ const App = () => {
     return (
         <div className="flex flex-col w-screen h-screen text-white">
             <Header fileName="main.py" />
-            {
-                !highlightSpecs 
-                ? <Dropzone setHighlightSpecs={(raw: string) => setHighlightSpecs(JSON.parse(raw))}></Dropzone> 
-                : <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
-            }
+                <Editor highlightSpecs={highlightSpecs} theme={themes[0]} />
         </div>
   );
 }
