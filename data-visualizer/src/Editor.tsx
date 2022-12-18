@@ -162,13 +162,10 @@ const highlight = async (code: string): Promise<HighlightSpecs> => {
   return response.json()
 }
 
-
-const f = async (e: KeyboardEvent) => {
+const f = async (content: string, ref: MutableRefObject<HTMLDivElement>, theme: Theme) => {
   // console.log(e)
-  if ((e.ctrlKey || e.metaKey) && e.key === "s") {
     console.log("hey")
     // Prevent the Save dialog to open
-    e.preventDefault();
     // Place your code here
     // setHighlightSpecs(await highlight(code))
     const s = await highlight(content)
@@ -207,7 +204,6 @@ const f = async (e: KeyboardEvent) => {
 
 
     // ref.current.innerHTML = ref.current.innerHTML.replace("banana", "<span style=\"background: red;\">banana</span>")
-  }
 }
 
 const Editor = () => {
@@ -216,22 +212,8 @@ const Editor = () => {
       comments: "#7b808a",
       keywords: "#c678dd",
     }
-  
-
-
-  // if (!highlightSpecs) return <></>
   const ref = useRef() as MutableRefObject<HTMLDivElement>;
-  const [content, setContent] = useState("")
-
-  useEffect(() => {
-   
-    document.addEventListener("keydown", f)
-
-    return () => {
-      document.removeEventListener("keydown", f)
-    }
-  }, [content]);
-
+  
   return (
     <>
       <div className="flex flex-col w-full h-full bg-neutral-800 p-5 overflow-scroll relative">
@@ -241,8 +223,8 @@ const Editor = () => {
           </div>
           <textarea
             // ref={ref}
-            onInput={e => setContent(e.currentTarget.value)}
-            className="w-full h-full bg-neutral-800 focus:outline-none z-10"
+            onInput={e => f(e.currentTarget.value, ref, theme)}
+            className="w-full h-full bg-neutral-800 focus:outline-none z-10 text-transparent bg-transparent caret-white"
           ></textarea>
       </div>
     </>
