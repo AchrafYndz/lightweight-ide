@@ -162,6 +162,54 @@ const highlight = async (code: string): Promise<HighlightSpecs> => {
   return response.json()
 }
 
+
+const f = async (e: KeyboardEvent) => {
+  // console.log(e)
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+    console.log("hey")
+    // Prevent the Save dialog to open
+    e.preventDefault();
+    // Place your code here
+    // setHighlightSpecs(await highlight(code))
+    const s = await highlight(content)
+    // console.log(s)
+    let html = content
+    console.log(html)
+    
+    const merged = []
+    for (const key of Object.keys(s.bounds)) merged.push(...(s.bounds[key as keyof HighlightSpecsBounds].map(c => ({bounds: c, color: theme[key as keyof Theme]}))))
+    merged.sort((a, b) => a.bounds[0] - b.bounds[0])
+    
+    let offset = 0
+    for (const pair of merged) {
+      pair.bounds[0] += offset
+      pair.bounds[1] += offset
+      const original = html.substring(pair.bounds[0], pair.bounds[1])
+      const target = `<span&nbspp;style="color:${pair.color};">${original}</span>`
+      // const target = original
+      // const target = html.substring(pair.bounds[0], pair.bounds[1])
+      html = html.substring(0, pair.bounds[0]) + target + html.substring(pair.bounds[1], html.length) 
+
+      offset += target.length - original.length
+    }
+
+    // console.log(html)
+
+    html = html.replace(/ /g, "&nbsp;")
+    html = html.replace(/&nbspp;/g, " ")
+    html = html.replace(/\n/g, "<br>")
+    // console.log(html === ref.current.innerText)
+
+    // console.log(html)
+    // ref.current.innerHTML = html
+    ref.current.innerHTML = html
+    console.log(ref.current.innerHTML)
+
+
+    // ref.current.innerHTML = ref.current.innerHTML.replace("banana", "<span style=\"background: red;\">banana</span>")
+  }
+}
+
 const Editor = () => {
   const theme: Theme = {
       strings: "#97c279",
@@ -173,81 +221,29 @@ const Editor = () => {
 
   // if (!highlightSpecs) return <></>
   const ref = useRef() as MutableRefObject<HTMLDivElement>;
-  const [content, setContent] = useState()
+  const [content, setContent] = useState("")
 
   useEffect(() => {
-    document.addEventListener("paste", function(e) {
-      e.preventDefault();
-      if (!e.clipboardData) return;
-      var text = e.clipboardData.getData("text/plain");
-      console.log(text)
-      ref.current.innerText = text
-      return true
-    })
-  }, [])
+   
+    document.addEventListener("keydown", f)
 
-  useEffect(() => {
-    document.addEventListener("keydown", async (e) => {
-      // console.log(e)
-      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-        // Prevent the Save dialog to open
-        e.preventDefault();
-        // Place your code here
-        // setHighlightSpecs(await highlight(code))
-        if (!ref.current) return;
-        const s = await highlight(ref.current.innerText)
-        // console.log(s)
-        let html = ref.current.innerText
-        // console.log(html)
-        
-        const merged = []
-        for (const key of Object.keys(s.bounds)) merged.push(...(s.bounds[key as keyof HighlightSpecsBounds].map(c => ({bounds: c, color: theme[key as keyof Theme]}))))
-        merged.sort((a, b) => a.bounds[0] - b.bounds[0])
-        
-        let offset = 0
-        for (const pair of merged) {
-          pair.bounds[0] += offset
-          pair.bounds[1] += offset
-          const original = html.substring(pair.bounds[0], pair.bounds[1])
-          const target = `<span style="color: ${pair.color};">${original}</span>`
-          // const target = original
-          // const target = html.substring(pair.bounds[0], pair.bounds[1])
-          html = html.substring(0, pair.bounds[0]) + target + html.substring(pair.bounds[1], html.length) 
-
-          offset += target.length - original.length
-        }
-
-        // console.log(html)
-
-        html = html.replace(/\n/g, "<br>")
-        console.log(html === ref.current.innerText)
-
-        // console.log(html)
-        ref.current.innerHTML = html
-
-
-        // ref.current.innerHTML = ref.current.innerHTML.replace("banana", "<span style=\"background: red;\">banana</span>")
-      }
-    });
-  }, []);
+    return () => {
+      document.removeEventListener("keydown", f)
+    }
+  }, [content]);
 
   return (
     <>
-      <div className="flex flex-col w-full h-full bg-neutral-800 p-5 overflow-scroll">
-        {/* {
-                lines.map((line, i) => {
-                    const startIndex = lines.slice(0, i).reduce((total, line) => total + line.length, 0) + i * "\n".length;
-                    return <div className="flex gap-10" key={i}>
-                                <div className="w-5 overflow-hidden text-right">{i + 1}</div>
-                                <Line highlightSpecsBounds={newHighlightSpecs.bounds} theme={theme} startIndex={startIndex} text={line}></Line>
-                    </div>
-                })
-            } */}
-        <div ref={ref}
-        contentEditable={true}
-          className="w-full h-full bg-neutral-800 focus:outline-none"
-          style={{display: "inline-block !important"}}
-        >{content}</div>
+      <div className="flex flex-col w-full h-full bg-neutral-800 p-5 overflow-scroll relative">
+          <div ref={ref}
+          className="w-full h-full bg-neutral-800 focus:outline-none fixed">
+            
+          </div>
+          <textarea
+            // ref={ref}
+            onInput={e => setContent(e.currentTarget.value)}
+            className="w-full h-full bg-neutral-800 focus:outline-none z-10"
+          ></textarea>
       </div>
     </>
   );
