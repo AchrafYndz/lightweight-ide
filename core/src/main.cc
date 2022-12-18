@@ -9,7 +9,7 @@
 
 std::string generateJSON(const std::string& code) {
     // TODO: @Flor remove placeholder for prod
-    std::string result = "{\"foo\":\"bar\"}";
+    std::string result = R"~({"code":"from string import ascii_lowercase\\n\\ndef main():\\n    # This is a comment!\\n    message = \\"Hello, alphabet!\\"\\n    print(message, ascii_lowercase)\\n\\nmain()","bounds":{"strings":[[87,105]],"comments":[[52,72]],"keywords":[[0,4],[12,18],[36,39]]}})~";
 
     // TODO: @Achraf syntax designation & error conversion to frontend compatible format
     // result = ...;
@@ -27,6 +27,7 @@ int main() {
     CROW_ROUTE(app, "/json").methods(crow::HTTPMethod::POST)([](const crow::request& req){
       crow::response response(generateJSON(req.body));
       response.set_header("content-type", "application/json");
+      response.set_header("Access-Control-Allow-Origin", "*");
 
       return response;
     });

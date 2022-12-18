@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 
 type HexColor = string;
 export interface Theme {
@@ -160,7 +160,15 @@ const convert = ({
 };
 
 const highlight = async (code: string) => {
-  fetch("http://0.0.0.0:18080/json")
+  const response = await fetch("http://0.0.0.0:18080/json", {
+    method: "POST",
+    headers: {
+      "content-type": "text/plain"
+    },
+    body: code
+  })
+
+  return response.json()
 }
 
 const Editor = () => {
@@ -178,21 +186,28 @@ const Editor = () => {
   });
   // if (!highlightSpecs) return <></>
   const lines = highlightSpecs.code.split("\n");
-  const [code, setCode] = useState("");
+  const ref = useRef() as MutableRefObject<HTMLDivElement>;
 
   const newHighlightSpecs: HighlightSpecs = {
     bounds: convert(highlightSpecs),
     code: highlightSpecs.code,
   };
 
+  const [code, setCode] = useState("")
+
   useEffect(() => {
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener("keydown", async (e) => {
       // console.log(e)
       if ((e.ctrlKey || e.metaKey) && e.key === "s") {
         // Prevent the Save dialog to open
         e.preventDefault();
         // Place your code here
-        console.log("CTRL + S");
+        // setHighlightSpecs(await highlight(code))
+        const code = ref.current.innerHTML
+        // ref.current.innerText = ""
+        // setCode(<div>${code}</div>)
+        // ref.current.innerHTML
+        console.log(code)
       }
     });
   }, []);
@@ -209,10 +224,11 @@ const Editor = () => {
                     </div>
                 })
             } */}
-        <textarea
-          onChange={(e) => setCode(e.target.value)}
+        <div ref={ref}
+        contentEditable={true}
           className="w-full h-full bg-neutral-800 focus:outline-none"
-        ></textarea>
+          onInput={e => setCode(e.currentTarget.textContent || "")}
+        ></div>
       </div>
     </>
   );
