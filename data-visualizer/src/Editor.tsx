@@ -1,24 +1,29 @@
 import { MutableRefObject, useEffect, useRef } from "react";
 
 type HexColor = string;
-export interface Theme {
-  strings: HexColor;
-  comments: HexColor;
-  keywords: HexColor;
+interface Theme {
+  strings: HexColor
+  comments: HexColor
+  keywords: HexColor
 }
 
-export type Bounds = number[];
-export type Pair = Bounds[];
+type Bounds = number[];
 
-export interface HighlightSpecsBounds {
-  strings: Bounds[];
-  comments: Bounds[];
-  keywords: Bounds[];
+interface HighlightSpecsBounds {
+  strings: Bounds[]
+  comments: Bounds[]
+  keywords: Bounds[]
 }
 
-export interface HighlightSpecs {
-  code: string;
-  bounds: HighlightSpecsBounds;
+interface Error {
+  line: number
+  message: string
+}
+
+interface HighlightSpecs {
+  code: string
+  bounds: HighlightSpecsBounds
+  errors: Error[]
 }
 
 const highlight = async (code: string): Promise<HighlightSpecs> => {
@@ -64,6 +69,14 @@ const f = async (
       html.substring(pair.bounds[1], html.length);
 
     offset += target.length - original.length;
+  }
+
+  for (const error of spec.errors) {
+    const split = html.split("\n")
+    if (split.length <= error.line) continue;
+
+    split[error.line] += `  <span&nbspp;style="color:red;">[ERROR] ${error.message}</span>`
+    html = split.join("\n")
   }
 
   html = html.replace(/ /g, "&nbsp;");
@@ -116,7 +129,7 @@ const Editor = () => {
       <div className="flex flex-row w-full bg-neutral-800 p-5 gap-2">
         <div className="flex flex-col text-gray-400">
           {[...Array(100).keys()].map((t) => (
-            <div className="w-2 flex items-end justify-end">{t}</div>
+            <div className="w-2 flex justify-end">{t}</div>
           ))}
         </div>
         <div className="flex w-full h-full relative">
