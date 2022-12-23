@@ -54,4 +54,28 @@ TEST_SUITE("StreamReaderTests") {
             CHECK_EQ(reader.consume(choice), written[choice]);
         }
     }
+
+    TEST_CASE("[StreamReaderTests] peek EOF") {
+        srand((unsigned)time(0));
+        std::ofstream myfile;
+        myfile.open("stream_reader.txt");
+        myfile.clear();
+        myfile.close();
+
+        StreamReader reader("stream_reader.txt");
+
+        CHECK_THROWS_AS(reader.peek(0), EOFException);
+    }
+
+    TEST_CASE("[StreamReaderTests] consume EOF") {
+        srand((unsigned)time(0));
+        std::ofstream myfile;
+        myfile.open("stream_reader.txt");
+        myfile.clear();
+        myfile.close();
+
+        StreamReader reader("stream_reader.txt");
+
+        CHECK_THROWS_AS(reader.consume(0), EOFException);
+    }
 }
