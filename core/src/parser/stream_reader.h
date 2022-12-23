@@ -3,6 +3,8 @@
 
 #include <string>
 
+class EOFException : public std::exception {};
+
 class StreamReader {
 private:
     std::string sourcePath;

@@ -65,6 +65,8 @@ char StreamReader::peek(int k, int& i) {
     is.seekg(readStart, std::ios::cur);
     is.read(read, length);
     is.close();
+    
+    if (is.eof()) throw EOFException();
 
     for (int i = 0; i < length; i++) {
         if (!empty)
