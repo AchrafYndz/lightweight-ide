@@ -32,7 +32,8 @@ std::ostream& operator<<(std::ostream& out, const std::vector<Lexer::NextToken>&
         out << '{';
 
         // out << (std::vector<const char*>{"Comment", "Keyword", "Literal", "Punctuation", "Identifier", "Whitespace",
-        //                                  "Eof"}[static_cast<unsigned int>(it->first)]); // used for debugging
+        //                                  "Eof",
+        //                                  "Incorrect"}[static_cast<unsigned int>(it->first)]); // used for debugging
         out << static_cast<int>(it->first);
 
         out << ',';
@@ -98,6 +99,30 @@ TEST_SUITE("LexerTests") {
         std::stringstream actual{};
 
         // std::ofstream reset("test/res/expected/LexerTests-factorial.txt");
+
+        std::vector<Lexer::NextToken> v{};
+        Lexer::NextToken next_token{};
+
+        do {
+            next_token = lexer.get_next_token();
+            v.push_back(next_token);
+        } while (next_token.first != Lexer::TokenType::Eof);
+
+        actual << v;
+
+        CHECK_EQ(expected.str(), actual.str());
+    }
+
+    TEST_CASE("[LexerTests] all") {
+        Lexer lexer(Scanner(StreamReader("test/res/input/all.bro")));
+
+        std::ifstream expected_fstream("test/res/expected/LexerTests-all.txt");
+        std::stringstream expected{};
+        expected << expected_fstream.rdbuf();
+
+        std::stringstream actual{};
+
+        // std::ofstream reset("test/res/expected/LexerTests-all.txt");
 
         std::vector<Lexer::NextToken> v{};
         Lexer::NextToken next_token{};
