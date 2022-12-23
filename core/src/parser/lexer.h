@@ -46,7 +46,7 @@ private:
         {TokenType::Keyword, std::regex("if|else|return|while|fn")},
         {TokenType::Literal, std::regex("\\d+")},
         {TokenType::Identifier, std::regex("[[:alpha:]]\\w*")},
-        {TokenType::Punctuation, std::regex("\\{|\\}|\\(|\\)|\\+|-|\\*|/|<|>|=|;")},
+        {TokenType::Punctuation, std::regex("\\{|\\}|\\(|\\)|\\+|-|\\*|/|<|>|=|!|;")},
         {TokenType::Whitespace, std::regex("\\s+")},
     };
 };
