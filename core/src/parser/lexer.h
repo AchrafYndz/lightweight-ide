@@ -21,6 +21,7 @@ public:
         Identifier,
         Whitespace,
         Eof,
+        Incorrect,
     };
 
 public:

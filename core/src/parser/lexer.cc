@@ -41,9 +41,10 @@ Lexer::NextToken Lexer::get_next_token() {
         }
     }
 
-    // TODO: add exception
     if (std::get<2>(result.second).empty())
-        throw "invalid input";
+        return {TokenType::Incorrect,
+                {std::get<0>(result.second), std::get<1>(result.second),
+                 std::string(1, std::get<2>(this->scanner.peek_next_char()))}};
 
     return result;
 }
