@@ -3,9 +3,17 @@
 
 #include <string>
 
-class EOFException : public std::exception {};
-
 class StreamReader {
+public:
+    /// End-of-file exception
+    // TODO: Make last character of buffer a specific end-of-file character (eg. null byte). Requesting any character
+    // beyond that throws the exception.
+    class EOFException : public std::exception {
+    public:
+        EOFException() = default;
+        inline const char* what() const noexcept override { return "end-of-file reached"; }
+    };
+
 private:
     std::string sourcePath;
 
