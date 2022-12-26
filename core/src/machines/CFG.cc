@@ -973,6 +973,8 @@ void CFG::parse_ebnf(const std::string& filepath) {
     // https://regex101.com/ link to be updated
     std::regex body_regex( R"([^\s]+)" );
 
+    bool determinedStartSymbol = false;
+
     // Read each line from the input file
     while (std::getline(infile, line)) {
         // Check if the line matches an eBNF rule
@@ -985,11 +987,15 @@ void CFG::parse_ebnf(const std::string& filepath) {
         std::string var = match[1].str();
         std::string body_str = match[2].str();
 
+        if (!determinedStartSymbol) {
+            start_var = '<' + var + '>';
+            determinedStartSymbol = true;
+        }
+
         // Parse the rule body into a set of bodies
         std::set<Body> bodies;
         std::sregex_iterator end;
         Body body;
-        // TODO: Parse first body as start symbol
         for (std::sregex_iterator it(body_str.begin(), body_str.end(), body_regex); it != end; it++) {
             match = *it;
             // Parse each term in the body
