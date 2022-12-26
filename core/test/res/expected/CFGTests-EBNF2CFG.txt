@@ -1,15 +1,15 @@
 V = {<arguments>, <body>, <expression>, <factor>, <function>, <identifier>, <if>, <number>, <program>, <return>, <statement>, <term>}
-T = {"(", ")", "*", "+", ",", "-", "/", ";", "else", "fn", "if", "return", "then", "{", "}"}
+T = {(, ), *, +, ,, -, /, ;, else, fn, if, return, then, {, }}
 P = {
-  arguments ::= <identifier>|<identifier> "," <arguments>
+  arguments ::= <identifier>|<identifier> , <arguments>
   body ::= <statement>|<statement> <body>
-  expression ::= <term>|<term> "+" <expression>|<term> "-" <expression>
-  factor ::= "(" <expression> ")"|<identifier>|<number>
-  function ::= "fn" <identifier> "(" <arguments> ")" "{" <body> "}"
-  if ::= "if" <expression> "then" <statement>|"if" <expression> "then" <statement> "else" <statement>
+  expression ::= <term>|<term> + <expression>|<term> - <expression>
+  factor ::= ( <expression> )|<identifier>|<number>
+  function ::= fn <identifier> ( <arguments> ) { <body> }
+  if ::= if <expression> then <statement>|if <expression> then <statement> else <statement>
   program ::= <function>|<function> <program>
-  return ::= "return" <expression> ";"
+  return ::= return <expression> ;
   statement ::= <if>|<return>
-  term ::= <factor>|<factor> "*" <term>|<factor> "/" <term>
+  term ::= <factor>|<factor> * <term>|<factor> / <term>
 }
-S =
+S = <program>
