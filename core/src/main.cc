@@ -1,14 +1,15 @@
 #include "crow.h"
 #include "parser/stream_reader.h"
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "machines/CFG.h"
 #include "parser/lr.h"
 
-std::string generateJSON() {
+std::string generateJSON(const std::string& code) {
     // TODO: @Flor remove placeholder for prod
-    std::string result = "{\"foo\":\"bar\"}";
+    std::string result = R"~({"code":"from string import ascii_lowercase\\n\\ndef main():\\n    # This is a comment!\\n    message = \"Hello, alphabet!\"\\n    print(message, ascii_lowercase)\\n\\nmain()","bounds":{"strings":[[87,105]],"comments":[[52,72]],"keywords":[[0,4],[12,18],[36,39]]},"errors":[{"line":0,"message":"Expected module, got 'string'"}]})~";
 
     // TODO: @Achraf syntax designation & error conversion to frontend compatible format
     // result = ...;
@@ -17,58 +18,21 @@ std::string generateJSON() {
 }
 
 int main() {
-    // const CFG cfg("tmp.json");
-    // LR lr(cfg);
+    crow::SimpleApp app;
 
-    // std::cout << "START" << std::endl;
-    // StreamReader t("t.txt");
-    // std::cout << t.consume(1) << std::endl;
-    // std::cout << t.consume(1) << std::endl;
-    // std::cout << t.peek(0) << std::endl;
-    // std::cout << t.consume(7) << std::endl;
-    // std::cout << t.consume(7) << std::endl;
-    // std::cout << t.peek(2) << std::endl;
-    // std::cout << t.peek(2) << std::endl;
-    // std::cout << t.peek(5) << std::endl;
-    // std::cout << t.peek(7) << std::endl;
+    CROW_ROUTE(app, "/")([](){
+      return "Hello, world!";
+    });
 
-    // srand((unsigned) time(0));
-    // std::ofstream myfile;
-    // std::string alphabet = "abcdefghijklmnopqrstuvwxyz";
-    // myfile.open("stream_reader.txt");
-    // myfile.clear();
-    //
-    // std::vector<char> written = {};
-    //
-    // for (int _ = 0; _ < 10000; _++) {
-    //   char choice = alphabet[(rand() % 26)];
-    //   written.push_back(choice);
-    //   myfile << choice;
-    // }
-    //
-    // myfile.close();
-    //
-    // StreamReader reader("stream_reader.txt");
-    // bool t = false;
-    // for (int _ = 0; _ < 10000; _++) {
-    //   int choice = rand() % 10;
-    //   char returned = reader.consume(choice);
-    //   if (returned != written[choice]) t = true;
-    //   std::cout << (returned == written[choice]) << ": " << choice << written[choice] << std::endl;
-    // }
-    //
-    // if (t) std::cout << "FAILED" << std::endl;
+    CROW_ROUTE(app, "/json").methods(crow::HTTPMethod::POST)([](const crow::request& req){
+      crow::response response(generateJSON(req.body));
+      response.set_header("content-type", "application/json");
+      response.set_header("Access-Control-Allow-Origin", "*");
 
-    // crow::SimpleApp app;
+      return response;
+    });
 
-    // CROW_ROUTE(app, "/json")([](){
-    //   crow::response response(generateJSON());
-    //   response.set_header("content-type", "application/json");
-
-    //   return response;
-    // });
-
-    // app.port(18080).multithreaded().run();
+    app.port(18080).multithreaded().run();
 
     return 0;
 }

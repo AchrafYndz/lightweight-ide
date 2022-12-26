@@ -1,6 +1,6 @@
 #include "doctest/doctest.h"
 
-#include "../src/parser/stream_reader.h"
+#include "parser/stream_reader.h"
 
 #include <fstream>
 #include <sstream>
@@ -53,5 +53,29 @@ TEST_SUITE("StreamReaderTests") {
             int choice = rand() % 10;
             CHECK_EQ(reader.consume(choice), written[choice]);
         }
+    }
+
+    TEST_CASE("[StreamReaderTests] peek EOF") {
+        srand((unsigned)time(0));
+        std::ofstream myfile;
+        myfile.open("stream_reader.txt");
+        myfile.clear();
+        myfile.close();
+
+        StreamReader reader("stream_reader.txt");
+
+        CHECK_THROWS_AS(reader.peek(0), StreamReader::EOFException);
+    }
+
+    TEST_CASE("[StreamReaderTests] consume EOF") {
+        srand((unsigned)time(0));
+        std::ofstream myfile;
+        myfile.open("stream_reader.txt");
+        myfile.clear();
+        myfile.close();
+
+        StreamReader reader("stream_reader.txt");
+
+        CHECK_THROWS_AS(reader.consume(0), StreamReader::EOFException);
     }
 }
