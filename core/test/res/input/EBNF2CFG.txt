@@ -1,0 +1,11 @@
+(* the first variable is also the start variable *)
+<program> ::= <function> | <function> <program>
+<function> ::= "fn" <identifier> "(" <arguments> ")" "{" <body> "}"
+<arguments> ::= <identifier> | <identifier> "," <arguments>
+<body> ::= <statement> | <statement> <body>
+<statement> ::= <if> | <return>
+<if> ::= "if" <expression> "then" <statement> | "if" <expression> "then" <statement> "else" <statement>
+<return> ::= "return" <expression> ";"
+<expression> ::= <term> | <term> "+" <expression> | <term> "-" <expression>
+<term> ::= <factor> | <factor> "*" <term> | <factor> "/" <term>
+<factor> ::= <number> | <identifier> | "(" <expression> ")"

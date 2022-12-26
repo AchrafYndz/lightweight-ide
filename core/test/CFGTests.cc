@@ -86,6 +86,20 @@ TEST_SUITE("CFGTests") {
 
         CHECK_EQ(expected.str(), actual.str());
     }
+    TEST_CASE("[CFGTests EBNF2CFG") {
+        CFG cfg;
+        cfg.parse_ebnf("test/res/input/EBNF2CFG.txt");
+
+        const std::ifstream expectedFile("test/res/expected/CFGTests-EBNF2CFG.txt");
+        std::stringstream expected;
+        expected << expectedFile.rdbuf();
+
+        std::stringstream actual("");
+
+        cfg.print(actual);
+
+        CHECK_EQ(expected.str(), actual.str());
+    }
     TEST_CASE("[CFGTests] CYK") {
         CFG cfg("test/res/input/CYK0.json");
 

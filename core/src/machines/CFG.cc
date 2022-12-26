@@ -989,6 +989,7 @@ void CFG::parse_ebnf(const std::string& filepath) {
         std::set<Body> bodies;
         std::sregex_iterator end;
         Body body;
+        // TODO: Parse first body as start symbol
         for (std::sregex_iterator it(body_str.begin(), body_str.end(), body_regex); it != end; it++) {
             match = *it;
             // Parse each term in the body
@@ -1007,9 +1008,7 @@ void CFG::parse_ebnf(const std::string& filepath) {
                 } else {
                     // Otherwise, the term is a terminal
                     // Extract the terminal name from the quotation marks
-                    // TODO: figure out what to do with letter and digit
-                    std::string term = str;
-//                                           .substr(1, str.length() - 2);
+                    std::string term = str.substr(1, str.length() - 2);
                     terms.insert(term);
                     body.push_back(term);
                 }
@@ -1020,5 +1019,6 @@ void CFG::parse_ebnf(const std::string& filepath) {
         // Add the parsed rule to the CFG
         rules[var] = bodies;
     }
+    // Flag the parsed eBNF as a BNF
     isBNF = true;
 }
