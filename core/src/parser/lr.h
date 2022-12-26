@@ -1,7 +1,8 @@
 #ifndef IDE_SRC_PARSERS_LR_H
 #define IDE_SRC_PARSERS_LR_H
 
-#include "../machines/CFG.h"
+#include "ASTree.h"
+#include "machines/CFG.h"
 
 #include <map>
 #include <stdexcept>
@@ -17,11 +18,11 @@ public:
     enum class ActionType { Shift, Reduce, Accept };
 
 public:
-    using ParsingTable =
-        std::map<unsigned int,
-                 std::pair<std::map<std::string, std::pair<ActionType, unsigned int>>, std::map<CFG::Var, unsigned int>>>;
+    using ParsingTable = std::map<unsigned int, std::pair<std::map<std::string, std::pair<ActionType, unsigned int>>,
+                                                          std::map<CFG::Var, unsigned int>>>;
 
 public:
+    /// Abstract Lr exception class.
     class LRException : public std::exception {};
 
     class LRCFGParsingException : public LRException {
@@ -53,6 +54,8 @@ public:
 public:
     LR() = default;
     LR(const CFG& cfg);
+
+    ASTree<std::string>* parse();
 
 private:
     static ItemSet closure(const ItemSet& item, const std::string& separator, const CFG& cfg);

@@ -20,14 +20,13 @@ LR::LR(const CFG& cfg) {
         throw LRCFGParsingException(LRCFGParsingException::EndOfInputMarkertotInvalid);
 
     // keep track of all produced items
+    // Note: The `ItemSet` constructed from the starting rule of the grammer should always be first in the verctor.
     // Note: This cannot be a set, because an ordering using indices needs to be kept.
     //       However, any `Item` in the vector should be unique.
-    // TODO: Refactor this to use pointers, then it _can_ be a set.
     std::vector<ItemSet> item_sets{};
     std::map<unsigned int, std::map<std::string, unsigned int>> transitions{};
 
     // keep track of items that need to be processed
-    // TODO: using pointers, `ItemSet` does not need to be copied
     std::queue<ItemSet> pending_items{};
 
     // add starting item to queue
@@ -122,7 +121,7 @@ LR::LR(const CFG& cfg) {
                         (item_set_transitions_entry.first.length() == 1 && "item_set_transitions_entry length is 1"));
 
                     this->table[i].first[item_set_transitions_entry.first] = {ActionType::Shift,
-                                                                                    item_set_transitions_entry.second};
+                                                                              item_set_transitions_entry.second};
                 }
             }
         }
@@ -160,7 +159,8 @@ LR::LR(const CFG& cfg) {
                 // add accept entry for ItemSet that contains final item that starts with the augmented start variable
 
                 // DEBUG: the body should be the regular start variable and the separator
-                assert((item_sets.at(i).begin()->second == CFG::Body{cfg.get_start_var(), separator}));
+                assert((item_sets.at(i).begin()->second == CFG::Body{cfg.get_start_var(), separator} &&
+                        "body of acception item consists of the CFG start variabel and the seperator symbol"));
 
                 // add accept entry for end of string terminal
                 this->table[i].first[this->end_of_input] = {ActionType::Accept, 0};
@@ -186,8 +186,7 @@ LR::ItemSet LR::closure(const ItemSet& item, const std::string& separator, const
 
             // check that iterator is in the body and that the found value is not a terminal
             std::advance(it, 1);
-            if (it == item.second.end() ||
-                (it->length() == 1 && cfg.get_terms().find(*it) != cfg.get_terms().end()))
+            if (it == item.second.end() || (it->length() == 1 && cfg.get_terms().find(*it) != cfg.get_terms().end()))
                 continue;
 
             const std::set<CFG::Body>& rule = cfg.get_rules().at(*it);
