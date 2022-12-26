@@ -4,6 +4,7 @@
 #include "parser/scanner.h"
 
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <vector>
 

@@ -1,7 +1,3 @@
-//
-// Created by maxime on 6/12/22.
-//
-
 #include "../automata/Value.h"
 #include <string>
 #include <vector>
