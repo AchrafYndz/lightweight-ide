@@ -973,6 +973,8 @@ void CFG::parse_ebnf(const std::string& filepath) {
     // https://regex101.com/ link to be updated
     std::regex body_regex( R"([^\s]+)" );
 
+    bool determinedStartSymbol = false;
+
     // Read each line from the input file
     while (std::getline(infile, line)) {
         // Check if the line matches an eBNF rule
@@ -984,6 +986,11 @@ void CFG::parse_ebnf(const std::string& filepath) {
         // Extract the variable and the rule body from the matched line
         std::string var = match[1].str();
         std::string body_str = match[2].str();
+
+        if (!determinedStartSymbol) {
+            start_var = '<' + var + '>';
+            determinedStartSymbol = true;
+        }
 
         // Parse the rule body into a set of bodies
         std::set<Body> bodies;
@@ -1007,9 +1014,7 @@ void CFG::parse_ebnf(const std::string& filepath) {
                 } else {
                     // Otherwise, the term is a terminal
                     // Extract the terminal name from the quotation marks
-                    // TODO: figure out what to do with letter and digit
-                    std::string term = str;
-//                                           .substr(1, str.length() - 2);
+                    std::string term = str.substr(1, str.length() - 2);
                     terms.insert(term);
                     body.push_back(term);
                 }
@@ -1020,5 +1025,6 @@ void CFG::parse_ebnf(const std::string& filepath) {
         // Add the parsed rule to the CFG
         rules[var] = bodies;
     }
+    // Flag the parsed eBNF as a BNF
     isBNF = true;
 }
