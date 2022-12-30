@@ -31,9 +31,11 @@ std::ostream& operator<<(std::ostream& out, const std::vector<Lexer::NextToken>&
     for (auto it = v.begin(); it != v.end(); ++it) {
         out << '{';
 
-        // out << (std::vector<const char*>{"Comment", "Keyword", "Literal", "Punctuation", "Identifier", "Whitespace",
-        //                                  "Eof",
-        //                                  "Incorrect"}[static_cast<unsigned int>(it->first)]); // used for debugging
+        // out << (std::vector<const char*>{
+        //     "Comment",   "Keyword",   "Literal",    "Punctuation", "Identifier",   "Whitespace", "Eof",
+        //     "Incorrect", "LeftCurly", "RightCurly", "LeftBracket", "RightBracket", "Plus",       "Min",
+        //     "Mult",      "Div",       "Less",       "Greater",     "Equals",       "Not",        "SemiColon",
+        // }[static_cast<unsigned int>(it->first)]); // used for debugging
         out << static_cast<int>(it->first);
 
         out << ',';

@@ -22,13 +22,22 @@ Lexer::NextToken Lexer::get_next_token() {
         matched = false;
         const auto [row, col, next_char] = this->scanner.peek_next_char();
 
-        if (next_char == '\0')
+        if (next_char == this->eof_token)
             break;
 
         // try to match the current built token to a matcher
-        for (const auto& [token_type, matcher] : this->token_matchers) {
+        for (const auto& matcher_pair : this->token_matchers) {
+            const auto& matcher = matcher_pair.second;
             if (!std::regex_match(std::get<2>(result.second) + next_char, matcher))
                 continue;
+
+            TokenType token_type = matcher_pair.first;
+            // match punctuation
+            if (token_type == TokenType::Punctuation) {
+                assert(std::get<2>(result.second).length() == 0 && "length of punctuation token is 1");
+
+                token_type = this->punctuation_to_token_type.at(next_char);
+            }
 
             matched = true;
             // set the `token_type`

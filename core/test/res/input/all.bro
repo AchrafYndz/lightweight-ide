@@ -9,3 +9,5 @@ fn
 foo
 
 +-*/<>!@#$%^&*()_+{}":>\|`
+
+if // this is a comment
