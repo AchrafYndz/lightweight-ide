@@ -8,4 +8,4 @@
 <return> ::= "return" <expression> ";"
 <expression> ::= <term> | <term> "+" <expression> | <term> "-" <expression> | <term> "==" <expression> | <term> "!=" <expression> | <term> "<" <expression>" | <term> ">" <expression> | <term> "<=" <expression> | <term> ">=" <expression>
 <term> ::= <factor> | <factor> "*" <term> | <factor> "/" <term>
-<factor> ::= <number> | "identifier" | "(" <expression> ")"
+<factor> ::= "literal" | "identifier" | "(" <expression> ")"
