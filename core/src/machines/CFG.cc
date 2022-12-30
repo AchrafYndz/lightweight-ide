@@ -1023,7 +1023,7 @@ void CFG::parse_ebnf(const std::string& filepath) {
         // Add the parsed body to the set of bodies
         bodies.insert(body);
         // Add the parsed rule to the CFG
-        rules[var] = bodies;
+        rules["<" + var + ">"] = bodies;
     }
     // Flag the parsed eBNF as a BNF
     isBNF = true;
