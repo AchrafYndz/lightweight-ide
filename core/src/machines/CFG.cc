@@ -962,16 +962,19 @@ std::string CFG::print_body(const Body& b) const {
 
     return out;
 }
-void CFG::parse_ebnf(const std::string& filepath) {
+
+CFG CFG::parse_ebnf(const std::string& filepath) {
+    CFG result;
+
     // Open the input file
     std::ifstream infile(filepath);
     std::string line;
 
     // Use regular expressions for matching eBNF rules and rule bodies
     // https://regex101.com/r/MWVvpF/2
-    std::regex rule_regex( R"(^\s*<([^>]+)>\s*::=\s*(.+)\s*$)" );
+    std::regex rule_regex(R"(^\s*<([^>]+)>\s*::=\s*(.+)\s*$)");
     // https://regex101.com/ link to be updated
-    std::regex body_regex( R"([^\s]+)" );
+    std::regex body_regex(R"([^\s]+)");
 
     bool determinedStartSymbol = false;
 
@@ -988,7 +991,7 @@ void CFG::parse_ebnf(const std::string& filepath) {
         std::string body_str = match[2].str();
 
         if (!determinedStartSymbol) {
-            start_var = '<' + var + '>';
+            result.start_var = '<' + var + '>';
             determinedStartSymbol = true;
         }
 
@@ -1009,13 +1012,13 @@ void CFG::parse_ebnf(const std::string& filepath) {
                 }
                 // If the term is enclosed in angle brackets, it is a variable
                 else if (str.front() == '<' && str.back() == '>') {
-                    vars.insert(str);
+                    result.vars.insert(str);
                     body.push_back(str);
                 } else {
                     // Otherwise, the term is a terminal
                     // Extract the terminal name from the quotation marks
                     std::string term = str.substr(1, str.length() - 2);
-                    terms.insert(term);
+                    result.terms.insert(term);
                     body.push_back(term);
                 }
             }
@@ -1023,8 +1026,10 @@ void CFG::parse_ebnf(const std::string& filepath) {
         // Add the parsed body to the set of bodies
         bodies.insert(body);
         // Add the parsed rule to the CFG
-        rules["<" + var + ">"] = bodies;
+        result.rules["<" + var + ">"] = bodies;
     }
     // Flag the parsed eBNF as a BNF
-    isBNF = true;
+    result.isBNF = true;
+
+    return result;
 }
