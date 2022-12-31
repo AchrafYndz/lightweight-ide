@@ -86,7 +86,7 @@ TEST_SUITE("CFGTests") {
 
         CHECK_EQ(expected.str(), actual.str());
     }
-    TEST_CASE("[CFGTests EBNF2CFG") {
+    TEST_CASE("[CFGTests] EBNF2CFG") {
         const CFG cfg = CFG::parse_ebnf("test/res/input/EBNF2CFG.txt");
 
         const std::ifstream expectedFile("test/res/expected/CFGTests-EBNF2CFG.txt");
@@ -94,6 +94,8 @@ TEST_SUITE("CFGTests") {
         expected << expectedFile.rdbuf();
 
         std::stringstream actual("");
+
+        // std::ofstream reset("test/res/expected/CFGTests-EBNF2CFG.txt");
 
         cfg.print(actual);
 
