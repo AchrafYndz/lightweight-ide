@@ -57,7 +57,7 @@ public:
     inline const std::string& get_start_var() const { return this->start_var; }
 
     std::set<std::string> first(const std::vector<std::string>& b) const;
-    std::set<std::string> follow(const std::string& a, const std::string& end_of_input = "<EOS>") const;
+    std::set<std::string> follow(const std::string& a) const;
 
 private:
     void elim_eps_prods(std::ostream& out = std::cout);

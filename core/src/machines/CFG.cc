@@ -58,7 +58,7 @@ inline std::vector<T> subvec(const std::vector<T>& v, unsigned int b, unsigned i
     return vector;
 }
 
-std::vector<unsigned int> find_occurrences(const Body& b, const std::string& a) {
+static std::vector<unsigned int> find_occurrences(const Body& b, const std::string& a) {
     std::vector<unsigned int> indices;
     auto it = b.begin();
     while ((it = std::find_if(it, b.end(), [&](const std::string& e) { return e == a; })) != b.end()) {
@@ -189,7 +189,7 @@ std::set<std::string> CFG::first(const std::vector<std::string>& b) const {
 }
 
 std::set<std::string> CFG::follow(const std::string& a) const {
-    std::set<std::string> result;
+    std::set<std::string> result{};
 
     if (a == this->start_var)
         result.insert("<EOS>");
@@ -201,7 +201,7 @@ std::set<std::string> CFG::follow(const std::string& a) const {
             for (auto oc : occurrences) {
                 const Body rem{b.begin() + oc + 1, b.end()};
 
-                if (rem.size() > 0) {
+                if (!rem.empty()) {
                     // production if of form `αBβ` => FOLLOW(B) = FIRST(β) AND (if FIRST(β) contains ε) FOLLOW(B) =
                     // FOLLOW(A)
                     auto first_other = this->first(rem);
