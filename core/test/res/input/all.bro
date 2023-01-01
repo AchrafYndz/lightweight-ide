@@ -3,6 +3,7 @@ else
 return
 while
 fn
+let
 
 5678
 

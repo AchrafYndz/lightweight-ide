@@ -1,5 +1,9 @@
+// Main entry point
 fn main() {
-    factorial(5);
+    let x = 5;
+
+    // call `factorial` with x as argument
+    factorial(x);
 }
 
 // Returns the factorial of the given integer.
