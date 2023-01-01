@@ -1,0 +1,4 @@
+(* the edge case is that the follow of <term> is calculated using the follow of <expression> *)
+<assignment> ::= <expression> ";"
+<expression> ::= <term> | <term> "+" <expression>
+<term> ::= "literal" | "literal" "*" <term>

@@ -1,7 +1,82 @@
 #include "lr.h"
 
+#include <algorithm>
 #include <cassert>
+#include <optional>
 #include <queue>
+
+/// Local private utility namespace
+namespace {
+
+std::vector<unsigned int> find_occurrences(const CFG::Body& b, const std::string& a) {
+    std::vector<unsigned int> indices;
+    auto it = b.begin();
+    while ((it = std::find_if(it, b.end(), [&](const std::string& e) { return e == a; })) != b.end()) {
+        indices.push_back(std::distance(b.begin(), it));
+        it++;
+    }
+    return indices;
+}
+
+/// Calculates follow sets of grammar
+std::unordered_map<std::string, std::set<std::string>> follow(const CFG& cfg, const std::string& start_var,
+                                                              const std::string& end_of_string) {
+    std::unordered_map<std::string, std::set<std::string>> result{};
+
+    for (const std::string& var : cfg.get_vars())
+        result[var] = {};
+
+    result[start_var].insert(end_of_string);
+
+    bool changed{true};
+    while (changed) {
+        changed = false;
+
+        for (const auto& rule_set : cfg.get_rules()) {
+            for (const auto& body : rule_set.second) {
+                for (const std::string& var : cfg.get_vars()) {
+                    const std::vector<unsigned int> occurrences = find_occurrences(body, var);
+
+                    for (unsigned int oc : occurrences) {
+                        const CFG::Body rem{body.begin() + oc + 1, body.end()};
+
+                        if (!rem.empty()) {
+                            // production if of form `αBβ` => FOLLOW(B) = FIRST(β) AND (if FIRST(β) contains ε)
+                            // FOLLOW(B) = FOLLOW(A)
+                            auto first_other = cfg.first(rem);
+
+                            const auto eps_it = first_other.find("");
+                            if (eps_it != first_other.end()) {
+                                // remove ε from `first_other` and insert FOLLOW(A)
+                                first_other.erase(eps_it);
+                                const auto follow_a = result[rule_set.first];
+
+                                first_other.insert(follow_a.begin(), follow_a.end());
+                            }
+
+                            const unsigned long length_before{result[var].size()};
+                            result[var].insert(first_other.begin(), first_other.end());
+
+                            if (result[var].size() > length_before)
+                                changed = true;
+                        } else {
+                            // production if of form `αB` => FOLLOW(B) = FOLLOW(A)
+                            const unsigned long length_before{result[var].size()};
+                            result[var].insert(result[rule_set.first].begin(), result[rule_set.first].end());
+
+                            if (result[var].size() > length_before)
+                                changed = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+} // namespace
 
 LR::LR(const CFG& cfg) {
     // check that the augmented start variable is not an existing variable
@@ -26,12 +101,14 @@ LR::LR(const CFG& cfg) {
     std::vector<ItemSet> item_sets{};
     std::map<unsigned int, std::map<std::string, unsigned int>> transitions{};
 
+    // precalculate follow set
+    std::unordered_map<std::string, std::set<std::string>> follow_sets{follow(cfg, aug_start_var, this->end_of_input)};
+
     // keep track of items that need to be processed
     std::queue<ItemSet> pending_items{};
 
     // add starting item to queue
-    const ItemSet start_item =
-        this->closure(ItemSet{{aug_start_var, {separator, cfg.get_start_var()}}}, separator, cfg);
+    const ItemSet start_item = LR::closure(ItemSet{{aug_start_var, {separator, cfg.get_start_var()}}}, separator, cfg);
     item_sets.push_back(start_item);
     pending_items.push(start_item);
 
@@ -45,34 +122,49 @@ LR::LR(const CFG& cfg) {
 
         const unsigned int pending_item_set_index = pending_item_set_it - item_sets.begin();
 
-        // generate new items and transitions
-        for (const Item& item : item_set) {
-            // try to move the `separator` one right and generate new item_set
-
-            // find separator in item
-            auto sep_it = std::find(item.second.begin(), item.second.end(), separator);
+        // build new itemset for every symbol that can be traversed
+        for (const Item& search_item : item_set) {
+            // get symbol that needs to be traversed
+            auto search_item_sep_it = std::find(search_item.second.begin(), search_item.second.end(), separator);
 
             // DEBUG: check that the separator is found
-            assert((sep_it != item.second.end() && "separator is found in item"));
+            assert((search_item_sep_it != search_item.second.end() && "separator is found in search item"));
 
-            // check if the separator is at the end of the body
-            if (sep_it + 1 == item.second.end())
+            const auto search_traverse_symbol_it = std::next(search_item_sep_it, 1);
+
+            // check that the symbol is not the end of the rule
+            if (search_traverse_symbol_it == search_item.second.end())
                 continue;
 
-            const std::string transition_var = *(sep_it + 1);
+            ItemSet new_item_set{};
 
-            const Item new_item(item.first, [&]() -> CFG::Body {
-                CFG::Body new_body(item.second);
+            // ceck for every item in itemset if that symbol can be traversed
+            for (const Item& item : item_set) {
+                auto sep_it = std::find(item.second.begin(), item.second.end(), separator);
 
-                // delete old separator from body and advance iterator to location the separator needs to be
-                // inserted
-                auto new_sep_it = new_body.erase(new_body.begin() + (sep_it - item.second.begin()));
-                new_body.insert(new_sep_it + 1, separator);
+                // DEBUG: check that the separator is found
+                assert((sep_it != item.second.end() && "separator is found in item"));
 
-                return new_body;
-            }());
+                auto traverse_symbol_it = std::next(sep_it, 1);
 
-            const ItemSet new_item_set = this->closure(ItemSet{{new_item}}, separator, cfg);
+                if (traverse_symbol_it == item.second.end() || *traverse_symbol_it != *search_traverse_symbol_it)
+                    continue;
+
+                const Item new_item(item.first, [&]() -> CFG::Body {
+                    CFG::Body new_body(item.second);
+
+                    // delete old separator from body and advance iterator to location the separator needs to be
+                    // inserted
+                    auto new_sep_it = new_body.erase(new_body.begin() + (sep_it - item.second.begin()));
+                    new_body.insert(new_sep_it + 1, separator);
+
+                    return new_body;
+                }());
+
+                new_item_set.insert(new_item);
+            }
+
+            new_item_set = LR::closure(new_item_set, separator, cfg);
 
             // keep track of whether the item is found, so it does not get added to the queue again
             bool found{true};
@@ -86,7 +178,7 @@ LR::LR(const CFG& cfg) {
 
             const unsigned int new_item_set_index = new_item_set_it - item_sets.begin();
 
-            transitions[pending_item_set_index][transition_var] = new_item_set_index;
+            transitions[pending_item_set_index][*search_traverse_symbol_it] = new_item_set_index;
 
             if (!found)
                 pending_items.push(new_item_set);
@@ -116,32 +208,34 @@ LR::LR(const CFG& cfg) {
                 } else {
                     // *ACTION*
 
-                    // DEBUG: assert that the length is 1
-                    assert(
-                        (item_set_transitions_entry.first.length() == 1 && "item_set_transitions_entry length is 1"));
-
                     this->table[i].first[item_set_transitions_entry.first] = {ActionType::Shift,
                                                                               item_set_transitions_entry.second};
                 }
             }
         }
 
-        // if item_set is final (one entry and only one separator on the right), reduce its action table
-        if (std::find(item_sets.at(i).begin()->second.begin(), item_sets.at(i).begin()->second.end(), separator) + 1 ==
-            item_sets.at(i).begin()->second.end()) {
+        // check if item set has shift-reduce or reduce-reduce conflict and resolve them using FIRST and FOLLOW sets
+        for (const auto& item : item_sets.at(i)) {
+            // if item is final (eg.A -> α ·) add reduce entry for every terminal in FOLLOW(A)
 
-            // DEBUG: there should only be one item in the set
-            assert((item_sets.at(i).size() == 1 && "only one item present in a final set"));
+            auto sep_it = std::find(item.second.begin(), item.second.end(), separator);
 
-            if (item_sets.at(i).begin()->first != aug_start_var) {
+            // DEBUG: separator should be found
+            assert(sep_it != item.second.end() && "separator is found in item");
+
+            if (std::next(sep_it, 1) != item.second.end())
+                continue;
+
+            // add reduce entry for every terminal in FOLLOW(A)
+            if (item.first != aug_start_var) {
                 // remove separator from item and find production rule in cfg productions
-                auto lookup_rule(*item_sets.at(i).begin());
-                auto sep_it = std::find(lookup_rule.second.begin(), lookup_rule.second.end(), separator);
+                auto lookup_rule(item);
+                auto lookup_sep_it = std::find(lookup_rule.second.begin(), lookup_rule.second.end(), separator);
 
                 // DEBUG: separator should be found
-                assert((sep_it != lookup_rule.second.end() && "separator is found in item body"));
+                assert((lookup_sep_it != lookup_rule.second.end() && "separator is found in item body"));
 
-                lookup_rule.second.erase(sep_it);
+                lookup_rule.second.erase(lookup_sep_it);
 
                 auto lookup_rule_it = std::find(this->rules.begin(), this->rules.end(), lookup_rule);
 
@@ -150,17 +244,16 @@ LR::LR(const CFG& cfg) {
 
                 const unsigned int lookup_rule_index = lookup_rule_it - this->rules.begin();
 
-                // add a reduce entry for every terminal and end_of_string marker
-                for (std::string term : cfg.get_terms()) {
+                for (const std::string& term : follow_sets.at(item.first)) {
                     this->table[i].first[term] = {ActionType::Reduce, lookup_rule_index};
                 }
                 this->table[i].first[end_of_input] = {ActionType::Reduce, lookup_rule_index};
             } else {
-                // add accept entry for ItemSet that contains final item that starts with the augmented start variable
+                // add accept entry for ItemSet that contains final item that starts with the augmented star variable
 
                 // DEBUG: the body should be the regular start variable and the separator
                 assert((item_sets.at(i).begin()->second == CFG::Body{cfg.get_start_var(), separator} &&
-                        "body of acception item consists of the CFG start variabel and the seperator symbol"));
+                        "body of accepting item consists of the CFG start variable and the separator symbol"));
 
                 // add accept entry for end of string terminal
                 this->table[i].first[this->end_of_input] = {ActionType::Accept, 0};
@@ -178,6 +271,7 @@ LR::ItemSet LR::closure(const ItemSet& item, const std::string& separator, const
         changed = false;
 
         for (const Item& item : result) {
+
             // find separator in item
             auto it = std::find(item.second.begin(), item.second.end(), separator);
 
@@ -186,7 +280,7 @@ LR::ItemSet LR::closure(const ItemSet& item, const std::string& separator, const
 
             // check that iterator is in the body and that the found value is not a terminal
             std::advance(it, 1);
-            if (it == item.second.end() || (it->length() == 1 && cfg.get_terms().find(*it) != cfg.get_terms().end()))
+            if (it == item.second.end() || cfg.get_terms().find(*it) != cfg.get_terms().end())
                 continue;
 
             const std::set<CFG::Body>& rule = cfg.get_rules().at(*it);
@@ -207,6 +301,61 @@ LR::ItemSet LR::closure(const ItemSet& item, const std::string& separator, const
             }
         }
     }
+
+    return result;
+}
+
+LR::ASTree* LR::parse(StreamReader in) const {
+    auto* result = new ASTree{};
+
+    /// Because `CFG::Var` (at this time of coding) is an `std::string`, a second `std::string` is not allowed. This is
+    /// solved by wrapping `CFG::Var` in an `std::tuple` with a single element.
+    ///
+    /// With `std::string` being the actual token (see exception for "identifier" and "literal"), and `unsigned int` the
+    /// state of the parser.
+    ///
+    /// With `std::optional` being used to define the starting pair.
+    using StackContent = std::pair<std::optional<std::variant<std::string, std::tuple<CFG::Var>>>, unsigned int>;
+
+    Lexer lexer(in);
+    std::stack<StackContent> stack(std::deque<StackContent>{{std::nullopt, 0}});
+
+    unsigned int parser_state = stack.top().second;
+    Lexer::NextToken lexer_token_pair{};
+    do {
+        lexer_token_pair = lexer.get_next_token();
+
+        // ignore some `TokenTypes`
+        if (lexer_token_pair.first == Lexer::TokenType::Comment ||
+            lexer_token_pair.first == Lexer::TokenType::Whitespace)
+            continue;
+
+        // determine what the `lexer_token` is
+        std::string lexer_token = std::get<2>(lexer_token_pair.second);
+        if (lexer_token_pair.first == Lexer::TokenType::Identifier ||
+            lexer_token_pair.first == Lexer::TokenType::Literal || lexer_token_pair.first == Lexer::TokenType::Eof) {
+            lexer_token = (lexer_token_pair.first == Lexer::TokenType::Identifier) ? "identifier"
+                          : (lexer_token_pair.first == Lexer::TokenType::Literal)  ? "literal"
+                                                                                   : this->end_of_input;
+        }
+
+        // check what action to perform
+        const auto& [action, new_state] = this->table.at(parser_state).first.at(lexer_token);
+
+        switch (action) {
+        case LR::ActionType::Shift: {
+            // shift `{token, state}` onto stack
+            stack.emplace(lexer_token, new_state);
+            // dbg(std::make_pair(lexer_token, new_state));
+            break;
+        }
+
+        default:
+            assert(false && "not implemented");
+        }
+
+        parser_state = stack.top().second;
+    } while (lexer_token_pair.first != Lexer::TokenType::Eof);
 
     return result;
 }

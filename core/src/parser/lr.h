@@ -2,11 +2,16 @@
 #define IDE_SRC_PARSERS_LR_H
 
 #include "ASTree.h"
+#include "lexer.h"
 #include "machines/CFG.h"
+#include "stream_reader.h"
 
+#include <deque>
 #include <map>
+#include <stack>
 #include <stdexcept>
 #include <string>
+#include <variant>
 #include <vector>
 
 class LR {
@@ -14,12 +19,15 @@ public:
     using Item = std::pair<CFG::Var, CFG::Body>;
     using ItemSet = std::set<Item>;
 
+    using ASTree = ASTree<std::string>;
+
 public:
     enum class ActionType { Shift, Reduce, Accept };
 
 public:
-    using ParsingTable = std::map<unsigned int, std::pair<std::map<std::string, std::pair<ActionType, unsigned int>>,
-                                                          std::map<CFG::Var, unsigned int>>>;
+    using AcitionTable = std::map<std::string, std::pair<ActionType, unsigned int>>;
+    using GotoTable = std::map<CFG::Var, unsigned int>;
+    using ParsingTable = std::map<unsigned int, std::pair<AcitionTable, GotoTable>>;
 
 public:
     /// Abstract Lr exception class.
@@ -55,7 +63,8 @@ public:
     LR() = default;
     LR(const CFG& cfg);
 
-    ASTree<std::string>* parse();
+    /// Parses the given lexer using the
+    ASTree* parse(StreamReader in) const;
 
 private:
     static ItemSet closure(const ItemSet& item, const std::string& separator, const CFG& cfg);
@@ -63,6 +72,7 @@ private:
 private:
     ParsingTable table{};
     std::vector<std::pair<CFG::Var, CFG::Body>> rules{};
+
     std::string end_of_input{'$'};
 
 #ifdef TEST

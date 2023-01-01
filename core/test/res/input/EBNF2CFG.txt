@@ -1,11 +1,14 @@
 (* the first variable is also the start variable *)
 <program> ::= <function> | <function> <program>
-<function> ::= "fn" "identifier" "(" <arguments> ")" "{" <body> "}"
+<function> ::= "fn" "identifier" "(" <arguments> ")" "{" <body> "}" | "fn" "identifier" "(" ")" "{" <body> "}"
 <arguments> ::= "identifier" | "identifier" "," <arguments>
 <body> ::= <statement> | <statement> <body>
-<statement> ::= <if> | <return>
-<if> ::= "if" <expression> "then" <statement> | "if" <expression> "then" <statement> "else" <statement>
+<statement> ::= <assignment> | <function_call> | <if> | <return>
+<assignment> ::= "let" "identifier" "=" <expression> ";" | "identifier" "=" <expression> ";"
+<function_call> ::= "identifier" "(" ")" ";" | "identifier" "(" <call_arguments> ")" ";"
+<call_arguments> ::= <expression> | <expression> "," <call_arguments>
+<if> ::= "if" <expression> "{" <body> "}" | "if" <expression> "{" <body> "}" "else" "{" <body> "}"
 <return> ::= "return" <expression> ";"
-<expression> ::= <term> | <term> "+" <expression> | <term> "-" <expression> | <term> "=" "=" <expression> | <term> "!" "=" <expression> | <term> "<" <expression>" | <term> ">" <expression> | <term> "<" "=" <expression> | <term> ">" "=" <expression>
+<expression> ::= <term> | <term> "+" <expression> | <term> "-" <expression> | <term> "=" "=" <expression> | <term> "!" "=" <expression> | <term> "<" <expression> | <term> ">" <expression> | <term> "<" "=" <expression> | <term> ">" "=" <expression>
 <term> ::= <factor> | <factor> "*" <term> | <factor> "/" <term>
-<factor> ::= "literal" | "identifier" | "(" <expression> ")"
+<factor> ::= "literal" | "identifier" | "(" <expression> ")" | "!" <expression>
