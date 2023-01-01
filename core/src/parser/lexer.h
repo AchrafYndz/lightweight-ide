@@ -25,7 +25,7 @@ public:
         Eof,
         Incorrect,
 
-        /// Punctiuation characters
+        /// Punctuation characters
         LeftCurly,
         RightCurly,
         LeftBracket,
@@ -41,6 +41,8 @@ public:
         SemiColon,
     };
 
+    static constexpr char eof_token{'\0'};
+
 public:
     /// Token descriptor of the form `{token_type, ({row_start, col_start}, {row_end, col_end}, token)}`.
     using NextToken = std::pair<TokenType, std::tuple<std::pair<unsigned int, unsigned int>,
@@ -53,29 +55,23 @@ public:
     /// characters that matches a token descriptor.
     NextToken get_next_token();
 
+public:
+    /// Character lookup table used to convert characters into `Lexer::TokenType`.
+    static const std::unordered_map<char, TokenType> character_to_token_type;
+
 private:
     Scanner scanner;
 
     /// Hardcoded list of regex matchers for different tokens in the language
     /// Note: The precedence of the token is defined by the order in the enum type.
     const std::map<TokenType, std::regex> token_matchers{
-        {TokenType::Comment, std::regex("//.*")},
-        {TokenType::Keyword, std::regex("if|else|return|while|fn")},
-        {TokenType::Literal, std::regex("\\d+")},
-        {TokenType::Identifier, std::regex("[[:alpha:]]\\w*")},
-        {TokenType::Punctuation, std::regex("\\{|\\}|\\(|\\)|\\+|-|\\*|/|<|>|=|!|;")},
-        {TokenType::Whitespace, std::regex("\\s+")},
+        {Lexer::TokenType::Comment, std::regex("//.*")},
+        {Lexer::TokenType::Keyword, std::regex("if|else|return|while|fn|let")},
+        {Lexer::TokenType::Literal, std::regex("\\d+")},
+        {Lexer::TokenType::Identifier, std::regex("[[:alpha:]]\\w*")},
+        {Lexer::TokenType::Punctuation, std::regex("\\{|\\}|\\(|\\)|\\+|-|\\*|/|<|>|=|!|;")},
+        {Lexer::TokenType::Whitespace, std::regex("\\s+")},
     };
-
-    const std::unordered_map<char, TokenType> punctuation_to_token_type{
-        {'{', TokenType::LeftCurly},    {'}', TokenType::RightCurly}, {'(', TokenType::LeftBracket},
-        {')', TokenType::RightBracket}, {'+', TokenType::Plus},       {'-', TokenType::Min},
-        {'*', TokenType::Mult},         {'/', TokenType::Div},        {'<', TokenType::Less},
-        {'>', TokenType::Greater},      {'=', TokenType::Equals},     {'!', TokenType::Not},
-        {';', TokenType::SemiColon},
-    };
-
-    const char eof_token{'\0'};
 };
 
 #endif // IDE_SRC_PARSER_LEXER_H

@@ -1,5 +1,15 @@
 #include "lexer.h"
 
+const std::unordered_map<char, Lexer::TokenType> Lexer::character_to_token_type{
+    {'{', Lexer::TokenType::LeftCurly},   {'}', Lexer::TokenType::RightCurly},
+    {'(', Lexer::TokenType::LeftBracket}, {')', Lexer::TokenType::RightBracket},
+    {'+', Lexer::TokenType::Plus},        {'-', Lexer::TokenType::Min},
+    {'*', Lexer::TokenType::Mult},        {'/', Lexer::TokenType::Div},
+    {'<', Lexer::TokenType::Less},        {'>', Lexer::TokenType::Greater},
+    {'=', Lexer::TokenType::Equals},      {'!', Lexer::TokenType::Not},
+    {';', Lexer::TokenType::SemiColon},   {Lexer::eof_token, Lexer::TokenType::Eof},
+};
+
 Lexer::NextToken Lexer::get_next_token() {
     // Try to take as much characters as possible from the scanner so that the input keeps matching a regex.
 
@@ -36,7 +46,7 @@ Lexer::NextToken Lexer::get_next_token() {
             if (token_type == TokenType::Punctuation) {
                 assert(std::get<2>(result.second).length() == 0 && "length of punctuation token is 1");
 
-                token_type = this->punctuation_to_token_type.at(next_char);
+                token_type = this->character_to_token_type.at(next_char);
             }
 
             matched = true;

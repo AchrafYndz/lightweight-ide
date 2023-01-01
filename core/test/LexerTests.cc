@@ -4,8 +4,8 @@
 #include "parser/scanner.h"
 
 #include <fstream>
-#include <sstream>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 /// Helper function to format `{row, col, character}` vector of tuples.
