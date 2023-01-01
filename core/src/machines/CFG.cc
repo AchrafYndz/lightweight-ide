@@ -211,11 +211,14 @@ std::set<std::string> CFG::follow(const std::string& a) const {
                         // remove ε from `first_other` and insert FOLLOW(A)
                         first_other.erase(eps_it);
                         const auto follow_a = this->follow(rule_set.first);
+
+                        first_other.insert(follow_a.begin(), follow_a.end());
                     }
 
-                    result.insert(first_other.begin(), first_other.end());
                 } else {
                     // production if of form `αB` => FOLLOW(B) = FOLLOW(A)
+                    if (a == rule_set.first)
+                        continue;
                     const auto follow_other = this->follow(rule_set.first);
                     result.insert(follow_other.begin(), follow_other.end());
                 }
@@ -992,6 +995,7 @@ CFG CFG::parse_ebnf(const std::string& filepath) {
 
         if (!determinedStartSymbol) {
             result.start_var = '<' + var + '>';
+            result.vars.insert(result.start_var);
             determinedStartSymbol = true;
         }
 

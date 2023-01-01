@@ -56,6 +56,9 @@ public:
     inline const Terms& get_terms() const { return this->terms; }
     inline const std::string& get_start_var() const { return this->start_var; }
 
+    std::set<std::string> first(const std::vector<std::string>& b) const;
+    std::set<std::string> follow(const std::string& a, const std::string& end_of_input = "<EOS>") const;
+
 private:
     void elim_eps_prods(std::ostream& out = std::cout);
     void elim_unit_pairs(std::ostream& out = std::cout);
@@ -63,8 +66,6 @@ private:
     void replace_bad_bodies(std::ostream& out = std::cout);
     void split_bodies(std::ostream& out = std::cout);
 
-    std::set<std::string> first(const std::vector<std::string>& b) const;
-    std::set<std::string> follow(const std::string& a) const;
     bool has_eps_prod(const std::string& var) const;
 
     unsigned int rule_count() const;
