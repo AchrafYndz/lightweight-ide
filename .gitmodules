@@ -1,0 +1,6 @@
+[submodule "core/lib/crow"]
+	path = core/lib/crow
+	url = https://github.com/CrowCpp/Crow.git
+[submodule "core/lib/asio"]
+	path = core/lib/asio
+	url = https://github.com/chriskohlhoff/asio
