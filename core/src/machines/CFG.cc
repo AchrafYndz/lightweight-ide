@@ -1,7 +1,5 @@
 #include "CFG.h"
 
-#include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <regex>
 #include <string>
@@ -149,7 +147,7 @@ std::set<std::string> CFG::first(const std::vector<std::string>& b) const {
         const std::string& var = b[0];
 
         // 1. If X is a terminal then First(X) is just X!
-        if (var.length() == 1 && this->terms.find(var) != this->terms.end())
+        if (this->terms.find(var) != this->terms.end())
             return {var};
 
         // if `var` has no productions
