@@ -2,10 +2,9 @@
 
 #include <algorithm>
 #include <cassert>
-#include <optional>
 #include <queue>
 
-/// Local private utility namespace
+/// Local private utility namespace.
 namespace {
 
 std::vector<unsigned int> find_occurrences(const CFG::Body& b, const std::string& a) {
@@ -18,7 +17,7 @@ std::vector<unsigned int> find_occurrences(const CFG::Body& b, const std::string
     return indices;
 }
 
-/// Calculates follow sets of grammar
+/// Calculates follow sets of grammar.
 std::unordered_map<std::string, std::set<std::string>> follow(const CFG& cfg, const std::string& start_var,
                                                               const std::string& end_of_string) {
     std::unordered_map<std::string, std::set<std::string>> result{};
@@ -27,6 +26,9 @@ std::unordered_map<std::string, std::set<std::string>> follow(const CFG& cfg, co
         result[var] = {};
 
     result[start_var].insert(end_of_string);
+    // TODO: Nasty workaround, because cfg is not modified. It is assumed that there should be a production `start_var`
+    // -> `cfg.get_start_var()`
+    result[cfg.get_start_var()].insert(end_of_string);
 
     bool changed{true};
     while (changed) {
@@ -204,6 +206,7 @@ LR::LR(const CFG& cfg) {
                 // check if the transition happens on a variable, if so it is a *goto*, else it is an *action*
                 if (cfg.get_vars().find(item_set_transitions_entry.first) != cfg.get_vars().end()) {
                     // *GOTO*
+
                     this->table[i].second[item_set_transitions_entry.first] = item_set_transitions_entry.second;
                 } else {
                     // *ACTION*
@@ -247,7 +250,6 @@ LR::LR(const CFG& cfg) {
                 for (const std::string& term : follow_sets.at(item.first)) {
                     this->table[i].first[term] = {ActionType::Reduce, lookup_rule_index};
                 }
-                this->table[i].first[end_of_input] = {ActionType::Reduce, lookup_rule_index};
             } else {
                 // add accept entry for ItemSet that contains final item that starts with the augmented star variable
 
@@ -305,17 +307,9 @@ LR::ItemSet LR::closure(const ItemSet& item, const std::string& separator, const
     return result;
 }
 
-LR::ASTree* LR::parse(StreamReader in) const {
-    auto* result = new ASTree{};
-
-    /// Because `CFG::Var` (at this time of coding) is an `std::string`, a second `std::string` is not allowed. This is
-    /// solved by wrapping `CFG::Var` in an `std::tuple` with a single element.
-    ///
-    /// With `std::string` being the actual token (see exception for "identifier" and "literal"), and `unsigned int` the
-    /// state of the parser.
-    ///
-    /// With `std::optional` being used to define the starting pair.
-    using StackContent = std::pair<std::optional<std::variant<std::string, std::tuple<CFG::Var>>>, unsigned int>;
+std::pair<bool, LR::ASTree*> LR::parse(StreamReader in) const {
+    auto* tree = new ASTree{};
+    bool success{true};
 
     Lexer lexer(in);
     std::stack<StackContent> stack(std::deque<StackContent>{{std::nullopt, 0}});
@@ -340,22 +334,67 @@ LR::ASTree* LR::parse(StreamReader in) const {
         }
 
         // check what action to perform
-        const auto& [action, new_state] = this->table.at(parser_state).first.at(lexer_token);
+        // `new_state` is both used as the new state and in case of a reduction, the rule to be used.
+        const auto action_pair = this->table.at(parser_state).first.at(lexer_token);
 
-        switch (action) {
-        case LR::ActionType::Shift: {
-            // shift `{token, state}` onto stack
-            stack.emplace(lexer_token, new_state);
-            // dbg(std::make_pair(lexer_token, new_state));
-            break;
-        }
+        const auto result = this->handle_action(action_pair, lexer_token, stack, parser_state);
 
-        default:
-            assert(false && "not implemented");
-        }
+        if (!result.first)
+            success = false;
 
         parser_state = stack.top().second;
     } while (lexer_token_pair.first != Lexer::TokenType::Eof);
 
-    return result;
+    return {success, tree};
+}
+
+std::pair<bool, LR::ASTree*> LR::handle_action(ActionPair action_pair, const std::string& token,
+                                               std::stack<StackContent>& stack, unsigned int& parser_state,
+                                               bool top) const {
+    bool success{true};
+
+    switch (action_pair.first) {
+    case LR::ActionType::Shift: {
+        // shift `{token, state}` onto stack
+        stack.emplace(token, action_pair.second);
+        // dbg(std::make_pair(token, action_pair.second));
+        break;
+    }
+    case LR::ActionType::Reduce: {
+        // reduce rule body amount of tokens
+        const auto& rule = this->rules.at(action_pair.second);
+        const unsigned int rule_length = rule.second.size();
+
+        // TODO: build the parse tree
+        for (unsigned int i = 0; i < rule_length; ++i) {
+            stack.pop();
+        }
+
+        // TODO: split this up
+        const StackContent new_pair{
+            std::make_tuple(this->rules.at(action_pair.second).first),
+            this->table.at(stack.top().second).second.at(this->rules.at(action_pair.second).first)};
+
+        stack.push(new_pair);
+
+        parser_state = stack.top().second;
+
+        // check what the new action is
+        const auto new_action_pair = this->table.at(parser_state).first.at(token);
+
+        const auto result = this->handle_action(new_action_pair, token, stack, parser_state, false);
+
+        if (!result.first)
+            success = false;
+
+        break;
+    }
+    case LR::ActionType::Accept: {
+        break;
+    }
+    default:
+        assert(false && "not implemented");
+    }
+
+    return {success, nullptr};
 }
