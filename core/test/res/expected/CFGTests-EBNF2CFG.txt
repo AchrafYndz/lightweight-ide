@@ -5,14 +5,14 @@ P = {
   <assignment> ::= identifier = <expression> ;|let identifier = <expression> ;
   <body> ::= <statement>|<statement> <body>
   <call_arguments> ::= <expression>|<expression> , <call_arguments>
-  <expression> ::= <term>|<term> ! = <expression>|<term> + <expression>|<term> - <expression>|<term> < <expression>|<term> < = <expression>|<term> = = <expression>|<term> > <expression>|<term> > = <expression>
-  <factor> ::= ! <expression>|( <expression> )|identifier|literal
+  <expression> ::= <expression> ! = <term>|<expression> + <term>|<expression> - <term>|<expression> < <term>|<expression> < = <term>|<expression> = = <term>|<expression> > <term>|<expression> > = <term>|<term>
+  <factor> ::= ! ( <expression> )|( <expression> )|- <factor>|<function_call>|identifier|literal
   <function> ::= fn identifier ( ) { <body> }|fn identifier ( <arguments> ) { <body> }
-  <function_call> ::= identifier ( ) ;|identifier ( <call_arguments> ) ;
+  <function_call> ::= identifier ( )|identifier ( <call_arguments> )
   <if> ::= if <expression> { <body> }|if <expression> { <body> } else { <body> }
   <program> ::= <function>|<function> <program>
   <return> ::= return <expression> ;
-  <statement> ::= <assignment>|<function_call>|<if>|<return>
-  <term> ::= <factor>|<factor> * <term>|<factor> / <term>
+  <statement> ::= <assignment>|<function_call> ;|<if>|<return>
+  <term> ::= <factor>|<term> * <factor>|<term> / <factor>
 }
 S = <program>
