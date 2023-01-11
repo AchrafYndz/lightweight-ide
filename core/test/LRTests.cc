@@ -725,4 +725,26 @@ TEST_SUITE("LRTests") {
 
         CHECK_EQ(table, get_table());
     }
+
+    TEST_CASE("[LRTests] factorial_parsing") {
+        const CFG cfg = CFG::parse_ebnf("test/res/input/EBNF2CFG.txt");
+        LR lr(cfg);
+
+        const auto parse_result = lr.parse(StreamReader("test/res/input/factorial.bro"));
+
+        std::ifstream expected_file("test/res/expected/LRTests-factorial_parsing.txt");
+        std::stringstream expected{};
+        expected << expected_file.rdbuf();
+        expected_file.close();
+
+        // std::ofstream reset("test/res/expected/LRTests-factorial_parsing.txt");
+        // reset << parse_result.second->getContent();
+        // reset.close();
+
+        CHECK(parse_result.first);
+        CHECK_EQ(expected.str(), parse_result.second->getContent());
+
+        // cleanup
+        delete parse_result.second;
+    }
 }

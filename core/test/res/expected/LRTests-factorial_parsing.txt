@@ -1,0 +1,100 @@
+<program>
++--- <function>
+|    +--- fn
+|    +--- identifier
+|    +--- (
+|    +--- )
+|    +--- {
+|    +--- <body>
+|    |    +--- <statement>
+|    |    |    +--- <assignment>
+|    |    |         +--- let
+|    |    |         +--- identifier
+|    |    |         +--- =
+|    |    |         +--- <expression>
+|    |    |         |    +--- <term>
+|    |    |         |         +--- <factor>
+|    |    |         |              +--- literal
+|    |    |         +--- ;
+|    |    +--- <body>
+|    |    |    +--- <statement>
+|    |    |         +--- <function_call>
+|    |    |         |    +--- identifier
+|    |    |         |    +--- (
+|    |    |         |    +--- <call_arguments>
+|    |    |         |    |    +--- <expression>
+|    |    |         |    |         +--- <term>
+|    |    |         |    |              +--- <factor>
+|    |    |         |    |                   +--- identifier
+|    |    |         |    +--- )
+|    |    |         +--- ;
+|    +--- }
++--- <program>
+|    +--- <function>
+|         +--- fn
+|         +--- identifier
+|         +--- (
+|         +--- <arguments>
+|         |    +--- identifier
+|         +--- )
+|         +--- {
+|         +--- <body>
+|         |    +--- <statement>
+|         |         +--- <if>
+|         |              +--- if
+|         |              +--- <expression>
+|         |              |    +--- <expression>
+|         |              |    |    +--- <term>
+|         |              |    |         +--- <factor>
+|         |              |    |              +--- identifier
+|         |              |    +--- =
+|         |              |    +--- =
+|         |              |    +--- <term>
+|         |              |    |    +--- <factor>
+|         |              |    |         +--- literal
+|         |              +--- {
+|         |              +--- <body>
+|         |              |    +--- <statement>
+|         |              |         +--- <return>
+|         |              |              +--- return
+|         |              |              +--- <expression>
+|         |              |              |    +--- <term>
+|         |              |              |         +--- <factor>
+|         |              |              |              +--- literal
+|         |              |              +--- ;
+|         |              +--- }
+|         |              +--- else
+|         |              +--- {
+|         |              +--- <body>
+|         |              |    +--- <statement>
+|         |              |         +--- <return>
+|         |              |              +--- return
+|         |              |              +--- <expression>
+|         |              |              |    +--- <term>
+|         |              |              |         +--- <factor>
+|         |              |              |              +--- (
+|         |              |              |              +--- <expression>
+|         |              |              |              |    +--- <term>
+|         |              |              |              |         +--- <term>
+|         |              |              |              |         |    +--- <factor>
+|         |              |              |              |         |         +--- identifier
+|         |              |              |              |         +--- *
+|         |              |              |              |         +--- <factor>
+|         |              |              |              |         |    +--- <function_call>
+|         |              |              |              |         |         +--- identifier
+|         |              |              |              |         |         +--- (
+|         |              |              |              |         |         +--- <call_arguments>
+|         |              |              |              |         |         |    +--- <expression>
+|         |              |              |              |         |         |         +--- <expression>
+|         |              |              |              |         |         |         |    +--- <term>
+|         |              |              |              |         |         |         |         +--- <factor>
+|         |              |              |              |         |         |         |              +--- identifier
+|         |              |              |              |         |         |         +--- -
+|         |              |              |              |         |         |         +--- <term>
+|         |              |              |              |         |         |         |    +--- <factor>
+|         |              |              |              |         |         |         |         +--- literal
+|         |              |              |              |         |         +--- )
+|         |              |              |              +--- )
+|         |              |              +--- ;
+|         |              +--- }
+|         +--- }
