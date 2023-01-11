@@ -1,13 +1,14 @@
-#include "../automata/Value.h"
-#include <string>
-#include <vector>
-#include <memory>
-#include <iostream>
-#include <map>
-#include <queue>
-
 #ifndef LIGHTWEIGHT_IDE_V2_ASTREE_H
 #define LIGHTWEIGHT_IDE_V2_ASTREE_H
+
+#include "automata/Value.h"
+
+#include <iostream>
+#include <map>
+#include <memory>
+#include <queue>
+#include <string>
+#include <vector>
 
 /*enum ASTType {
     import_declaration,
@@ -45,64 +46,110 @@
     arguments,
 };*/
 
-template <typename Value>
+template <typename T>
 class ASTNode {
     // ASTType type;
     std::vector<std::shared_ptr<ASTNode>> nodes;
-    std::shared_ptr<Value> value;
+    std::shared_ptr<T> value;
 
 public:
     ASTNode() = default;
-    ASTNode(Value* value, std::vector<std::shared_ptr<ASTNode>> nodes);
+    ASTNode(T* value, std::vector<std::shared_ptr<ASTNode>> nodes);
+    inline ASTNode(std::shared_ptr<T> value, std::vector<std::shared_ptr<ASTNode>> nodes) {
+        this->value = value;
+        this->nodes = nodes;
+    };
 
-    const std::shared_ptr<Value> getValue() const;
-    void setValue(Value* value);
+    const std::shared_ptr<T> getValue() const;
+    void setValue(T* value);
 
     std::vector<std::shared_ptr<ASTNode>> getNodes();
     void setNodes(std::vector<std::shared_ptr<ASTNode>> nodes);
 };
 
-template <typename Value>
+template <typename T>
 class ASTree {
-    std::shared_ptr<ASTNode<Value>> root;
+    std::shared_ptr<ASTNode<T>> root;
 
 public:
     ASTree() = default;
-    ASTree(ASTNode<Value>* root);
+    explicit ASTree(ASTNode<T>* root);
+    inline ASTree(std::shared_ptr<ASTNode<T>> root) { this->root = root; };
 
-    std::shared_ptr<ASTNode<Value>> getRoot();
-    void setRoot(ASTNode<Value>* root);
+    std::shared_ptr<ASTNode<T>> getRoot();
+    void setRoot(ASTNode<T>* root);
 
     void printTree();
     std::string getContent();
-    void getContent(std::string &content_, std::shared_ptr<ASTNode<Value>> rootNode, std::vector<bool> fList, int d, bool l);
+    void getContent(std::string& content_, std::shared_ptr<ASTNode<T>> rootNode, std::vector<bool> &fList, int d,
+                    bool l);
 
+    int getHeight(std::shared_ptr<ASTNode<T>> node);
 };
 
-template <typename Value>
-ASTree<Value>::ASTree(ASTNode<Value>* root) {
-    ASTree::root = std::shared_ptr<ASTNode<Value>>(root);
+template <typename T>
+ASTree<T>::ASTree(ASTNode<T>* root) {
+    ASTree::root = std::shared_ptr<ASTNode<T>>(root);
 }
 
-template <typename Value>
-void ASTree<Value>::printTree() {
-    std::vector<bool> flag(10, true);
+template <typename T>
+int ASTree<T>::getHeight(std::shared_ptr<ASTNode<T>> node) {
+    if(node == nullptr || node->getNodes().size() == 0)
+        return 0;
+    int height = 0;
+    for(auto node_ : node->getNodes())
+        height = std::max(height, getHeight(node_));
+    return ++height;
+}
+
+template <typename T>
+void ASTree<T>::printTree() {
+    int height = getHeight(root);
+    height = (height == 0) ? 1 : height;
+    std::vector<bool> flag(height, true);
     std::string content_ = "";
     getContent(content_, root, flag, 0, false);
     std::cout << content_ << std::endl;
 }
 
-
-template<typename Value>
-std::string ASTree<Value>::getContent() {
-    std::vector<bool> flag(10, true);
+template <typename T>
+std::string ASTree<T>::getContent() {
+    int height = getHeight(root);
+    height = (height == 0) ? 1 : height;
+    std::vector<bool> flag(height, true);
     std::string content_ = "";
     getContent(content_, root, flag, 0, false);
     return content_;
 }
 
-template <typename Value>
-void ASTree<Value>::getContent(std::string &content_, std::shared_ptr<ASTNode<Value>> rootNode, std::vector<bool> fList, int d, bool l){
+template <typename T>
+void ASTree<T>::getContent(std::string& content_, std::shared_ptr<ASTNode<T>> rootNode, std::vector<bool>& fList, int d,
+                           bool l) {
+    if (rootNode == nullptr)
+        return;
+    for (int i = 1; i < d; i++) {
+        if (fList[i]) {
+            content_ += "|    ";
+            continue;
+        }
+        content_ += "     ";
+    }
+    if (d == 0) {
+        content_ += *rootNode->getValue() + "\n";
+    } else if (l) {
+        content_ += "+--- " + *rootNode->getValue() + "\n";
+        fList[d] = false;
+    } else {
+        content_ += "+--- " + *rootNode->getValue() + "\n";
+    }
+    for (const auto& node : rootNode->getNodes())
+        getContent(content_, node, fList, d + 1, (0 == (rootNode->getNodes().size()) - 1));
+    fList[d] = true;
+}
+
+template <>
+inline void ASTree<Value>::getContent(std::string& content_, std::shared_ptr<ASTNode<Value>> rootNode,
+                                      std::vector<bool>& fList, int d, bool l) {
     if (rootNode == nullptr)
         return;
     for (int i = 1; i < d; i++) {
@@ -114,45 +161,51 @@ void ASTree<Value>::getContent(std::string &content_, std::shared_ptr<ASTNode<Va
     }
     if (d == 0) {
         content_ += rootNode->getValue()->getName() + "\n";
-    }
-    else if (l) {
+    } else if (l) {
         content_ += "+--- " + rootNode->getValue()->getName() + "\n";
         fList[d] = false;
-    }
-    else {
+    } else {
         content_ += "+--- " + rootNode->getValue()->getName() + "\n";
     }
-    for(const auto &node: rootNode->getNodes())
-        getContent(content_, node, fList, d + 1,(0 == (rootNode->getNodes().size()) - 1));
+    for (const auto& node : rootNode->getNodes())
+        getContent(content_, node, fList, d + 1, (0 == (rootNode->getNodes().size()) - 1));
     fList[d] = true;
 }
 
-template <typename Value>
-std::shared_ptr<ASTNode<Value>> ASTree<Value>::getRoot() { return root; }
-
-template <typename Value>
-void ASTree<Value>::setRoot(ASTNode<Value>* root) {
-    ASTree::root = std::shared_ptr<ASTNode<Value>>(root);
+template <typename T>
+std::shared_ptr<ASTNode<T>> ASTree<T>::getRoot() {
+    return root;
 }
 
-template <typename Value>
-ASTNode<Value>::ASTNode(Value* value, std::vector<std::shared_ptr<ASTNode<Value>>> nodes) {
-    ASTNode::value = std::shared_ptr<Value>(value);
+template <typename T>
+void ASTree<T>::setRoot(ASTNode<T>* root) {
+    ASTree::root = std::shared_ptr<ASTNode<T>>(root);
+}
+
+template <typename T>
+ASTNode<T>::ASTNode(T* value, std::vector<std::shared_ptr<ASTNode<T>>> nodes) {
+    ASTNode::value = std::shared_ptr<T>(value);
     ASTNode::nodes = nodes;
 }
 
-template <typename Value>
-const std::shared_ptr<Value> ASTNode<Value>::getValue() const { return value; }
-
-template <typename Value>
-void ASTNode<Value>::setValue(Value* value) {
-    ASTNode::value = std::shared_ptr<Value>(value);
+template <typename T>
+const std::shared_ptr<T> ASTNode<T>::getValue() const {
+    return value;
 }
 
-template <typename Value>
-std::vector<std::shared_ptr<ASTNode<Value>>> ASTNode<Value>::getNodes() { return nodes; }
+template <typename T>
+void ASTNode<T>::setValue(T* value) {
+    ASTNode::value = std::shared_ptr<T>(value);
+}
 
-template <typename Value>
-void ASTNode<Value>::setNodes(std::vector<std::shared_ptr<ASTNode<Value>>> nodes) { ASTNode::nodes = nodes; }
+template <typename T>
+std::vector<std::shared_ptr<ASTNode<T>>> ASTNode<T>::getNodes() {
+    return nodes;
+}
+
+template <typename T>
+void ASTNode<T>::setNodes(std::vector<std::shared_ptr<ASTNode<T>>> nodes) {
+    ASTNode::nodes = nodes;
+}
 
 #endif // LIGHTWEIGHT_IDE_V2_ASTREE_H
