@@ -13,16 +13,16 @@
 #include <thread>
 #include <vector>
 
+#include <dbg.h>
+
 std::string generateJSON(const LR& lr, const std::string& filepath) {
     std::pair<bool, LR::ASTree*> parse_result = lr.parse(StreamReader(filepath));
-
-    std::cout << "ASTree content: \n" << parse_result.second->getContent();
 
     std::cout << "Parse result: " << ((parse_result.first) ? "success" : "failed") << '\n';
 
     // delete file from system
-    if (!std::filesystem::remove(filepath))
-        throw std::runtime_error("failed to delete temporary source file");
+     if (!std::filesystem::remove(filepath))
+         throw std::runtime_error("failed to delete temporary source file");
 
     // TODO: analyze parse tree for syntax highlighting
 
@@ -33,8 +33,6 @@ std::string generateJSON(const LR& lr, const std::string& filepath) {
     // TODO: @Achraf syntax designation & error conversion to frontend compatible format
     // result = ...;
 
-    // delete parse tree
-    // TODO: When using it for syntax highlighting, store it in a smart pointer.
     delete parse_result.second;
 
     return result;

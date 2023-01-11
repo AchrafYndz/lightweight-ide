@@ -308,6 +308,7 @@ LR::ItemSet LR::closure(const ItemSet& item, const std::string& separator, const
 }
 
 std::pair<bool, LR::ASTree*> LR::parse(StreamReader in) const {
+    auto* tree = new ASTree{};
     bool success{true};
 
     Lexer lexer(in);
@@ -338,17 +339,18 @@ std::pair<bool, LR::ASTree*> LR::parse(StreamReader in) const {
 
         const auto result = this->handle_action(action_pair, lexer_token, stack, parser_state);
 
-        if (!result)
+        if (!result.first)
             success = false;
 
         parser_state = stack.top().second;
     } while (lexer_token_pair.first != Lexer::TokenType::Eof);
 
-    return {success, std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value()))};
+    return {success, tree};
 }
 
-bool LR::handle_action(ActionPair action_pair, const std::string& token, std::stack<StackContent>& stack,
-                       unsigned int& parser_state) const {
+std::pair<bool, LR::ASTree*> LR::handle_action(ActionPair action_pair, const std::string& token,
+                                               std::stack<StackContent>& stack, unsigned int& parser_state,
+                                               bool top) const {
     bool success{true};
 
     switch (action_pair.first) {
@@ -364,32 +366,13 @@ bool LR::handle_action(ActionPair action_pair, const std::string& token, std::st
         const unsigned int rule_length = rule.second.size();
 
         // TODO: build the parse tree
-        std::vector<std::shared_ptr<ASTNode>> old_nodes;
-        old_nodes.reserve(rule_length);
         for (unsigned int i = 0; i < rule_length; ++i) {
-            const auto [pos_content, state] = stack.top();
-
-            // DEBUG: `pos_content` should not be empty, this means that the starting stack state is popped
-            assert(pos_content.has_value() && "pos_content is not empty");
-
-            const auto content = pos_content.value();
-
-            // check if content is a variable with tree or a terminal without tree
-            if (std::holds_alternative<std::tuple<CFG::Var, ASTree*>>(content)) {
-                old_nodes.push_back(std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(content))->getRoot());
-            } else {
-                old_nodes.push_back(std::make_shared<ASTNode>(new std::string(std::get<std::string>(content)),
-                                                              std::vector<std::shared_ptr<ASTNode>>{}));
-            }
-
             stack.pop();
         }
-        std::reverse(old_nodes.begin(), old_nodes.end());
-        const std::string new_var = this->rules.at(action_pair.second).first;
 
         // TODO: split this up
         const StackContent new_pair{
-            std::make_tuple(new_var, new ASTree{new ASTNode(new std::string(new_var), old_nodes)}),
+            std::make_tuple(this->rules.at(action_pair.second).first),
             this->table.at(stack.top().second).second.at(this->rules.at(action_pair.second).first)};
 
         stack.push(new_pair);
@@ -399,9 +382,9 @@ bool LR::handle_action(ActionPair action_pair, const std::string& token, std::st
         // check what the new action is
         const auto new_action_pair = this->table.at(parser_state).first.at(token);
 
-        const auto result = this->handle_action(new_action_pair, token, stack, parser_state);
+        const auto result = this->handle_action(new_action_pair, token, stack, parser_state, false);
 
-        if (!result)
+        if (!result.first)
             success = false;
 
         break;
@@ -410,8 +393,8 @@ bool LR::handle_action(ActionPair action_pair, const std::string& token, std::st
         break;
     }
     default:
-        assert(false && "unreachable");
+        assert(false && "not implemented");
     }
 
-    return success;
+    return {success, nullptr};
 }

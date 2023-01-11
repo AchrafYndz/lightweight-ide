@@ -21,7 +21,6 @@ public:
     using ItemSet = std::set<Item>;
 
     using ASTree = ASTree<std::string>;
-    using ASTNode = ASTNode<std::string>;
 
 public:
     enum class ActionType { Shift, Reduce, Accept };
@@ -33,14 +32,14 @@ public:
     using ParsingTable = std::map<unsigned int, std::pair<AcitionTable, GotoTable>>;
 
 private:
-    /// With `std::tuple` being the comination of variable and syntax tree.
+    /// Because `CFG::Var` (at this time of coding) is an `std::string`, a second `std::string` is not allowed. This is
+    /// solved by wrapping `CFG::Var` in an `std::tuple` with a single element.
     ///
     /// With `std::string` being the actual token (see exception for "identifier" and "literal"), and `unsigned int` the
     /// state of the parser.
     ///
     /// With `std::optional` of the `std::variant` being used to define the starting pair.
-    using StackContent =
-        std::pair<std::optional<std::variant<std::string, std::tuple<CFG::Var, ASTree*>>>, unsigned int>;
+    using StackContent = std::pair<std::optional<std::variant<std::string, std::tuple<CFG::Var>>>, unsigned int>;
 
 public:
     /// Abstract Lr exception class.
@@ -82,8 +81,8 @@ public:
 private:
     static ItemSet closure(const ItemSet& item, const std::string& separator, const CFG& cfg);
 
-    bool handle_action(ActionPair action_pair, const std::string& token, std::stack<StackContent>& stack,
-                       unsigned int& parser_state) const;
+    std::pair<bool, LR::ASTree*> handle_action(ActionPair action_pair, const std::string& token,
+                                               std::stack<StackContent>& stack, unsigned int& parser_state, bool top = true) const;
 
 private:
     ParsingTable table{};
