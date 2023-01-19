@@ -18,11 +18,11 @@ public:
 
     /// Returns `{row, col, character}` of the next character without advancing the internal buffer and counters.
     /// Note: Both `row` and `col` use zero-based indexing.
-    /// TODO: cannot be const because of implementation of `StreamReader::peek`
-    NextChar peek_next_char();
+    NextChar peek_next_char() const;
 
 private:
-    StreamReader reader;
+    /// Note: Is mutable because of the implementation of `StreamReader::peek`.
+    mutable StreamReader reader;
 
     unsigned int row{0}, col{0};
     unsigned int index{0};

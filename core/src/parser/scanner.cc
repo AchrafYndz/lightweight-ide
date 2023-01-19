@@ -23,7 +23,7 @@ std::tuple<unsigned int, unsigned int, char> Scanner::get_next_char() {
     return result;
 }
 
-std::tuple<unsigned int, unsigned int, char> Scanner::peek_next_char() {
+std::tuple<unsigned int, unsigned int, char> Scanner::peek_next_char() const {
     // TODO: make this better
     char next_char;
     try {
