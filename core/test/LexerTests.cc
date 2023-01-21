@@ -37,17 +37,15 @@ std::ostream& operator<<(std::ostream& out, const std::vector<Lexer::NextToken>&
         //     "Incorrect", "LeftCurly", "RightCurly", "LeftBracket", "RightBracket", "Plus",       "Min",
         //     "Mult",      "Div",       "Less",       "Greater",     "Equals",       "Not",        "SemiColon",
         // }[static_cast<unsigned int>(it->first)]); // used for debugging
-        out << static_cast<int>(it->first);
+        out << static_cast<int>(it->type);
 
         out << ',';
 
         out << '(';
 
-        out << '{' << '`' << std::get<0>(it->second).first << '`' << ',' << '`' << std::get<0>(it->second).second << '`'
-            << "},";
-        out << '{' << '`' << std::get<1>(it->second).first << '`' << ',' << '`' << std::get<1>(it->second).second << '`'
-            << "},";
-        out << '`' << std::get<2>(it->second) << '`';
+        out << '{' << '`' << it->start.first << '`' << ',' << '`' << it->start.second << '`' << "},";
+        out << '{' << '`' << it->end.first << '`' << ',' << '`' << it->end.second << '`' << "},";
+        out << '`' << it->value << '`';
 
         out << ')';
 
@@ -109,7 +107,7 @@ TEST_SUITE("LexerTests") {
         do {
             next_token = lexer.get_next_token();
             v.push_back(next_token);
-        } while (next_token.first != Lexer::TokenType::Eof);
+        } while (next_token.type != Lexer::TokenType::Eof);
 
         actual << v;
 
@@ -133,7 +131,7 @@ TEST_SUITE("LexerTests") {
         do {
             next_token = lexer.get_next_token();
             v.push_back(next_token);
-        } while (next_token.first != Lexer::TokenType::Eof);
+        } while (next_token.type != Lexer::TokenType::Eof);
 
         actual << v;
 

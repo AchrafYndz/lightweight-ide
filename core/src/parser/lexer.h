@@ -67,8 +67,8 @@ public:
     NextToken get_next_token();
 
 public:
-    /// Character lookup table used to convert characters into `Lexer::TokenType`.
-    static const std::unordered_map<char, TokenType> character_to_token_type;
+    /// Terminal lookup table used to convert terminals into `Lexer::TokenType`.
+    static const std::unordered_map<std::string, TokenType> terminal_to_token_type;
 
 private:
     Scanner scanner;
