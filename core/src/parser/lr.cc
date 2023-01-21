@@ -231,15 +231,11 @@ LR::LR(const CFG& cfg) {
 
             // add reduce entry for every terminal in FOLLOW(A)
             if (item.first != aug_start_var) {
-                // remove separator from item and find production rule in cfg productions
+                // remove separator from item
                 auto lookup_rule(item);
                 auto lookup_sep_it = std::find(lookup_rule.second.begin(), lookup_rule.second.end(), separator);
 
-                // DEBUG: separator should be found
-                assert((lookup_sep_it != lookup_rule.second.end() && "separator is found in item body"));
-
                 lookup_rule.second.erase(lookup_sep_it);
-
                 auto lookup_rule_it = std::find(this->rules.begin(), this->rules.end(), lookup_rule);
 
                 // DEBUG: rule should be found
@@ -314,48 +310,86 @@ std::pair<bool, LR::ASTree*> LR::parse(StreamReader in) const {
     std::stack<StackContent> stack(std::deque<StackContent>{{std::nullopt, 0}});
 
     unsigned int parser_state = stack.top().second;
-    Lexer::NextToken lexer_token_pair{};
+    Lexer::NextToken lexer_token{};
     do {
-        lexer_token_pair = lexer.get_next_token();
+        lexer_token = lexer.get_next_token();
 
         // ignore some `TokenTypes`
-        if (lexer_token_pair.first == Lexer::TokenType::Comment ||
-            lexer_token_pair.first == Lexer::TokenType::Whitespace)
+        if (lexer_token.type == Lexer::TokenType::Comment || lexer_token.type == Lexer::TokenType::Whitespace)
             continue;
 
-        // determine what the `lexer_token` is
-        std::string lexer_token = std::get<2>(lexer_token_pair.second);
-        if (lexer_token_pair.first == Lexer::TokenType::Identifier ||
-            lexer_token_pair.first == Lexer::TokenType::Literal || lexer_token_pair.first == Lexer::TokenType::Eof) {
-            lexer_token = (lexer_token_pair.first == Lexer::TokenType::Identifier) ? "identifier"
-                          : (lexer_token_pair.first == Lexer::TokenType::Literal)  ? "literal"
-                                                                                   : this->end_of_input;
+        const std::string lookup_token = this->lexer_token_to_parse_string(lexer_token);
+
+        bool result{};
+        try {
+
+            // check what action to perform
+            // `new_state` is both used as the new state and in case of a reduction, the rule to be used.
+            const auto action_pair = this->table.at(parser_state).first.at(lookup_token);
+            result = this->handle_action(action_pair, lookup_token, lexer_token, stack, parser_state);
+        } catch (const std::out_of_range&) {
+            auto best_corrections = this->handle_error(lookup_token, lexer, parser_state, stack);
+
+            // DEBUG: Because `Insert` corrections are added first to vector, first element can only be delete if size
+            // is 0.
+            // DEBUG: At least one correction should be found
+            assert(best_corrections.size() != 0 && "at least one correction is found");
+            const auto& correction = best_corrections.at(0);
+
+            switch (correction.first) {
+            case ErrorCorrectionAction::Insert: {
+                // try correction
+                try {
+                    const std::string& correction_token = correction.second.value();
+
+                    // DEBUG: `correction_token` should be convertible to Lexer::TokenType
+                    assert(Lexer::terminal_to_token_type.find(correction_token) !=
+                               Lexer::terminal_to_token_type.end() &&
+                           "correction token can be converted to Lexer::TokenType");
+
+                    const auto action_pair = this->table.at(parser_state).first.at(correction.second.value());
+                    this->handle_action(
+                        action_pair, correction.second.value(),
+                        Lexer::NextToken{
+                            Lexer::terminal_to_token_type.at(correction_token), {0, 0}, {0, 0}, correction_token},
+                        stack, parser_state);
+                } catch (std::out_of_range&) {
+                    throw std::runtime_error("solution to error does not fix the first iteration");
+                }
+
+                parser_state = stack.top().second;
+
+                // try previous faulty lexer token
+                try {
+                    const auto action_pair = this->table.at(parser_state).first.at(lookup_token);
+                    this->handle_action(action_pair, lookup_token, lexer_token, stack, parser_state);
+                } catch (std::out_of_range&) {
+                    throw std::runtime_error("solution to error does not fix the first iteration");
+                }
+
+                break;
+            }
+            case ErrorCorrectionAction::Delete:
+                continue;
+            }
         }
-
-        // check what action to perform
-        // `new_state` is both used as the new state and in case of a reduction, the rule to be used.
-        const auto action_pair = this->table.at(parser_state).first.at(lexer_token);
-
-        const auto result = this->handle_action(action_pair, lexer_token, stack, parser_state);
 
         if (!result)
             success = false;
 
         parser_state = stack.top().second;
-    } while (lexer_token_pair.first != Lexer::TokenType::Eof);
+    } while (lexer_token.type != Lexer::TokenType::Eof);
 
     return {success, std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value()))};
 }
 
-bool LR::handle_action(ActionPair action_pair, const std::string& token, std::stack<StackContent>& stack,
-                       unsigned int& parser_state) const {
+bool LR::handle_action(ActionPair action_pair, const std::string& lookup_token, const Lexer::NextToken& lexer_token,
+                       std::stack<StackContent>& stack, unsigned int& parser_state) const {
     bool success{true};
 
     switch (action_pair.first) {
     case LR::ActionType::Shift: {
-        // shift `{token, state}` onto stack
-        stack.emplace(token, action_pair.second);
-        // dbg(std::make_pair(token, action_pair.second));
+        stack.emplace(lexer_token, action_pair.second);
         break;
     }
     case LR::ActionType::Reduce: {
@@ -378,8 +412,9 @@ bool LR::handle_action(ActionPair action_pair, const std::string& token, std::st
             if (std::holds_alternative<std::tuple<CFG::Var, ASTree*>>(content)) {
                 old_nodes.push_back(std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(content))->getRoot());
             } else {
-                old_nodes.push_back(std::make_shared<ASTNode>(new std::string(std::get<std::string>(content)),
-                                                              std::vector<std::shared_ptr<ASTNode>>{}));
+                old_nodes.push_back(std::make_shared<ASTNode>(
+                    new std::variant<CFG::Var, Lexer::NextToken>(std::get<Lexer::NextToken>(content)),
+                    std::vector<std::shared_ptr<ASTNode>>{}));
             }
 
             stack.pop();
@@ -389,7 +424,8 @@ bool LR::handle_action(ActionPair action_pair, const std::string& token, std::st
 
         // TODO: split this up
         const StackContent new_pair{
-            std::make_tuple(new_var, new ASTree{new ASTNode(new std::string(new_var), old_nodes)}),
+            std::make_tuple(new_var,
+                            new ASTree{new ASTNode(new std::variant<CFG::Var, Lexer::NextToken>(new_var), old_nodes)}),
             this->table.at(stack.top().second).second.at(this->rules.at(action_pair.second).first)};
 
         stack.push(new_pair);
@@ -397,9 +433,9 @@ bool LR::handle_action(ActionPair action_pair, const std::string& token, std::st
         parser_state = stack.top().second;
 
         // check what the new action is
-        const auto new_action_pair = this->table.at(parser_state).first.at(token);
+        const auto new_action_pair = this->table.at(parser_state).first.at(lookup_token);
 
-        const auto result = this->handle_action(new_action_pair, token, stack, parser_state);
+        const auto result = this->handle_action(new_action_pair, lookup_token, lexer_token, stack, parser_state);
 
         if (!result)
             success = false;
@@ -414,4 +450,111 @@ bool LR::handle_action(ActionPair action_pair, const std::string& token, std::st
     }
 
     return success;
+}
+
+std::vector<std::pair<LR::ErrorCorrectionAction, std::optional<std::string>>> LR::handle_error(
+    const std::string& current_lexer_token, const Lexer& lexer, unsigned int parser_state,
+    std::stack<StackContent> stack) const {
+    /*
+        Try to insert every terminal that is expected in the current parser state and try to delete the current token.
+        Keep on parsing until the next error.
+
+        Select the best solution that fixes the input for the largest amount. If there is a tie, select the solution(s)
+        that uses an insertion.
+    */
+
+    std::vector<std::tuple<ErrorCorrectionAction, std::optional<std::string>, unsigned int>>
+        possible_correction_results{};
+
+    for (unsigned int i = 0; i <= this->table.at(parser_state).first.size(); ++i) {
+        bool token_delete{false};
+        std::optional<std::string> fix_token{};
+
+        std::stack<StackContent> tmp_stack(stack);
+        unsigned int tmp_parser_state = tmp_stack.top().second;
+        Lexer tmp_lexer(lexer);
+
+        if (i == this->table.at(parser_state).first.size()) {
+            token_delete = true;
+        } else {
+            try {
+                fix_token = std::next(this->table.at(tmp_parser_state).first.begin(), i)->first;
+                this->handle_action(
+                    this->table.at(tmp_parser_state).first.at(fix_token.value()), fix_token.value(),
+                    Lexer::NextToken{
+                        Lexer::terminal_to_token_type.at(fix_token.value()), {0, 0}, {0, 0}, fix_token.value()},
+                    tmp_stack, tmp_parser_state);
+                tmp_parser_state = tmp_stack.top().second;
+            } catch (std::out_of_range&) {
+                // skip the current fix when it doesn't even fix anything (usually an unwanted reduction)
+                continue;
+            }
+        }
+
+        // deletion cannot parse the faulty token, thus give it a head start of 1
+        unsigned int success_count = (token_delete) ? 1 : 0;
+
+        Lexer::NextToken lexer_token_pair{};
+        do {
+            // determine what the `lexer_token` is
+            std::string lexer_token{};
+            if (!token_delete && success_count == 0) {
+                // try previous faulty token first
+                lexer_token = current_lexer_token;
+            } else {
+                lexer_token_pair = tmp_lexer.get_next_token();
+                lexer_token = lexer_token_pair.value;
+
+                // ignore some `TokenTypes`
+                if (lexer_token_pair.type == Lexer::TokenType::Comment ||
+                    lexer_token_pair.type == Lexer::TokenType::Whitespace)
+                    continue;
+
+                lexer_token = this->lexer_token_to_parse_string(lexer_token_pair);
+            }
+
+            try {
+                const auto action_pair = this->table.at(tmp_parser_state).first.at(lexer_token);
+                this->handle_action(
+                    action_pair, lexer_token,
+                    Lexer::NextToken{Lexer::terminal_to_token_type.at(lexer_token), {0, 0}, {0, 0}, lexer_token},
+                    tmp_stack, tmp_parser_state);
+            } catch (std::out_of_range&) {
+                break;
+            }
+
+            tmp_parser_state = tmp_stack.top().second;
+            ++success_count;
+        } while (lexer_token_pair.type != Lexer::TokenType::Eof);
+
+        possible_correction_results.emplace_back(
+            (token_delete) ? ErrorCorrectionAction::Delete : ErrorCorrectionAction::Insert, fix_token, success_count);
+    }
+
+    // dbg(possible_correction_results);
+
+    // Check what solution is best using the following conditions.
+    // 1. Choose the solution that has the largest effect.
+    // 2. Choose the solution that is an insertion.
+    unsigned int max_effect{0};
+    std::vector<decltype(possible_correction_results)::const_iterator> pos_solutions{};
+    for (auto correction_result_it = possible_correction_results.begin();
+         correction_result_it != possible_correction_results.end(); ++correction_result_it) {
+        unsigned int effect = std::get<2>(*correction_result_it);
+        if (max_effect > effect)
+            continue;
+        else if (effect != max_effect) {
+            max_effect = effect;
+            pos_solutions.clear();
+        }
+
+        pos_solutions.emplace_back(correction_result_it);
+    }
+
+    std::vector<std::pair<ErrorCorrectionAction, std::optional<std::string>>> solutions{};
+    for (const auto& solution : pos_solutions) {
+        solutions.emplace_back(std::get<0>(*solution), std::get<1>(*solution));
+    }
+
+    return solutions;
 }

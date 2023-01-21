@@ -1,7 +1,7 @@
 <program>
 +--- <function>
 |    +--- fn
-|    +--- identifier
+|    +--- main
 |    +--- (
 |    +--- )
 |    +--- {
@@ -9,33 +9,33 @@
 |    |    +--- <statement>
 |    |    |    +--- <assignment>
 |    |    |         +--- let
-|    |    |         +--- identifier
+|    |    |         +--- x
 |    |    |         +--- =
 |    |    |         +--- <expression>
 |    |    |         |    +--- <term>
 |    |    |         |         +--- <factor>
-|    |    |         |              +--- literal
+|    |    |         |              +--- 5
 |    |    |         +--- ;
 |    |    +--- <body>
 |    |    |    +--- <statement>
 |    |    |         +--- <function_call>
-|    |    |         |    +--- identifier
+|    |    |         |    +--- factorial
 |    |    |         |    +--- (
 |    |    |         |    +--- <call_arguments>
 |    |    |         |    |    +--- <expression>
 |    |    |         |    |         +--- <term>
 |    |    |         |    |              +--- <factor>
-|    |    |         |    |                   +--- identifier
+|    |    |         |    |                   +--- x
 |    |    |         |    +--- )
 |    |    |         +--- ;
 |    +--- }
 +--- <program>
 |    +--- <function>
 |         +--- fn
-|         +--- identifier
+|         +--- factorial
 |         +--- (
 |         +--- <arguments>
-|         |    +--- identifier
+|         |    +--- x
 |         +--- )
 |         +--- {
 |         +--- <body>
@@ -46,12 +46,12 @@
 |         |              |    +--- <expression>
 |         |              |    |    +--- <term>
 |         |              |    |         +--- <factor>
-|         |              |    |              +--- identifier
+|         |              |    |              +--- x
 |         |              |    +--- =
 |         |              |    +--- =
 |         |              |    +--- <term>
 |         |              |    |    +--- <factor>
-|         |              |    |         +--- literal
+|         |              |    |         +--- 1
 |         |              +--- {
 |         |              +--- <body>
 |         |              |    +--- <statement>
@@ -60,7 +60,7 @@
 |         |              |              +--- <expression>
 |         |              |              |    +--- <term>
 |         |              |              |         +--- <factor>
-|         |              |              |              +--- literal
+|         |              |              |              +--- 1
 |         |              |              +--- ;
 |         |              +--- }
 |         |              +--- else
@@ -77,22 +77,22 @@
 |         |              |              |              |    +--- <term>
 |         |              |              |              |         +--- <term>
 |         |              |              |              |         |    +--- <factor>
-|         |              |              |              |         |         +--- identifier
+|         |              |              |              |         |         +--- x
 |         |              |              |              |         +--- *
 |         |              |              |              |         +--- <factor>
 |         |              |              |              |         |    +--- <function_call>
-|         |              |              |              |         |         +--- identifier
+|         |              |              |              |         |         +--- factorial
 |         |              |              |              |         |         +--- (
 |         |              |              |              |         |         +--- <call_arguments>
 |         |              |              |              |         |         |    +--- <expression>
 |         |              |              |              |         |         |         +--- <expression>
 |         |              |              |              |         |         |         |    +--- <term>
 |         |              |              |              |         |         |         |         +--- <factor>
-|         |              |              |              |         |         |         |              +--- identifier
+|         |              |              |              |         |         |         |              +--- x
 |         |              |              |              |         |         |         +--- -
 |         |              |              |              |         |         |         +--- <term>
 |         |              |              |              |         |         |         |    +--- <factor>
-|         |              |              |              |         |         |         |         +--- literal
+|         |              |              |              |         |         |         |         +--- 1
 |         |              |              |              |         |         +--- )
 |         |              |              |              +--- )
 |         |              |              +--- ;
