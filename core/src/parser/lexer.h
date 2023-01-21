@@ -44,9 +44,20 @@ public:
     static constexpr char eof_token{'\0'};
 
 public:
-    /// Token descriptor of the form `{token_type, ({row_start, col_start}, {row_end, col_end}, token)}`.
-    using NextToken = std::pair<TokenType, std::tuple<std::pair<unsigned int, unsigned int>,
-                                                      std::pair<unsigned int, unsigned int>, std::string>>;
+    using Pos = std::pair<unsigned long, unsigned long>;
+
+public:
+    /// Token descriptor emitted by the lexer.
+    struct NextToken {
+        /// Type of the token.
+        TokenType type{};
+        /// Start position.
+        Pos start{};
+        /// End position.
+        Pos end{};
+        /// Value of the token.
+        std::string value{};
+    };
 
 public:
     inline Lexer(Scanner scanner) : scanner(scanner) {}

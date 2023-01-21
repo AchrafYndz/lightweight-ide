@@ -17,15 +17,16 @@ Lexer::NextToken Lexer::get_next_token() {
         // return `EOF` token without advancing the scanner
         const auto [row, col, next_char] = this->scanner.peek_next_char();
 
-        return {TokenType::Eof, {{row, col}, {row, col}, "EOF"}};
+        return {TokenType::Eof, {row, col}, {row, col}, "EOF"};
     }
-
-    NextToken result{};
 
     // TODO: make this better
     // set correct start location
-    std::get<0>(result.second) = {std::get<0>(this->scanner.peek_next_char()),
-                                  std::get<1>(this->scanner.peek_next_char())};
+    const Pos token_start = {std::get<0>(this->scanner.peek_next_char()), std::get<1>(this->scanner.peek_next_char())};
+
+    std::string token_value{};
+    TokenType token_type{};
+    Pos token_end{};
 
     bool matched = true;
     while (matched) {
@@ -38,32 +39,31 @@ Lexer::NextToken Lexer::get_next_token() {
         // try to match the current built token to a matcher
         for (const auto& matcher_pair : this->token_matchers) {
             const auto& matcher = matcher_pair.second;
-            if (!std::regex_match(std::get<2>(result.second) + next_char, matcher))
+            if (!std::regex_match(token_value + next_char, matcher))
                 continue;
 
-            TokenType token_type = matcher_pair.first;
+            TokenType matcher_token_type = matcher_pair.first;
             // match punctuation
-            if (token_type == TokenType::Punctuation) {
-                assert(std::get<2>(result.second).length() == 0 && "length of punctuation token is 1");
+            if (matcher_token_type == TokenType::Punctuation) {
+                assert(token_value.length() == 0 && "length of punctuation token is 1");
 
-                token_type = this->character_to_token_type.at(next_char);
+                matcher_token_type = this->character_to_token_type.at(next_char);
             }
 
             matched = true;
             // set the `token_type`
-            result.first = token_type;
+            token_type = matcher_token_type;
 
             // add the new char to result and update locations
-            std::get<2>(result.second) += std::get<2>(this->scanner.get_next_char());
-            std::get<1>(result.second) = {row, col};
+            token_value += std::get<2>(this->scanner.get_next_char());
+            token_end = {row, col};
             break;
         }
     }
 
-    if (std::get<2>(result.second).empty())
-        return {TokenType::Incorrect,
-                {std::get<0>(result.second), std::get<1>(result.second),
-                 std::string(1, std::get<2>(this->scanner.get_next_char()))}};
+    if (token_value.empty())
+        return {TokenType::Incorrect, token_start, token_end,
+                std::string(1, std::get<2>(this->scanner.get_next_char()))};
 
-    return result;
+    return {token_type, token_start, token_end, token_value};
 }
