@@ -10,6 +10,9 @@ public:
     using NextChar = std::tuple<unsigned int, unsigned int, char>;
 
 public:
+    const char end_of_file{'\0'};
+
+public:
     inline Scanner(StreamReader reader) : reader(reader) {}
 
     /// Returns `{row, col, character}` of the next character.

@@ -6,7 +6,7 @@ std::tuple<unsigned int, unsigned int, char> Scanner::get_next_char() {
     try {
         next_char = this->reader.consume(this->index);
     } catch (StreamReader::EOFException&) {
-        next_char = '\0';
+        next_char = this->end_of_file;
     }
     const auto result = std::make_tuple(this->row, this->col, next_char);
 
@@ -23,13 +23,13 @@ std::tuple<unsigned int, unsigned int, char> Scanner::get_next_char() {
     return result;
 }
 
-std::tuple<unsigned int, unsigned int, char> Scanner::peek_next_char() const {
+Scanner::NextChar Scanner::peek_next_char() const {
     // TODO: make this better
     char next_char;
     try {
         next_char = this->reader.peek(this->index);
     } catch (StreamReader::EOFException&) {
-        next_char = '\0';
+        next_char = this->end_of_file;
     }
     return std::make_tuple(this->row, this->col, next_char);
 }
