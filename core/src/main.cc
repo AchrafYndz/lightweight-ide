@@ -47,7 +47,9 @@ std::string generateJSON(const LR& lr, const std::string& filepath, const std::s
 
     if (parse_result.tree.has_value()) {
         const auto& root = parse_result.tree.value()->getRoot();
-        root->inorderVisit(root, result);
+        root->inorderVisit(root, result["bounds"]);
+    } else {
+        result["bounds"] = {};
     }
 
     std::cout << std::setw(4) << result << std::endl;
