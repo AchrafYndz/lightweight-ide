@@ -9,6 +9,7 @@
 #include <memory>
 #include <queue>
 #include <string>
+#include <variant>
 #include <vector>
 
 /*enum ASTType {
@@ -84,7 +85,7 @@ public:
 
     void printTree();
     std::string getContent();
-    void getContent(std::string& content_, std::shared_ptr<ASTNode<T>> rootNode, std::vector<bool> &fList, int d,
+    void getContent(std::string& content_, std::shared_ptr<ASTNode<T>> rootNode, std::vector<bool>& fList, int d,
                     bool l);
 
     int getHeight(std::shared_ptr<ASTNode<T>> node);
@@ -97,10 +98,10 @@ ASTree<T>::ASTree(ASTNode<T>* root) {
 
 template <typename T>
 int ASTree<T>::getHeight(std::shared_ptr<ASTNode<T>> node) {
-    if(node == nullptr || node->getNodes().size() == 0)
+    if (node == nullptr || node->getNodes().size() == 0)
         return 0;
     int height = 0;
-    for(auto node_ : node->getNodes())
+    for (auto node_ : node->getNodes())
         height = std::max(height, getHeight(node_));
     return ++height;
 }
@@ -222,7 +223,7 @@ void ASTNode<T>::inorderVisit(std::shared_ptr<ASTNode<T>> parentNode) {
     }
 
     // Visit children
-    for (const auto &child : getNodes()) {
+    for (const auto& child : getNodes()) {
         std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
         std::cout << "Visiting child of " << std::get<std::string>(*value_) << std::endl;
         child->inorderVisit(this->shared_from_this());
