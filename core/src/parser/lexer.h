@@ -10,20 +10,23 @@
 #include <tuple>
 #include <unordered_map>
 
+
+
+
 class Lexer {
 public:
     /// Token types the lexer uses to group characters.
     enum class TokenType {
         /// The order in which they are defined, defines the precedence.
 
-        Comment,
-        Keyword,
-        Literal,
-        Punctuation,
-        Identifier,
-        Whitespace,
-        Eof,
-        Incorrect,
+        Comment,                        // 0
+        Keyword,                        // 1
+        Literal,                        // 2
+        Punctuation,                    // 3
+        Identifier,                     // 4
+        Whitespace,                     // 5
+        Eof,                            // 6
+        Incorrect,                      // 7
 
         /// Punctuation characters
         LeftCurly,
@@ -40,7 +43,7 @@ public:
         Not,
         SemiColon,
     };
-
+    
     static constexpr char eof_token{'\0'};
 
 public:

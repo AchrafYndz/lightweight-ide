@@ -40,10 +40,13 @@ std::string generateJSON(const LR& lr, const std::string& filepath, const std::s
     // literals
     // comments
     // punctuation (= brackets and operators)
+
     if (parse_result.tree.has_value()) {
         const auto& root = parse_result.tree.value()->getRoot();
-        root->inorderVisit(root);
+        root->inorderVisit(root, result);
     }
+
+    std::cout << std::setw(4) << result << std::endl;
 
     // TODO: @Flor remove placeholder for prod
     // std::string result =

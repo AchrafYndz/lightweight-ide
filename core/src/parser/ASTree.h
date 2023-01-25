@@ -68,7 +68,7 @@ public:
     const std::vector<std::shared_ptr<ASTNode>>& getNodes();
     void setNodes(std::vector<std::shared_ptr<ASTNode>> nodes);
 
-    void inorderVisit(std::shared_ptr<ASTNode<T>> parentNode);
+    void inorderVisit(std::shared_ptr<ASTNode<T>> parentNode, nlohmann::json& json);
 };
 
 template <typename T>
@@ -214,24 +214,55 @@ void ASTNode<T>::setNodes(std::vector<std::shared_ptr<ASTNode<T>>> nodes) {
 
 // inorder traverse while keeping track of parent
 template <typename T>
-void ASTNode<T>::inorderVisit(std::shared_ptr<ASTNode<T>> parentNode) {
+void ASTNode<T>::inorderVisit(std::shared_ptr<ASTNode<T>> parentNode, nlohmann::json& json) {
     // Check if leaf
     if (getNodes().empty()) {
         std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
-        std::cout << "Found leaf: " << std::get<Lexer::NextToken>(*value_).value << std::endl;
+        std::string str = std::get<Lexer::NextToken>(*value_).value;
+        std::string type = std::get<std::string>(*parentNode->getValue());
+        Lexer::TokenType self_type = std::get<Lexer::NextToken>(*value_).type;
+//        std::cout << "Found leaf: `" << str << "` with parent " << type << " and type " << int(self_type) << std::endl;
+
+        std::pair<unsigned int, unsigned int> start = std::get<Lexer::NextToken>(*value_).start;
+        std::pair<unsigned int, unsigned int> end = std::get<Lexer::NextToken>(*value_).end;
+//        std::cout << "|___start: {" << start.first << ", " << start.second << "} , end: {" << end.first << ", "
+//                  << end.second << "}" << std::endl;
+
+        std::map<std::string, std::pair<unsigned int, unsigned int>> json_key = {{"start", start}, {"end", end}};
+
+        switch (self_type) {
+        case Lexer::TokenType::Comment:
+            json["bounds"]["comments"] += json_key;
+            break;
+        case Lexer::TokenType::Keyword:
+            json["bounds"]["keywords"] += json_key;
+            break;
+        case Lexer::TokenType::Identifier:
+            if (type == "<function>") {
+                json["bounds"]["function_name"] += json_key;
+            } else if (type == "<function_call>") {
+                json["bounds"]["function_call"] += json_key;
+            } else if (type == "<arguments>") {
+                json["bounds"]["arguments"] += json_key;
+            }
+            break;
+        default:
+            break;
+        }
+
         return;
     }
 
     // Visit children
     for (const auto& child : getNodes()) {
-        std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
-        std::cout << "Visiting child of " << std::get<std::string>(*value_) << std::endl;
-        child->inorderVisit(this->shared_from_this());
+        //        std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
+        //        std::cout << "Visiting child of " << std::get<std::string>(*value_) << std::endl;
+        child->inorderVisit(this->shared_from_this(), json);
     }
 
     // Visit current node
-    std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
-    std::cout << "Visiting: " << std::get<std::string>(*value_) << std::endl;
+    //    std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
+    //    std::cout << "Visiting: " << std::get<std::string>(*value_) << std::endl;
 }
 
 #endif // LIGHTWEIGHT_IDE_V2_ASTREE_H
