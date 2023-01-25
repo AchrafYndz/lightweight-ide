@@ -2,25 +2,25 @@ import { MutableRefObject, useEffect, useRef } from "react";
 
 type HexColor = string;
 interface Theme {
-  comments: HexColor
-  keywords: HexColor
+  comment: HexColor
+  keyword: HexColor
   identifier: HexColor
   function_call_identifier: HexColor
-  literals: HexColor
+  literal: HexColor
   function_name: HexColor
-  arguments: HexColor
+  argument: HexColor
 }
 
 type Bounds = number[];
 
 interface HighlightSpecsBounds {
-  comments: Bounds[]
-  keywords: Bounds[]
+  comment: Bounds[]
+  keyword: Bounds[]
   identifier: Bounds[]
   function_call_identifier: Bounds[]
   function_name: Bounds[]
-  literals: Bounds[]
-  arguments: Bounds[]
+  literal: Bounds[]
+  argument: Bounds[]
 }
 
 interface Error {
@@ -112,13 +112,13 @@ const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement) => {
 
 const Editor = () => {
   const theme: Theme = {
-    comments: "#7B808A",
-    keywords: "#C678DD",
+    comment: "#7B808A",
+    keyword: "#C678DD",
     identifier: "#ABB2BF",
-    literals: "#E5C07B",
+    literal: "#E5C07B",
     function_call_identifier: "196CF0",
     function_name: "#62AFF0",
-    arguments: "#E5C07B",
+    argument: "#E5C07B",
   };
 
   const mirrorRef = useRef() as MutableRefObject<HTMLDivElement>;
