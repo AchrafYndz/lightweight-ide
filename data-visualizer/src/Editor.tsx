@@ -172,7 +172,7 @@ const theme: Theme = {
   keyword: "#C678DD",
   identifier: "#ABB2BF",
   literal: "#E5C07B",
-  function_call_identifier: "#196CF0",
+  function_call_identifier: "#4CAF50",
   function_name: "#62AFF0",
   argument: "#E5C07B",
 };
