@@ -397,12 +397,16 @@ LR::ParseResult LR::parse(StreamReader in) const {
         parser_state = stack.top().second;
     } while (lexer_token.type != Lexer::TokenType::Eof);
 
-    ParseResult result{success,
-                       (stack.top().first.has_value())
-                           ? std::make_optional(std::unique_ptr<ASTree>(
-                                 &*std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value()))))
-                           : std::nullopt,
-                       std::move(errors)};
+    std::optional<std::unique_ptr<ASTree>> tree{};
+    if (stack.top().first.has_value() &&
+        std::holds_alternative<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value())) {
+        tree = std::make_optional(
+            std::unique_ptr<ASTree>(&*std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value()))));
+    } else {
+        tree = std::nullopt;
+    }
+
+    ParseResult result{success, std::move(tree), std::move(errors)};
 
     return result;
 }
