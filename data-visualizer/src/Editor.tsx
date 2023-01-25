@@ -202,7 +202,7 @@ const Editor = () => {
                         <div className="w-2 flex justify-end">{t}</div>
                     ))}
                 </div>
-                <div className="flex w-full h-full relative" spellCheck={true}>
+                <div className="flex w-full h-full relative" spellCheck={false}>
                     <textarea
                         ref={inputRef}
                         onInput={(e) => f(e.currentTarget.value, mirrorRef, theme)}
