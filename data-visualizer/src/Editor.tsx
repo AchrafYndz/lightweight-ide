@@ -167,17 +167,17 @@ const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement, cb: () => v
     cb();
 };
 
-const Editor = () => {
-    const theme: Theme = {
-        comment: "#7B808A",
-        keyword: "#C678DD",
-        identifier: "#ABB2BF",
-        literal: "#E5C07B",
-        function_call_identifier: "#196CF0",
-        function_name: "#62AFF0",
-        argument: "#E5C07B",
-    };
+const theme: Theme = {
+  comment: "#7B808A",
+  keyword: "#C678DD",
+  identifier: "#ABB2BF",
+  literal: "#E5C07B",
+  function_call_identifier: "#196CF0",
+  function_name: "#62AFF0",
+  argument: "#E5C07B",
+};
 
+const Editor = () => {
     const mirrorRef = useRef() as MutableRefObject<HTMLDivElement>;
     const inputRef = useRef() as MutableRefObject<HTMLTextAreaElement>;
 
@@ -191,7 +191,7 @@ const Editor = () => {
         return () => {
             current.removeEventListener("keydown", tabHandlerCurrent);
         };
-    }, [inputRef, theme]);
+    }, [inputRef]);
 
     return (
         <>
