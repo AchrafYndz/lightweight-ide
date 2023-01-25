@@ -13,7 +13,8 @@ interface Theme {
 
 type ConvertedBounds = number[];
 interface BackendBounds {
-  
+  end: number[]
+  start: number[]
 }
 
 interface HighlightSpecsBounds<T> {
@@ -37,7 +38,7 @@ interface HighlightSpecs<T> {
   errors: Error[]
 }
 
-const highlight = async (code: string): Promise<HighlightSpecs> => {
+const highlight = async (code: string): Promise<HighlightSpecs<ConvertedBounds>> => {
   const response = await fetch("http://0.0.0.0:18080/json", {
     method: "POST",
     headers: {
@@ -45,6 +46,8 @@ const highlight = async (code: string): Promise<HighlightSpecs> => {
     },
     body: code,
   });
+
+  const parsed = await response.json() as HighlightSpecs<BackendBounds>
 
   return response.json();
 };
@@ -60,7 +63,7 @@ const f = async (
   const merged = [];
   for (const key of Object.keys(spec.bounds))
     merged.push(
-      ...spec.bounds[key as keyof HighlightSpecsBounds].map((c) => ({
+      ...spec.bounds[key as keyof HighlightSpecsBounds<ConvertedBounds>].map((c) => ({
         bounds: c,
         color: theme[key as keyof Theme],
       }))
