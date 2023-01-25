@@ -236,23 +236,23 @@ inline void ASTNode<std::variant<std::string, Lexer::NextToken>>::inorderVisit(
 
         switch (self_type) {
         case Lexer::TokenType::Comment:
-            json["bounds"]["comment"] += json_key;
+            json["comment"] += json_key;
             break;
         case Lexer::TokenType::Keyword:
-            json["bounds"]["keyword"] += json_key;
+            json["keyword"] += json_key;
             break;
         case Lexer::TokenType::Literal:
-            json["bounds"]["literal"] += json_key;
+            json["literal"] += json_key;
             break;
         case Lexer::TokenType::Identifier:
             if (type == "<function>") {
-                json["bounds"]["function_name"] += json_key;
+                json["function_name"] += json_key;
             } else if (type == "<function_call>") {
-                json["bounds"]["function_call_identifier"] += json_key;
+                json["function_call_identifier"] += json_key;
             } else if (type == "<arguments>") {
-                json["bounds"]["argument"] += json_key;
+                json["argument"] += json_key;
             } else
-                json["bounds"]["identifier"] += json_key;
+                json["identifier"] += json_key;
             break;
         default:
             break;
