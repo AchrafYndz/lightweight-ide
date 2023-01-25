@@ -47,8 +47,7 @@ const convert_backend_bounds = (bounds: BackendBounds, code: string): ConvertedB
     let end = 0;
 
     const chars = [...code];
-
-    for (let c of chars) {
+    for (const c of chars) {
         switch (c) {
             case "\n": {
                 col = 0;
@@ -69,7 +68,6 @@ const convert_backend_bounds = (bounds: BackendBounds, code: string): ConvertedB
         if (([row, col] as number[]).every((n, i) => n === bounds.end[i])) {
             end = index + 1;
             return [start, end] as ConvertedBounds;
-
         }
     }
 
