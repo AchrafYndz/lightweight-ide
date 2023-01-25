@@ -237,6 +237,9 @@ void ASTNode<T>::inorderVisit(std::shared_ptr<ASTNode<T>> parentNode, nlohmann::
         case Lexer::TokenType::Keyword:
             json["bounds"]["keywords"] += json_key;
             break;
+        case Lexer::TokenType::Literal:
+            json["bounds"]["literals"] += json_key;
+            break;
         case Lexer::TokenType::Identifier:
             if (type == "<function>") {
                 json["bounds"]["function_name"] += json_key;
