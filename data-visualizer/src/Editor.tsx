@@ -11,16 +11,20 @@ interface Theme {
   argument: HexColor
 }
 
-type Bounds = number[];
+type ConvertedBounds = number[];
+interface BackendBounds {
+  end: number[]
+  start: number[]
+}
 
-interface HighlightSpecsBounds {
-  comment: Bounds[]
-  keyword: Bounds[]
-  identifier: Bounds[]
-  function_call_identifier: Bounds[]
-  function_name: Bounds[]
-  literal: Bounds[]
-  argument: Bounds[]
+interface HighlightSpecsBounds<T> {
+  comment: T[]
+  keyword: T[]
+  identifier: T[]
+  function_call_identifier: T[]
+  function_name: T[]
+  literal: T[]
+  argument: T[]
 }
 
 interface Error {
@@ -28,13 +32,13 @@ interface Error {
   message: string
 }
 
-interface HighlightSpecs {
+interface HighlightSpecs<T> {
   code: string
-  bounds: HighlightSpecsBounds
+  bounds: HighlightSpecsBounds<T>
   errors: Error[]
 }
 
-const highlight = async (code: string): Promise<HighlightSpecs> => {
+const highlight = async (code: string): Promise<HighlightSpecs<ConvertedBounds>> => {
   const response = await fetch("http://0.0.0.0:18080/json", {
     method: "POST",
     headers: {
@@ -42,6 +46,8 @@ const highlight = async (code: string): Promise<HighlightSpecs> => {
     },
     body: code,
   });
+
+  const parsed = await response.json() as HighlightSpecs<BackendBounds>
 
   return response.json();
 };
@@ -57,7 +63,7 @@ const f = async (
   const merged = [];
   for (const key of Object.keys(spec.bounds))
     merged.push(
-      ...spec.bounds[key as keyof HighlightSpecsBounds].map((c) => ({
+      ...spec.bounds[key as keyof HighlightSpecsBounds<ConvertedBounds>].map((c) => ({
         bounds: c,
         color: theme[key as keyof Theme],
       }))
