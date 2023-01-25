@@ -52,6 +52,15 @@ private:
     };
 
 public:
+    /// Result returned for parsing an input.
+    struct ParseResult {
+        /// Parsing succeeded.
+        bool success{};
+        /// Abstract syntax tree (can be none when the program contained to many errors).
+        std::optional<std::unique_ptr<ASTree>> tree{};
+    };
+
+public:
     /// Abstract Lr exception class.
     class LRException : public std::exception {};
 
@@ -86,7 +95,7 @@ public:
     LR(const CFG& cfg);
 
     /// Parses the given lexer using the
-    std::pair<bool, ASTree*> parse(StreamReader in) const;
+    ParseResult parse(StreamReader in) const;
 
 private:
     static ItemSet closure(const ItemSet& item, const std::string& separator, const CFG& cfg);

@@ -303,7 +303,7 @@ LR::ItemSet LR::closure(const ItemSet& item, const std::string& separator, const
     return result;
 }
 
-std::pair<bool, LR::ASTree*> LR::parse(StreamReader in) const {
+LR::ParseResult LR::parse(StreamReader in) const {
     bool success{true};
 
     Lexer lexer(in);
@@ -328,6 +328,8 @@ std::pair<bool, LR::ASTree*> LR::parse(StreamReader in) const {
             const auto action_pair = this->table.at(parser_state).first.at(lookup_token);
             result = this->handle_action(action_pair, lookup_token, lexer_token, stack, parser_state);
         } catch (const std::out_of_range&) {
+
+            success = false;
             auto best_corrections = this->handle_error(lookup_token, lexer, parser_state, stack);
 
             // DEBUG: Because `Insert` corrections are added first to vector, first element can only be delete if size
@@ -380,7 +382,13 @@ std::pair<bool, LR::ASTree*> LR::parse(StreamReader in) const {
         parser_state = stack.top().second;
     } while (lexer_token.type != Lexer::TokenType::Eof);
 
-    return {success, std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value()))};
+    // check if the parser got far enough with parsing
+    ParseResult result{success, (stack.top().first.has_value())
+                                    ? std::make_optional(std::unique_ptr<ASTree>(std::get<1>(
+                                          std::get<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value()))))
+                                    : std::nullopt};
+
+    return result;
 }
 
 bool LR::handle_action(ActionPair action_pair, const std::string& lookup_token, const Lexer::NextToken& lexer_token,

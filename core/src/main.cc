@@ -13,12 +13,21 @@
 #include <thread>
 #include <vector>
 
-std::string generateJSON(const LR& lr, const std::string& filepath) {
-    std::pair<bool, LR::ASTree*> parse_result = lr.parse(StreamReader(filepath));
+std::string generateJSON(const LR& lr, const std::string& filepath, const std::string& request_source) {
+    nlohmann::json result{};
+    result["code"] = request_source;
 
-    std::cout << "ASTree content: \n" << parse_result.second->getContent();
+    const LR::ParseResult parse_result = lr.parse(StreamReader(filepath));
+    if (!parse_result.success)
+        result["errors"] = "failed to parse content";
 
-    std::cout << "Parse result: " << ((parse_result.first) ? "success" : "failed") << '\n';
+    if (parse_result.tree.has_value()) {
+        std::cout << "ASTree content: \n" << parse_result.tree.value()->getContent();
+    } else {
+        std::cout << "Cannot print ASTree for program with unrecoverable errors." << std::endl;
+    }
+
+    std::cout << "Parse result: " << ((parse_result.success) ? "success" : "failed") << '\n';
 
     // delete file from system
     if (!std::filesystem::remove(filepath))
@@ -27,17 +36,16 @@ std::string generateJSON(const LR& lr, const std::string& filepath) {
     // TODO: analyze parse tree for syntax highlighting
 
     // TODO: @Flor remove placeholder for prod
-    std::string result =
-        R"~({"code":"from string import ascii_lowercase\\n\\ndef main():\\n    # This is a comment!\\n    message = \"Hello, alphabet!\"\\n    print(message, ascii_lowercase)\\n\\nmain()","bounds":{"strings":[[87,105]],"comments":[[52,72]],"keywords":[[0,4],[12,18],[36,39]]},"errors":[{"line":0,"message":"Expected module, got 'string'"}]})~";
+    // std::string result =
+    //     R"~({"code":"from string import ascii_lowercase\\n\\ndef main():\\n    # This is a comment!\\n    message =
+    //     \"Hello, alphabet!\"\\n    print(message,
+    //     ascii_lowercase)\\n\\nmain()","bounds":{"strings":[[87,105]],"comments":[[52,72]],"keywords":[[0,4],[12,18],[36,39]]},"errors":[{"line":0,"message":"Expected
+    //     module, got 'string'"}]})~";
 
     // TODO: @Achraf syntax designation & error conversion to frontend compatible format
     // result = ...;
 
-    // delete parse tree
-    // TODO: When using it for syntax highlighting, store it in a smart pointer.
-    delete parse_result.second;
-
-    return result;
+    return result.dump();
 }
 
 /// Returns string with escaped characters replaced with actual characters.
@@ -124,6 +132,16 @@ int main() {
     const CFG cfg = CFG::parse_ebnf("res/grammar/brolang.gram");
     LR lr(cfg);
 
+    // const std::pair<bool, LR::ASTree*> result = lr.parse(StreamReader("factorial.bro"));
+    //
+    // if (result.second) {
+    //     std::cout << "ASTree content: \n" << result.second->getContent();
+    // } else {
+    //     std::cout << "Cannot generate AST for program that contains to many errors." << std::endl;
+    // }
+    //
+    // std::cout << "Parse result: " << ((result.first) ? "success" : "failed") << '\n';
+
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/")([]() { return "Hello, world!"; });
@@ -135,7 +153,7 @@ int main() {
         // move source code into source file to free memory
         const std::string filename = move_code_into_file(body["code"]);
 
-        crow::response response(generateJSON(lr, filename));
+        crow::response response(generateJSON(lr, filename, body["code"]));
         response.set_header("content-type", "application/json");
         response.set_header("Access-Control-Allow-Origin", "*");
 
