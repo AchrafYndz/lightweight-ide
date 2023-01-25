@@ -68,7 +68,8 @@ public:
     const std::vector<std::shared_ptr<ASTNode>>& getNodes();
     void setNodes(std::vector<std::shared_ptr<ASTNode>> nodes);
 
-    void inorderVisit(std::shared_ptr<ASTNode<std::variant<std::string, Lexer::NextToken>>> parentNode, nlohmann::json& json);
+    void inorderVisit(std::shared_ptr<ASTNode<std::variant<std::string, Lexer::NextToken>>> parentNode,
+                      nlohmann::json& json);
 };
 
 template <typename T>
@@ -214,19 +215,22 @@ void ASTNode<T>::setNodes(std::vector<std::shared_ptr<ASTNode<T>>> nodes) {
 
 // inorder traverse while keeping track of parent
 template <>
-void ASTNode<std::variant<std::string, Lexer::NextToken>>::inorderVisit(std::shared_ptr<ASTNode<std::variant<std::string, Lexer::NextToken>>> parentNode, nlohmann::json& json) {
+inline void ASTNode<std::variant<std::string, Lexer::NextToken>>::inorderVisit(
+    std::shared_ptr<ASTNode<std::variant<std::string, Lexer::NextToken>>> parentNode, nlohmann::json& json) {
     // Check if leaf
     if (getNodes().empty()) {
         std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
         std::string str = std::get<Lexer::NextToken>(*value_).value;
         std::string type = std::get<std::string>(*parentNode->getValue());
         Lexer::TokenType self_type = std::get<Lexer::NextToken>(*value_).type;
-//        std::cout << "Found leaf: `" << str << "` with parent " << type << " and type " << int(self_type) << std::endl;
+        //        std::cout << "Found leaf: `" << str << "` with parent " << type << " and type " << int(self_type) <<
+        //        std::endl;
 
         std::pair<unsigned int, unsigned int> start = std::get<Lexer::NextToken>(*value_).start;
         std::pair<unsigned int, unsigned int> end = std::get<Lexer::NextToken>(*value_).end;
-//        std::cout << "|___start: {" << start.first << ", " << start.second << "} , end: {" << end.first << ", "
-//                  << end.second << "}" << std::endl;
+        //        std::cout << "|___start: {" << start.first << ", " << start.second << "} , end: {" << end.first << ",
+        //        "
+        //                  << end.second << "}" << std::endl;
 
         std::map<std::string, std::pair<unsigned int, unsigned int>> json_key = {{"start", start}, {"end", end}};
 
