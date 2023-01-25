@@ -148,10 +148,10 @@ std::string move_code_into_file(const std::string& code) {
 }
 
 int main() {
-    const CFG cfg = CFG::parse_ebnf("res/grammar/brolang.gram");
+    const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
     LR lr(cfg);
 
-    // const std::pair<bool, LR::ASTree*> result = lr.parse(StreamReader("factorial.bro"));
+    // const std::pair<bool, LR::ASTree*> result = lr.parse(StreamReader("factorial.pai"));
     //
     // if (result.second) {
     //     std::cout << "ASTree content: \n" << result.second->getContent();

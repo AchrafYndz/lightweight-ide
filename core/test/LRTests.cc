@@ -75,7 +75,7 @@ TEST_SUITE("LRTests") {
         CHECK_EQ(table, get_table());
     }
 
-    TEST_CASE_FIXTURE(LRTest, "[LRTests] bro_parse_table") {
+    TEST_CASE_FIXTURE(LRTest, "[LRTests] pai_parse_table") {
         const CFG cfg = CFG::parse_ebnf("test/res/input/EBNF2CFG.txt");
         setup(cfg);
 
@@ -730,7 +730,7 @@ TEST_SUITE("LRTests") {
         const CFG cfg = CFG::parse_ebnf("test/res/input/EBNF2CFG.txt");
         LR lr(cfg);
 
-        const auto parse_result = lr.parse(StreamReader("test/res/input/factorial.bro"));
+        const auto parse_result = lr.parse(StreamReader("test/res/input/factorial.pai"));
 
         std::ifstream expected_file("test/res/expected/LRTests-factorial_parsing.txt");
         std::stringstream expected{};
