@@ -305,6 +305,7 @@ LR::ItemSet LR::closure(const ItemSet& item, const std::string& separator, const
 
 LR::ParseResult LR::parse(StreamReader in) const {
     bool success{true};
+    std::vector<ParseError> errors{};
 
     Lexer lexer(in);
     std::stack<StackContent> stack(std::deque<StackContent>{{std::nullopt, 0}});
@@ -328,13 +329,27 @@ LR::ParseResult LR::parse(StreamReader in) const {
             const auto action_pair = this->table.at(parser_state).first.at(lookup_token);
             result = this->handle_action(action_pair, lookup_token, lexer_token, stack, parser_state);
         } catch (const std::out_of_range&) {
-
             success = false;
             auto best_corrections = this->handle_error(lookup_token, lexer, parser_state, stack);
 
-            // DEBUG: Because `Insert` corrections are added first to vector, first element can only be delete if size
-            // is 0.
-            // DEBUG: At least one correction should be found
+            if (lexer_token.type != Lexer::TokenType::Eof) {
+                std::vector<std::string> corrections{};
+
+                for (const auto& correction : best_corrections) {
+                    corrections.push_back(std::string() +
+                                          ((correction.first == ErrorCorrectionAction::Delete)
+                                               ? "delete the unexpected token"
+                                               : std::string() + "insert token: `" + correction.second.value() +
+                                                     "` after the unexpected token"));
+                }
+
+                errors.push_back({lexer_token.start.first,
+                                  std::string() + "unexpected token found: `" + lexer_token.value + "`",
+                                  std::move(corrections)});
+            }
+
+            // DEBUG: Because `Insert` corrections are added first to vector, first element can only be delete if
+            // size is 0. DEBUG: At least one correction should be found
             assert(best_corrections.size() != 0 && "at least one correction is found");
             const auto& correction = best_corrections.at(0);
 
@@ -382,10 +397,12 @@ LR::ParseResult LR::parse(StreamReader in) const {
         parser_state = stack.top().second;
     } while (lexer_token.type != Lexer::TokenType::Eof);
 
-    ParseResult result{success, (stack.top().first.has_value())
-                                    ? std::make_optional(std::unique_ptr<ASTree>(&*std::get<1>(
-                                          std::get<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value()))))
-                                    : std::nullopt};
+    ParseResult result{success,
+                       (stack.top().first.has_value())
+                           ? std::make_optional(std::unique_ptr<ASTree>(
+                                 &*std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value()))))
+                           : std::nullopt,
+                       std::move(errors)};
 
     return result;
 }

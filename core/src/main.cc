@@ -18,8 +18,12 @@ std::string generateJSON(const LR& lr, const std::string& filepath, const std::s
     result["code"] = request_source;
 
     const LR::ParseResult parse_result = lr.parse(StreamReader(filepath));
-    if (!parse_result.success)
-        result["errors"] = "failed to parse content";
+    if (!parse_result.success) {
+        for (auto error : parse_result.errors)
+            result["errors"].push_back({{"line", error.line},
+                                        {"message", std::move(error.message)},
+                                        {"corrections", std::move(error.corrections)}});
+    }
 
     if (parse_result.tree.has_value()) {
         std::cout << "ASTree content: \n" << parse_result.tree.value()->getContent();
