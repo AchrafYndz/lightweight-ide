@@ -30,6 +30,7 @@ interface HighlightSpecsBounds<T> {
 interface Error {
     line: number
     message: string
+    corrections: string[]
 }
 
 interface HighlightSpecs<T> {
@@ -106,6 +107,8 @@ const processCode = async (
 
     const spec = await highlight(content);
 
+
+
     const merged = [];
     if (spec.bounds) {
         for (const key of Object.keys(spec.bounds))
@@ -140,6 +143,8 @@ const processCode = async (
 
             split[error.line] += `  <span&nbspp;style="color:red;">[ERROR] ${error.message}</span>`
             html = split.join("\n")
+
+            console.log("possible corrections:", error.corrections);
         }
     }
 
@@ -168,13 +173,13 @@ const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement, cb: () => v
 };
 
 const theme: Theme = {
-  comment: "#7B808A",
-  keyword: "#C678DD",
-  identifier: "#ABB2BF",
-  literal: "#E5C07B",
-  function_call_identifier: "#196CF0",
-  function_name: "#62AFF0",
-  argument: "#E5C07B",
+    comment: "#7B808A",
+    keyword: "#C678DD",
+    identifier: "#ABB2BF",
+    literal: "#E5C07B",
+    function_call_identifier: "#4CAF50",
+    function_name: "#62AFF0",
+    argument: "#E5C07B",
 };
 
 const Editor = () => {
@@ -184,7 +189,7 @@ const Editor = () => {
     useEffect(() => {
         if (!inputRef.current) return;
         const current = inputRef.current;
-        const tabHandlerCurrent = (e: KeyboardEvent) => {tabHandler(e, current, () => processCode(inputRef.current.value, mirrorRef, theme))};
+        const tabHandlerCurrent = (e: KeyboardEvent) => { tabHandler(e, current, () => processCode(inputRef.current.value, mirrorRef, theme)) };
 
         current.addEventListener("keydown", tabHandlerCurrent);
 
