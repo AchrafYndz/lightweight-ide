@@ -382,9 +382,8 @@ LR::ParseResult LR::parse(StreamReader in) const {
         parser_state = stack.top().second;
     } while (lexer_token.type != Lexer::TokenType::Eof);
 
-    // check if the parser got far enough with parsing
     ParseResult result{success, (stack.top().first.has_value())
-                                    ? std::make_optional(std::unique_ptr<ASTree>(std::get<1>(
+                                    ? std::make_optional(std::unique_ptr<ASTree>(&*std::get<1>(
                                           std::get<std::tuple<CFG::Var, ASTree*>>(stack.top().first.value()))))
                                     : std::nullopt};
 
@@ -418,7 +417,8 @@ bool LR::handle_action(ActionPair action_pair, const std::string& lookup_token, 
 
             // check if content is a variable with tree or a terminal without tree
             if (std::holds_alternative<std::tuple<CFG::Var, ASTree*>>(content)) {
-                old_nodes.push_back(std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(content))->getRoot());
+                const auto tree = std::get<1>(std::get<std::tuple<CFG::Var, ASTree*>>(content));
+                old_nodes.push_back(tree->getRoot());
             } else {
                 old_nodes.push_back(std::make_shared<ASTNode>(
                     new std::variant<CFG::Var, Lexer::NextToken>(std::get<Lexer::NextToken>(content)),

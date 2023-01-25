@@ -64,7 +64,7 @@ public:
     const std::shared_ptr<T> getValue() const;
     void setValue(T* value);
 
-    std::vector<std::shared_ptr<ASTNode>> getNodes();
+    const std::vector<std::shared_ptr<ASTNode>>& getNodes();
     void setNodes(std::vector<std::shared_ptr<ASTNode>> nodes);
 
     void inorderVisit(std::shared_ptr<ASTNode<T>> parentNode);
@@ -202,7 +202,7 @@ void ASTNode<T>::setValue(T* value) {
 }
 
 template <typename T>
-std::vector<std::shared_ptr<ASTNode<T>>> ASTNode<T>::getNodes() {
+const std::vector<std::shared_ptr<ASTNode<T>>>& ASTNode<T>::getNodes() {
     return nodes;
 }
 

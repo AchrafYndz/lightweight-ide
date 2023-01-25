@@ -741,10 +741,8 @@ TEST_SUITE("LRTests") {
         // reset << parse_result.second->getContent();
         // reset.close();
 
-        CHECK(parse_result.first);
-        CHECK_EQ(expected.str(), parse_result.second->getContent());
-
-        // cleanup
-        delete parse_result.second;
+        CHECK(parse_result.success);
+        CHECK(parse_result.tree.has_value());
+        CHECK_EQ(expected.str(), parse_result.tree.value()->getContent());
     }
 }
