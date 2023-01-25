@@ -15,43 +15,6 @@
 #include <variant>
 #include <vector>
 
-template <>
-inline void ASTree<std::variant<CFG::Var, Lexer::NextToken>>::getContent(
-    std::string& content_, std::shared_ptr<ASTNode<std::variant<CFG::Var, Lexer::NextToken>>> rootNode,
-    std::vector<bool>& fList, int d, bool l) {
-    if (rootNode == nullptr)
-        return;
-    for (int i = 1; i < d; i++) {
-        if (fList[i]) {
-            content_ += "|    ";
-            continue;
-        }
-        content_ += "     ";
-    }
-    if (d == 0) {
-        content_ += ((std::holds_alternative<Lexer::NextToken>(*rootNode->getValue()))
-                         ? std::get<Lexer::NextToken>(*rootNode->getValue()).value
-                         : std::get<CFG::Var>(*rootNode->getValue())) +
-                    "\n";
-    } else if (l) {
-        content_ += "+--- " +
-                    ((std::holds_alternative<Lexer::NextToken>(*rootNode->getValue()))
-                         ? std::get<Lexer::NextToken>(*rootNode->getValue()).value
-                         : std::get<CFG::Var>(*rootNode->getValue())) +
-                    "\n";
-        fList[d] = false;
-    } else {
-        content_ += "+--- " +
-                    ((std::holds_alternative<Lexer::NextToken>(*rootNode->getValue()))
-                         ? std::get<Lexer::NextToken>(*rootNode->getValue()).value
-                         : std::get<CFG::Var>(*rootNode->getValue())) +
-                    "\n";
-    }
-    for (const auto& node : rootNode->getNodes())
-        getContent(content_, node, fList, d + 1, (0 == (rootNode->getNodes().size()) - 1));
-    fList[d] = true;
-}
-
 class LR {
 public:
     using Rule = std::pair<CFG::Var, CFG::Body>;
@@ -159,5 +122,42 @@ private:
     friend class LRTest;
 #endif
 };
+
+template <>
+inline void ASTree<std::variant<CFG::Var, Lexer::NextToken>>::getContent(
+    std::string& content_, std::shared_ptr<ASTNode<std::variant<CFG::Var, Lexer::NextToken>>> rootNode,
+    std::vector<bool>& fList, int d, bool l) {
+    if (rootNode == nullptr)
+        return;
+    for (int i = 1; i < d; i++) {
+        if (fList[i]) {
+            content_ += "|    ";
+            continue;
+        }
+        content_ += "     ";
+    }
+    if (d == 0) {
+        content_ += ((std::holds_alternative<Lexer::NextToken>(*rootNode->getValue()))
+                         ? std::get<Lexer::NextToken>(*rootNode->getValue()).value
+                         : std::get<CFG::Var>(*rootNode->getValue())) +
+                    "\n";
+    } else if (l) {
+        content_ += "+--- " +
+                    ((std::holds_alternative<Lexer::NextToken>(*rootNode->getValue()))
+                         ? std::get<Lexer::NextToken>(*rootNode->getValue()).value
+                         : std::get<CFG::Var>(*rootNode->getValue())) +
+                    "\n";
+        fList[d] = false;
+    } else {
+        content_ += "+--- " +
+                    ((std::holds_alternative<Lexer::NextToken>(*rootNode->getValue()))
+                         ? std::get<Lexer::NextToken>(*rootNode->getValue()).value
+                         : std::get<CFG::Var>(*rootNode->getValue())) +
+                    "\n";
+    }
+    for (const auto& node : rootNode->getNodes())
+        getContent(content_, node, fList, d + 1, (0 == (rootNode->getNodes().size()) - 1));
+    fList[d] = true;
+}
 
 #endif // IDE_SRC_PARSERS_LR_H
