@@ -209,7 +209,7 @@ const Editor = () => {
                     />
                     <div
                         ref={mirrorRef}
-                        className="w-full h-full bg-neutral-800 absolute"
+                        className="w-full h-full bg-neutral-800 absolute whitespace-nowrap"
                     />
                 </div>
             </div>
