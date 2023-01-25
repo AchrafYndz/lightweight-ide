@@ -2,7 +2,6 @@ import { MutableRefObject, useEffect, useRef } from "react";
 
 type HexColor = string;
 interface Theme {
-    comment: HexColor
     keyword: HexColor
     identifier: HexColor
     function_call_identifier: HexColor
@@ -18,7 +17,6 @@ interface BackendBounds {
 }
 
 interface HighlightSpecsBounds<T> {
-    comment: T[]
     keyword: T[]
     identifier: T[]
     function_call_identifier: T[]
@@ -86,7 +84,7 @@ const highlight = async (code: string): Promise<HighlightSpecs<ConvertedBounds>>
 
     const parsed = await response.json() as HighlightSpecs<BackendBounds>
 
-    const converted: HighlightSpecsBounds<ConvertedBounds> = { comment: [], keyword: [], identifier: [], function_call_identifier: [], function_name: [], literal: [], argument: [] };
+    const converted: HighlightSpecsBounds<ConvertedBounds> = { keyword: [], identifier: [], function_call_identifier: [], function_name: [], literal: [], argument: [] };
 
     if (parsed.bounds) {
         for (const key of Object.keys(parsed.bounds)) {
@@ -173,7 +171,6 @@ const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement, cb: () => v
 };
 
 const theme: Theme = {
-    comment: "#7B808A",
     keyword: "#C678DD",
     identifier: "#ABB2BF",
     literal: "#E5C07B",
