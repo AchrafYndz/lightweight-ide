@@ -1,6 +1,6 @@
 (* the first variable is also the start variable *)
 <program> ::= <function> | <function> <program>
-<function> ::= "fn" "identifier" "(" <arguments> ")" "{" <body> "}" | "fn" "identifier" "(" ")" "{" <body> "}"
+<function> ::= "fn" "identifier" "(" <arguments> ")" "{" <body> "}" | "fn" "identifier" "(" ")" "{" <body> "}" | "fn" "identifier" "(" ")" "{" "}"
 <arguments> ::= "identifier" | "identifier" "," <arguments>
 <body> ::= <statement> | <statement> <body>
 <statement> ::= <assignment> | <function_call> ";" | <if> | <return>
