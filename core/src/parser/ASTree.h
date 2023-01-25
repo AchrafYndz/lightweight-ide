@@ -232,22 +232,23 @@ void ASTNode<T>::inorderVisit(std::shared_ptr<ASTNode<T>> parentNode, nlohmann::
 
         switch (self_type) {
         case Lexer::TokenType::Comment:
-            json["bounds"]["comments"] += json_key;
+            json["bounds"]["comment"] += json_key;
             break;
         case Lexer::TokenType::Keyword:
-            json["bounds"]["keywords"] += json_key;
+            json["bounds"]["keyword"] += json_key;
             break;
         case Lexer::TokenType::Literal:
-            json["bounds"]["literals"] += json_key;
+            json["bounds"]["literal"] += json_key;
             break;
         case Lexer::TokenType::Identifier:
             if (type == "<function>") {
                 json["bounds"]["function_name"] += json_key;
             } else if (type == "<function_call>") {
-                json["bounds"]["function_call"] += json_key;
+                json["bounds"]["function_call_identifier"] += json_key;
             } else if (type == "<arguments>") {
-                json["bounds"]["arguments"] += json_key;
-            }
+                json["bounds"]["argument"] += json_key;
+            } else
+                json["bounds"]["identifier"] += json_key;
             break;
         default:
             break;
