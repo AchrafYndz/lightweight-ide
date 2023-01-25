@@ -47,8 +47,7 @@ const convert_backend_bounds = (bounds: BackendBounds, code: string): ConvertedB
     let end = 0;
 
     const chars = [...code];
-
-    for (let c of chars) {
+    for (const c of chars) {
         switch (c) {
             case "\n": {
                 col = 0;
@@ -69,7 +68,6 @@ const convert_backend_bounds = (bounds: BackendBounds, code: string): ConvertedB
         if (([row, col] as number[]).every((n, i) => n === bounds.end[i])) {
             end = index + 1;
             return [start, end] as ConvertedBounds;
-
         }
     }
 
@@ -100,7 +98,7 @@ const highlight = async (code: string): Promise<HighlightSpecs<ConvertedBounds>>
     return { ...parsed, bounds: converted } as HighlightSpecs<ConvertedBounds>;
 };
 
-const f = async (
+const processCode = async (
     content: string,
     ref: MutableRefObject<HTMLDivElement>,
     theme: Theme
@@ -153,7 +151,7 @@ const f = async (
 };
 
 // Source (modified): https://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
-const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement) => {
+const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement, cb: () => void) => {
     if (e.key !== "Tab") return;
     e.preventDefault();
 
@@ -166,26 +164,27 @@ const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement) => {
         textarea.value.substring(0, start) + "    " + textarea.value.substring(end);
 
     textarea.selectionStart = textarea.selectionEnd = start + 4;
+    cb();
+};
+
+const theme: Theme = {
+  comment: "#7B808A",
+  keyword: "#C678DD",
+  identifier: "#ABB2BF",
+  literal: "#E5C07B",
+  function_call_identifier: "#196CF0",
+  function_name: "#62AFF0",
+  argument: "#E5C07B",
 };
 
 const Editor = () => {
-    const theme: Theme = {
-        comment: "#7B808A",
-        keyword: "#C678DD",
-        identifier: "#ABB2BF",
-        literal: "#E5C07B",
-        function_call_identifier: "#196CF0",
-        function_name: "#62AFF0",
-        argument: "#E5C07B",
-    };
-
     const mirrorRef = useRef() as MutableRefObject<HTMLDivElement>;
     const inputRef = useRef() as MutableRefObject<HTMLTextAreaElement>;
 
     useEffect(() => {
         if (!inputRef.current) return;
         const current = inputRef.current;
-        const tabHandlerCurrent = (e: KeyboardEvent) => tabHandler(e, current);
+        const tabHandlerCurrent = (e: KeyboardEvent) => {tabHandler(e, current, () => processCode(inputRef.current.value, mirrorRef, theme))};
 
         current.addEventListener("keydown", tabHandlerCurrent);
 
@@ -205,7 +204,7 @@ const Editor = () => {
                 <div className="flex w-full h-full relative" spellCheck={false}>
                     <textarea
                         ref={inputRef}
-                        onInput={(e) => f(e.currentTarget.value, mirrorRef, theme)}
+                        onInput={(e) => processCode(e.currentTarget.value, mirrorRef, theme)}
                         className="w-full h-full bg-neutral-800 focus:outline-none z-10 text-transparent bg-transparent caret-white"
                     />
                     <div
