@@ -68,7 +68,7 @@ public:
     const std::vector<std::shared_ptr<ASTNode>>& getNodes();
     void setNodes(std::vector<std::shared_ptr<ASTNode>> nodes);
 
-    void inorderVisit(std::shared_ptr<ASTNode<T>> parentNode, nlohmann::json& json);
+    void inorderVisit(std::shared_ptr<ASTNode<std::variant<std::string, Lexer::NextToken>>> parentNode, nlohmann::json& json);
 };
 
 template <typename T>
@@ -213,8 +213,8 @@ void ASTNode<T>::setNodes(std::vector<std::shared_ptr<ASTNode<T>>> nodes) {
 }
 
 // inorder traverse while keeping track of parent
-template <typename T>
-void ASTNode<T>::inorderVisit(std::shared_ptr<ASTNode<T>> parentNode, nlohmann::json& json) {
+template <>
+void ASTNode<std::variant<std::string, Lexer::NextToken>>::inorderVisit(std::shared_ptr<ASTNode<std::variant<std::string, Lexer::NextToken>>> parentNode, nlohmann::json& json) {
     // Check if leaf
     if (getNodes().empty()) {
         std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
