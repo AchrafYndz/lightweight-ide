@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 
 type HexColor = string;
 interface Theme {
@@ -74,7 +74,7 @@ const convert_backend_bounds = (bounds: BackendBounds, code: string): ConvertedB
     throw new Error("failed to find start and end index of bounds");
 };
 
-const highlight = async (code: string): Promise<HighlightSpecs<BackendBounds>> => {
+const highlight = async (code: string): Promise<HighlightSpecs<ConvertedBounds>> => {
     const response = await fetch("http://0.0.0.0:18080/json", {
         method: "POST",
         headers: {
@@ -85,25 +85,27 @@ const highlight = async (code: string): Promise<HighlightSpecs<BackendBounds>> =
 
     const parsed = await response.json() as HighlightSpecs<BackendBounds>
 
-    // const converted: HighlightSpecsBounds<ConvertedBounds> = { comment: [], keyword: [], identifier: [], function_call_identifier: [], function_name: [], literal: [], argument: [] };
+    const converted: HighlightSpecsBounds<ConvertedBounds> = { comment: [], keyword: [], identifier: [], function_call_identifier: [], function_name: [], literal: [], argument: [] };
 
-    // if (parsed.bounds) {
-    //     for (const key of Object.keys(parsed.bounds)) {
-    //         converted[key as keyof HighlightSpecsBounds<ConvertedBounds>] =
-    //             parsed.bounds[key as keyof HighlightSpecsBounds<BackendBounds>].map((b) => convert_backend_bounds(b, code));
-    //     }
+    if (parsed.bounds) {
+        for (const key of Object.keys(parsed.bounds)) {
+            converted[key as keyof HighlightSpecsBounds<ConvertedBounds>] =
+                parsed.bounds[key as keyof HighlightSpecsBounds<BackendBounds>].map((b) => convert_backend_bounds(b, code));
+        }
 
-    // }
+    }
 
-    return parsed
+    return { ...parsed, bounds: converted } as HighlightSpecs<ConvertedBounds>;
 };
 
-const processCode = (
+const processCode = async (
     content: string,
-    spec: HighlightSpecs<ConvertedBounds>,
     ref: MutableRefObject<HTMLDivElement>,
     theme: Theme
 ) => {
+
+    const spec = await highlight(content);
+
     const merged = [];
     if (spec.bounds) {
         for (const key of Object.keys(spec.bounds))
@@ -146,8 +148,6 @@ const processCode = (
     html = html.replace(/\n/g, "<br>");
 
     ref.current.innerHTML = html;
-
-    return spec;
 };
 
 // Source (modified): https://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
@@ -180,27 +180,6 @@ const Editor = () => {
 
     const mirrorRef = useRef() as MutableRefObject<HTMLDivElement>;
     const inputRef = useRef() as MutableRefObject<HTMLTextAreaElement>;
-    const [highlightCache, setHighlightCache] = useState<HighlightSpecs<ConvertedBounds> | null>(null)
-
-    const processCodeLocal = useCallback(async (content: string, ref: MutableRefObject<HTMLDivElement>, theme: Theme) => {
-      let spec = await highlight(content)
-
-      if (Object.values(spec.bounds).every(entry => entry.size === 0) && highlightCache) spec = highlightCache
-      else setHighlightCache(spec)
-
-      const converted: HighlightSpecsBounds<ConvertedBounds> = { comment: [], keyword: [], identifier: [], function_call_identifier: [], function_name: [], literal: [], argument: [] };
-
-      if (spec.bounds) {
-        for (const key of Object.keys(spec.bounds)) {
-          converted[key as keyof HighlightSpecsBounds<ConvertedBounds>] =
-          spec.bounds[key as keyof HighlightSpecsBounds<BackendBounds>].map((b) => convert_backend_bounds(b, content));
-        }
-      }
-
-      spec = { ...spec, bounds: converted } as HighlightSpecs<ConvertedBounds>;
-      
-      processCode(content, spec, ref, theme)
-    }, [])
 
     useEffect(() => {
         if (!inputRef.current) return;
