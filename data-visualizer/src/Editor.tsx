@@ -151,7 +151,7 @@ const f = async (
 };
 
 // Source (modified): https://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
-const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement) => {
+const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement, cb: () => void) => {
     if (e.key !== "Tab") return;
     e.preventDefault();
 
@@ -164,6 +164,7 @@ const tabHandler = (e: KeyboardEvent, textarea: HTMLTextAreaElement) => {
         textarea.value.substring(0, start) + "    " + textarea.value.substring(end);
 
     textarea.selectionStart = textarea.selectionEnd = start + 4;
+    cb();
 };
 
 const Editor = () => {
@@ -183,7 +184,7 @@ const Editor = () => {
     useEffect(() => {
         if (!inputRef.current) return;
         const current = inputRef.current;
-        const tabHandlerCurrent = (e: KeyboardEvent) => tabHandler(e, current);
+        const tabHandlerCurrent = (e: KeyboardEvent) => {tabHandler(e, current, () => f(inputRef.current.value, mirrorRef, theme))};
 
         current.addEventListener("keydown", tabHandlerCurrent);
 
