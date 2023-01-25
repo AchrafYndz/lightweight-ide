@@ -11,16 +11,19 @@ interface Theme {
   argument: HexColor
 }
 
-type Bounds = number[];
+type ConvertedBounds = number[];
+interface BackendBounds {
+  
+}
 
-interface HighlightSpecsBounds {
-  comment: Bounds[]
-  keyword: Bounds[]
-  identifier: Bounds[]
-  function_call_identifier: Bounds[]
-  function_name: Bounds[]
-  literal: Bounds[]
-  argument: Bounds[]
+interface HighlightSpecsBounds<T> {
+  comment: T[]
+  keyword: T[]
+  identifier: T[]
+  function_call_identifier: T[]
+  function_name: T[]
+  literal: T[]
+  argument: T[]
 }
 
 interface Error {
@@ -28,9 +31,9 @@ interface Error {
   message: string
 }
 
-interface HighlightSpecs {
+interface HighlightSpecs<T> {
   code: string
-  bounds: HighlightSpecsBounds
+  bounds: HighlightSpecsBounds<T>
   errors: Error[]
 }
 
