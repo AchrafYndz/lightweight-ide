@@ -191,7 +191,7 @@ const Editor = () => {
         return () => {
             current.removeEventListener("keydown", tabHandlerCurrent);
         };
-    }, [inputRef]);
+    }, [inputRef, theme]);
 
     return (
         <>
