@@ -2,6 +2,7 @@
 #define LIGHTWEIGHT_IDE_V2_ASTREE_H
 
 #include "automata/Value.h"
+#include "lexer.h"
 
 #include <iostream>
 #include <map>
@@ -47,7 +48,7 @@
 };*/
 
 template <typename T>
-class ASTNode {
+class ASTNode : public std::enable_shared_from_this<ASTNode<T>> {
     // ASTType type;
     std::vector<std::shared_ptr<ASTNode>> nodes;
     std::shared_ptr<T> value;
@@ -65,6 +66,8 @@ public:
 
     std::vector<std::shared_ptr<ASTNode>> getNodes();
     void setNodes(std::vector<std::shared_ptr<ASTNode>> nodes);
+
+    void inorderVisit(std::shared_ptr<ASTNode<T>> parentNode);
 };
 
 template <typename T>
@@ -206,6 +209,28 @@ std::vector<std::shared_ptr<ASTNode<T>>> ASTNode<T>::getNodes() {
 template <typename T>
 void ASTNode<T>::setNodes(std::vector<std::shared_ptr<ASTNode<T>>> nodes) {
     ASTNode::nodes = nodes;
+}
+
+// inorder traverse while keeping track of parent
+template <typename T>
+void ASTNode<T>::inorderVisit(std::shared_ptr<ASTNode<T>> parentNode) {
+    // Check if leaf
+    if (getNodes().empty()) {
+        std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
+        std::cout << "Found leaf: " << std::get<Lexer::NextToken>(*value_).value << std::endl;
+        return;
+    }
+
+    // Visit children
+    for (const auto &child : getNodes()) {
+        std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
+        std::cout << "Visiting child of " << std::get<std::string>(*value_) << std::endl;
+        child->inorderVisit(this->shared_from_this());
+    }
+
+    // Visit current node
+    std::shared_ptr<std::variant<std::string, Lexer::NextToken>> value_ = getValue();
+    std::cout << "Visiting: " << std::get<std::string>(*value_) << std::endl;
 }
 
 #endif // LIGHTWEIGHT_IDE_V2_ASTREE_H

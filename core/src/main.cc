@@ -33,7 +33,17 @@ std::string generateJSON(const LR& lr, const std::string& filepath, const std::s
     if (!std::filesystem::remove(filepath))
         throw std::runtime_error("failed to delete temporary source file");
 
-    // TODO: analyze parse tree for syntax highlighting
+    // TODO: @Achraf analyze parse tree for syntax highlighting
+    // identifier
+    // function_call_identifier, function_name, arguments
+    // keywords
+    // literals
+    // comments
+    // punctuation (= brackets and operators)
+    LR::ASTree* parse_tree = parse_result.second;
+    auto root = parse_tree->getRoot();
+    root->inorderVisit(root);
+
 
     // TODO: @Flor remove placeholder for prod
     // std::string result =
