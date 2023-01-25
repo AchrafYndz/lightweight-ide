@@ -19,7 +19,7 @@ const Header = ({ fileName }: { fileName: string }) => {
 const App = () => {
     return (
         <div className="flex flex-col w-screen h-screen text-white">
-            <Header fileName="main.py" />
+            <Header fileName="main.pai" />
             <Editor />
         </div>
   );
