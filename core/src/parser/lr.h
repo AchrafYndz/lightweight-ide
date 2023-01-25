@@ -52,12 +52,24 @@ private:
     };
 
 public:
+    /// Errors representing a parsing error.
+    struct ParseError {
+        /// Line on which the error happened.
+        unsigned long line{};
+        /// Error message.
+        std::string message{};
+        /// Vector of possible error corrections.
+        std::vector<std::string> corrections{};
+    };
+
     /// Result returned for parsing an input.
     struct ParseResult {
         /// Parsing succeeded.
         bool success{};
         /// Abstract syntax tree (can be none when the program contained to many errors).
         std::optional<std::unique_ptr<ASTree>> tree{};
+        /// Vector of errors occurred while parsing.
+        std::vector<ParseError> errors{};
     };
 
 public:
