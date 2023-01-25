@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 
 type HexColor = string;
 interface Theme {
@@ -98,7 +98,7 @@ const highlight = async (code: string): Promise<HighlightSpecs<ConvertedBounds>>
     return { ...parsed, bounds: converted } as HighlightSpecs<ConvertedBounds>;
 };
 
-const f = async (
+const processCode = async (
     content: string,
     ref: MutableRefObject<HTMLDivElement>,
     theme: Theme
@@ -148,6 +148,8 @@ const f = async (
     html = html.replace(/\n/g, "<br>");
 
     ref.current.innerHTML = html;
+
+    return spec;
 };
 
 // Source (modified): https://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
@@ -180,11 +182,18 @@ const Editor = () => {
 
     const mirrorRef = useRef() as MutableRefObject<HTMLDivElement>;
     const inputRef = useRef() as MutableRefObject<HTMLTextAreaElement>;
+    const [highlightCache, setHighlightCache] = useState<HighlightSpecs<ConvertedBounds> | null>(null)
+
+    const processCodeLocal = useCallback(async (content: string, ref: MutableRefObject<HTMLDivElement>, theme: Theme) => {
+      const spec = await highlight(content);
+      const result = await processCode(content, ref, theme)
+      setHighlightCache(result)
+    }, [])
 
     useEffect(() => {
         if (!inputRef.current) return;
         const current = inputRef.current;
-        const tabHandlerCurrent = (e: KeyboardEvent) => {tabHandler(e, current, () => f(inputRef.current.value, mirrorRef, theme))};
+        const tabHandlerCurrent = (e: KeyboardEvent) => {tabHandler(e, current, () => processCode(inputRef.current.value, mirrorRef, theme))};
 
         current.addEventListener("keydown", tabHandlerCurrent);
 
@@ -204,7 +213,7 @@ const Editor = () => {
                 <div className="flex w-full h-full relative" spellCheck={false}>
                     <textarea
                         ref={inputRef}
-                        onInput={(e) => f(e.currentTarget.value, mirrorRef, theme)}
+                        onInput={(e) => processCode(e.currentTarget.value, mirrorRef, theme)}
                         className="w-full h-full bg-neutral-800 focus:outline-none z-10 text-transparent bg-transparent caret-white"
                     />
                     <div
