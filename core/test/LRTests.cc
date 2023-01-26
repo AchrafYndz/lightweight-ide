@@ -745,4 +745,71 @@ TEST_SUITE("LRTests") {
         CHECK(parse_result.tree.has_value());
         CHECK_EQ(expected.str(), parse_result.tree.value()->getContent());
     }
+
+    TEST_CASE("[LRTests] error1") {
+        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        LR lr(cfg);
+
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Error1.pai"));
+
+        CHECK(!parse_result.success);
+        CHECK(parse_result.tree.has_value());
+        CHECK(parse_result.errors.size() == 1);
+
+        if(!parse_result.errors.empty()){
+            std::string errorMessage = parse_result.errors[0].message;
+            CHECK_EQ(errorMessage, "unexpected token found: `ain`");
+        }
+    }
+    TEST_CASE("[LRTests] error2") {
+        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        LR lr(cfg);
+
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Error2.pai"));
+
+        CHECK(!parse_result.success);
+        CHECK(parse_result.tree.has_value());
+        CHECK(parse_result.errors.size() == 1);
+
+        if(!parse_result.errors.empty()){
+            std::string errorMessage = parse_result.errors[0].message;
+            CHECK_EQ(errorMessage, "unexpected token found: `5`");
+        }
+    }
+    TEST_CASE("[LRTests] error3") {
+        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        LR lr(cfg);
+
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Error3.pai"));
+
+        CHECK(!parse_result.success);
+        CHECK(parse_result.tree.has_value());
+        CHECK(parse_result.errors.size() == 4);
+
+        if(parse_result.errors.size() == 4){
+            CHECK_EQ(parse_result.errors[0].message, "unexpected token found: `{`");
+            CHECK_EQ(parse_result.errors[1].message, "unexpected token found: `x`");
+            CHECK_EQ(parse_result.errors[2].message, "unexpected token found: `}`");
+            CHECK_EQ(parse_result.errors[3].message, "unexpected token found: `;`");
+        }
+
+    }
+
+    TEST_CASE("[LRTests] error4") {
+        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        LR lr(cfg);
+
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Error4.pai"));
+
+        CHECK(!parse_result.success);
+        CHECK(parse_result.tree.has_value());
+        CHECK(parse_result.errors.size() == 4);
+
+        if(parse_result.errors.size() == 4){
+            CHECK_EQ(parse_result.errors[0].message, "unexpected token found: `,`");
+            CHECK_EQ(parse_result.errors[1].message, "unexpected token found: `,`");
+            CHECK_EQ(parse_result.errors[2].message, "unexpected token found: `,`");
+            CHECK_EQ(parse_result.errors[3].message, "unexpected token found: `=`");
+        }
+    }
 }

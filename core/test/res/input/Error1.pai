@@ -1,0 +1,5 @@
+// invalid function name
+// Main entry point
+fn m ain() {
+    let x = 5;
+}

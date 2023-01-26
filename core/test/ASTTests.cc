@@ -1,6 +1,7 @@
 #include "doctest/doctest.h"
 
 #include "../src/parser/ASTree.h"
+#include "lr.h"
 
 #include <iostream>
 
@@ -87,6 +88,56 @@ TEST_SUITE("ASTTests") {
         std::string actual = asTree.getContent();
 
         CHECK_EQ(expected.str(), actual);
+
+    }
+
+    TEST_CASE("[ASTTests] syntax1") {
+        nlohmann::json result{};
+        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        LR lr(cfg);
+
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Syntax1.pai"));
+
+        const std::ifstream expectedFile("test/res/expected/Syntax1.txt");
+        std::stringstream expected;
+        expected << expectedFile.rdbuf();
+
+        CHECK(parse_result.success);
+        CHECK(parse_result.tree.has_value());
+
+        if (parse_result.tree.has_value()) {
+            const auto& root = parse_result.tree.value()->getRoot();
+            root->inorderVisit(root, result["bounds"]);
+        } else {
+            result["bounds"] = {};
+        }
+
+        CHECK_EQ(expected.str(), (std::string) result["bounds"].dump());
+
+    }
+
+    TEST_CASE("[ASTTests] syntax2") {
+        nlohmann::json result{};
+        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        LR lr(cfg);
+
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Syntax2.pai"));
+
+        const std::ifstream expectedFile("test/res/expected/Syntax2.txt");
+        std::stringstream expected;
+        expected << expectedFile.rdbuf();
+
+        CHECK(parse_result.success);
+        CHECK(parse_result.tree.has_value());
+
+        if (parse_result.tree.has_value()) {
+            const auto& root = parse_result.tree.value()->getRoot();
+            root->inorderVisit(root, result["bounds"]);
+        } else {
+            result["bounds"] = {};
+        }
+
+        CHECK_EQ(expected.str(), (std::string) result["bounds"].dump());
 
     }
 }
