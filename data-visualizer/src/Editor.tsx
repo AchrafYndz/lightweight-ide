@@ -38,6 +38,9 @@ interface HighlightSpecs<T> {
 }
 
 const convert_backend_bounds = (bounds: BackendBounds, code: string): ConvertedBounds => {
+    if (bounds.start.every(n => n === 0) && bounds.end.every(n => n === 0))
+        return [0, 0] as ConvertedBounds;
+
     let index = 0;
     let row = 0;
     let col = 0;
@@ -70,6 +73,7 @@ const convert_backend_bounds = (bounds: BackendBounds, code: string): ConvertedB
         }
     }
 
+    console.log(bounds);
     throw new Error("failed to find start and end index of bounds");
 };
 
