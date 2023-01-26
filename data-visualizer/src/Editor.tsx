@@ -93,7 +93,7 @@ const highlight = async (code: string): Promise<HighlightSpecs<ConvertedBounds>>
     if (parsed.bounds) {
         for (const key of Object.keys(parsed.bounds)) {
             converted[key as keyof HighlightSpecsBounds<ConvertedBounds>] =
-                parsed.bounds[key as keyof HighlightSpecsBounds<BackendBounds>].map((b) => convert_backend_bounds(b, code));
+                parsed.bounds[key as keyof HighlightSpecsBounds<BackendBounds>].map((b) => convert_backend_bounds(b, code)).filter(a => a[0] !== a[1]);
         }
 
     }
