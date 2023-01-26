@@ -75,8 +75,8 @@ TEST_SUITE("LRTests") {
         CHECK_EQ(table, get_table());
     }
 
-    TEST_CASE_FIXTURE(LRTest, "[LRTests] pai_parse_table") {
-        const CFG cfg = CFG::parse_ebnf("test/res/input/EBNF2CFG.txt");
+    TEST_CASE_FIXTURE(LRTest, "[LRTests] cmm_parse_table") {
+        const CFG cfg = CFG::parse_ebnf("res/grammar/cminmin.gram");
         setup(cfg);
 
         const LR::ParsingTable table{
@@ -794,7 +794,7 @@ TEST_SUITE("LRTests") {
     }
 
     TEST_CASE("[LRTests] factorial_parsing") {
-        const CFG cfg = CFG::parse_ebnf("test/res/input/EBNF2CFG.txt");
+        const CFG cfg = CFG::parse_ebnf("res/grammar/cminmin.gram");
         LR lr(cfg);
 
         const auto parse_result = lr.parse(StreamReader("test/res/input/factorial.cmm"));
@@ -814,7 +814,7 @@ TEST_SUITE("LRTests") {
     }
 
     TEST_CASE("[LRTests] error1") {
-        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        const CFG cfg = CFG::parse_ebnf("res/grammar/cminmin.gram");
         LR lr(cfg);
 
         const auto parse_result = lr.parse(StreamReader("test/res/input/Error1.cmm"));
@@ -829,7 +829,7 @@ TEST_SUITE("LRTests") {
         }
     }
     TEST_CASE("[LRTests] error2") {
-        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        const CFG cfg = CFG::parse_ebnf("res/grammar/cminmin.gram");
         LR lr(cfg);
 
         const auto parse_result = lr.parse(StreamReader("test/res/input/Error2.cmm"));
@@ -844,7 +844,7 @@ TEST_SUITE("LRTests") {
         }
     }
     TEST_CASE("[LRTests] error3") {
-        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        const CFG cfg = CFG::parse_ebnf("res/grammar/cminmin.gram");
         LR lr(cfg);
 
         const auto parse_result = lr.parse(StreamReader("test/res/input/Error3.cmm"));
@@ -862,7 +862,7 @@ TEST_SUITE("LRTests") {
     }
 
     TEST_CASE("[LRTests] error4") {
-        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        const CFG cfg = CFG::parse_ebnf("res/grammar/cminmin.gram");
         LR lr(cfg);
 
         const auto parse_result = lr.parse(StreamReader("test/res/input/Error4.cmm"));

@@ -1,5 +1,0 @@
-// Main entry point
-fn main() {
-    let x = 5;
-    return 0;
-}

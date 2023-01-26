@@ -93,10 +93,10 @@ TEST_SUITE("ASTTests") {
 
     TEST_CASE("[ASTTests] syntax1") {
         nlohmann::json result{};
-        const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+        const CFG cfg = CFG::parse_ebnf("res/grammar/cminmin.gram");
         LR lr(cfg);
 
-        const auto parse_result = lr.parse(StreamReader("test/res/input/Syntax1.pai"));
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Syntax1.cmm"));
 
         const std::ifstream expectedFile("test/res/expected/Syntax1.txt");
         std::stringstream expected;

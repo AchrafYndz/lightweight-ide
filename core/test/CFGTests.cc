@@ -95,7 +95,7 @@ TEST_SUITE("CFGTests") {
     }
 
     TEST_CASE("[CFGTests] EBNF2CFG") {
-        const CFG cfg = CFG::parse_ebnf("test/res/input/EBNF2CFG.txt");
+        const CFG cfg = CFG::parse_ebnf("res/grammar/cminmin.gram");
 
         const std::ifstream expectedFile("test/res/expected/CFGTests-EBNF2CFG.txt");
         std::stringstream expected;

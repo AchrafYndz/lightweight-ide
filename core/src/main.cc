@@ -148,7 +148,7 @@ std::string move_code_into_file(const std::string& code) {
 }
 
 int main() {
-    const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
+    const CFG cfg = CFG::parse_ebnf("res/grammar/cminmin.gram");
     LR lr(cfg);
 
     // const std::pair<bool, LR::ASTree*> result = lr.parse(StreamReader("factorial.cmm"));
