@@ -7,7 +7,7 @@ P = {
   <call_arguments> ::= <expression>|<expression> , <call_arguments>
   <expression> ::= <expression> ! = <term>|<expression> + <term>|<expression> - <term>|<expression> < <term>|<expression> < = <term>|<expression> = = <term>|<expression> > <term>|<expression> > = <term>|<term>
   <factor> ::= ! ( <expression> )|( <expression> )|- <factor>|<function_call>|identifier|literal
-  <function> ::= fn identifier ( ) { <body> }|fn identifier ( <arguments> ) { <body> }
+  <function> ::= fn identifier ( ) { <body> }|fn identifier ( ) { }|fn identifier ( <arguments> ) { <body> }
   <function_call> ::= identifier ( )|identifier ( <call_arguments> )
   <if> ::= if <expression> { <body> }|if <expression> { <body> } else { <body> }
   <program> ::= <function>|<function> <program>

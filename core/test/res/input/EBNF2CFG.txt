@@ -1,1 +1,1 @@
-../../../res/grammar/brolang.gram
+../../../res/grammar/paithon.gram
