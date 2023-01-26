@@ -340,7 +340,7 @@ LR::ParseResult LR::parse(StreamReader in) const {
                                           ((correction.first == ErrorCorrectionAction::Delete)
                                                ? "delete the unexpected token"
                                                : std::string() + "insert token: `" + correction.second.value() +
-                                                     "` after the unexpected token"));
+                                                     "` before the unexpected token"));
                 }
 
                 errors.push_back({lexer_token.start.first,
