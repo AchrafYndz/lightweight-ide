@@ -91,7 +91,7 @@ TEST_SUITE("ScannerTests") {
 
 TEST_SUITE("LexerTests") {
     TEST_CASE("[LexerTests] factorial") {
-        Lexer lexer(Scanner(StreamReader("test/res/input/factorial.pai")));
+        Lexer lexer(Scanner(StreamReader("test/res/input/factorial.cmm")));
 
         std::ifstream expected_fstream("test/res/expected/LexerTests-factorial.txt");
         std::stringstream expected{};
@@ -115,7 +115,7 @@ TEST_SUITE("LexerTests") {
     }
 
     TEST_CASE("[LexerTests] all") {
-        Lexer lexer(Scanner(StreamReader("test/res/input/all.pai")));
+        Lexer lexer(Scanner(StreamReader("test/res/input/all.cmm")));
 
         std::ifstream expected_fstream("test/res/expected/LexerTests-all.txt");
         std::stringstream expected{};

@@ -797,7 +797,7 @@ TEST_SUITE("LRTests") {
         const CFG cfg = CFG::parse_ebnf("test/res/input/EBNF2CFG.txt");
         LR lr(cfg);
 
-        const auto parse_result = lr.parse(StreamReader("test/res/input/factorial.pai"));
+        const auto parse_result = lr.parse(StreamReader("test/res/input/factorial.cmm"));
 
         std::ifstream expected_file("test/res/expected/LRTests-factorial_parsing.txt");
         std::stringstream expected{};
@@ -817,7 +817,7 @@ TEST_SUITE("LRTests") {
         const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
         LR lr(cfg);
 
-        const auto parse_result = lr.parse(StreamReader("test/res/input/Error1.pai"));
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Error1.cmm"));
 
         CHECK(!parse_result.success);
         CHECK(parse_result.tree.has_value());
@@ -832,7 +832,7 @@ TEST_SUITE("LRTests") {
         const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
         LR lr(cfg);
 
-        const auto parse_result = lr.parse(StreamReader("test/res/input/Error2.pai"));
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Error2.cmm"));
 
         CHECK(!parse_result.success);
         CHECK(parse_result.tree.has_value());
@@ -847,7 +847,7 @@ TEST_SUITE("LRTests") {
         const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
         LR lr(cfg);
 
-        const auto parse_result = lr.parse(StreamReader("test/res/input/Error3.pai"));
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Error3.cmm"));
 
         CHECK(!parse_result.success);
         CHECK(parse_result.tree.has_value());
@@ -865,7 +865,7 @@ TEST_SUITE("LRTests") {
         const CFG cfg = CFG::parse_ebnf("res/grammar/paithon.gram");
         LR lr(cfg);
 
-        const auto parse_result = lr.parse(StreamReader("test/res/input/Error4.pai"));
+        const auto parse_result = lr.parse(StreamReader("test/res/input/Error4.cmm"));
 
         CHECK(!parse_result.success);
         CHECK(parse_result.tree.has_value());

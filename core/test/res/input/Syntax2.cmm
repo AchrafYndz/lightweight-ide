@@ -1,0 +1,19 @@
+// Main entry point
+fn main() {
+    let x = 5;
+
+    if 1 == 1 {
+        let y = 5;
+    }
+    else {
+        let x = 5;
+    }
+    main2();
+    return 0;
+}
+
+fn main2() {
+    let x = 5;
+    let xx = (1 * 1)  /  2;
+    let yy  = 1 / 1;
+}
