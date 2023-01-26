@@ -1,5 +1,5 @@
-V = {<arguments>, <assignment>, <body>, <call_arguments>, <expression>, <factor>, <function>, <function_call>, <if>, <program>, <return>, <statement>, <term>}
-T = {!, (, ), *, +, ,, -, /, ;, <, =, >, else, fn, identifier, if, let, literal, return, {, }}
+V = {<arguments>, <assignment>, <body>, <call_arguments>, <expression>, <factor>, <function>, <function_call>, <if>, <program>, <return>, <statement>, <term>, <while>}
+T = {!, (, ), *, +, ,, -, /, ;, <, =, >, else, fn, identifier, if, let, literal, return, while, {, }}
 P = {
   <arguments> ::= identifier|identifier , <arguments>
   <assignment> ::= identifier = <expression> ;|let identifier = <expression> ;
@@ -12,7 +12,8 @@ P = {
   <if> ::= if <expression> { <body> }|if <expression> { <body> } else { <body> }
   <program> ::= <function>|<function> <program>
   <return> ::= return <expression> ;
-  <statement> ::= <assignment>|<function_call> ;|<if>|<return>
+  <statement> ::= <assignment>|<function_call> ;|<if>|<return>|<while>
   <term> ::= <factor>|<term> * <factor>|<term> / <factor>
+  <while> ::= while <expression> { <body> }
 }
 S = <program>
