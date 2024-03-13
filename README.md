@@ -16,6 +16,7 @@
 <p align="center">
     <img src="./images/screenshot.png" width="500">
 </p>
+
 ---
 
 ## Technologies used
