@@ -21,11 +21,11 @@
 
 ## Technologies used
 
-- <img src="https://simpleicons.org/icons/cplusplus.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> C++
-- <img src="https://simpleicons.org/icons/typescript.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> TypeScript
-- <img src="https://simpleicons.org/icons/react.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> React
-- <img src="https://simpleicons.org/icons/tailwindcss.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> Tailwind CSS
-- <img src="https://simpleicons.org/icons/python.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> Python
+- <img src="./images/cpp.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> C++
+- <img src="./images/typescript.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> TypeScript
+- <img src="./images/react.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> React
+- <img src="./images/tailwind.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> Tailwind CSS
+- <img src="./images/python.svg" width="18" height="18" style="filter: brightness(0) invert(1);"> Python
 
 ## Project structure
 
