@@ -13,9 +13,9 @@
 
 ---
 
-<div style="display: flex; justify-content: center; align-items: center; height: 35vh;">
+<p align="center">
     <img src="./images/screenshot.png" width="500">
-</div>
+</p>
 ---
 
 ## Technologies used
